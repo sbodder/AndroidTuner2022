@@ -21,8 +21,11 @@ using Java.Nio.Channels;
 using TTtuner_2022_2.Plot;
 using System.Collections.ObjectModel;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("TTtunerUnitTests")]
+
 namespace TTtuner_2022_2.Common
 {
+   
     // [System.Reflection.Obfuscation(Exclude = false, Feature = "preset(minimum);-anti dump;+ctrl flow;-invalid metadata;-resources;+rename(mode=letters);")]
     public class PathUtil
     {
