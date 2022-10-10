@@ -18,7 +18,7 @@
 			p1:gravity="center"
 			p1:background="#000000"
 			p1:layout_weight="8"/>
-		<TuneTracker.SwipeIndicatorView
+		<TTtuner_2022_2.SwipeIndicatorView
 			p1:id="@+id/tunerSwipeIndicatorView"
 			p1:layout_height="0dp"
 			p1:layout_width="fill_parent"

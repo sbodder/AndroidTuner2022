@@ -1,54 +1,49 @@
 ﻿using Android.App;
-using Android.Widget;
+using global::Android.Widget;
 using Android.OS;
-using Android.Media;
-using System.Diagnostics;
+
 
 
 using System;
-using Android.Util;
-using System.Collections.Generic;
-using System.IO;
-using Android.Content;
-using Android.Views;
-using Android.Graphics;
-using System.Threading.Tasks;
-using System.Threading;
+//using Android.Util;
+//using System.Collections.Generic;
+//using System.IO;
+//using global::Android.Views;
+//using Android.Graphics;
+//using System.Threading.Tasks;
+//using System.Threading;
 using AndroidX.AppCompat.App;
-//using TuneTracker.Audio;
-//using TuneTracker.Plot;
-//using TuneTracker.Common;
-using Android;
-using AndroidX;
-using Android.Content.PM;
-//using TuneTracker.Fragments;
-//using TuneTracker.Adapters;
-//using Android.Graphics.Drawables;
-//using System.Collections.ObjectModel;
-//using TuneTracker.Services;
-// using Firebase.Analytics;
-//using Xamarin.Forms.PlatformConfiguration;
+using TTtuner_2022_2.Audio;
+using TTtuner_2022_2.Plot;
+using TTtuner_2022_2.Common;
+using TTtuner_2022_2.Fragments;
+using TTtuner_2022_2.Adapters;
+using Android.Graphics.Drawables;
+using System.Collections.ObjectModel;
+using TTtuner_2022_2.Services;
+using Firebase.Analytics;
+using Xamarin.Forms.PlatformConfiguration;
 
 namespace TTtuner_2022_2
 {
-    [Activity(Label = "TTtuner", MainLauncher = true, Icon = "@drawable/icon", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Activity(Label = "TTtuner", MainLauncher = true, Icon = "@drawable/icon", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
     {
-        //private int LED_NOTIFICATION_ID = 0; //arbitrary constant   
-        //private int REQUEST_PERMISSIONS = 3; //arbitrary constant
-        //private Audio_Record m_audioRecorder = null;
-        //private LinearLayout m_llay;
-        //private bool ignoreSwipeleftToRightGestures = false;
+        private int LED_NOTIFICATION_ID = 0; //arbitrary constant   
+        private int REQUEST_PERMISSIONS = 3; //arbitrary constant
+        private Audio_Record m_audioRecorder = null;
+        private LinearLayout m_llay;
+        private bool ignoreSwipeleftToRightGestures = false;
 
-        //private TextView m_txtTimeElapsed;
+        private TextView m_txtTimeElapsed;
 
-        //private bool blRecordButtonEnabled = true;
-        //private bool m_blCollectionPaused = true;
-        //private DataPointHelper<Serializable_DataPoint> m_dataPtHelper;
-        //private string m_strTimeStampForFileName;
-        //private bool m_blPermissionsOK = false;
-        //private int m_secElapsed = 0;
-        //private int _pitch_i = 0;
+        private bool blRecordButtonEnabled = true;
+        private bool m_blCollectionPaused = true;
+        private DataPointHelper<Serializable_DataPoint> m_dataPtHelper;
+        private string m_strTimeStampForFileName;
+        private bool m_blPermissionsOK = false;
+        private int m_secElapsed = 0;
+        private int _pitch_i = 0;
 
 
         //internal Audio_Record AudioRecorder

@@ -38,6 +38,10 @@
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -54,7 +58,13 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FilesAndDirsPicker">
+      <HintPath>..\..\dlls\FilesAndDirsPicker.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Android.Export" />
+    <Reference Include="RubberBandTarosDspBinding">
+      <HintPath>..\..\dlls\RubberBandTarosDspBinding.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -63,8 +73,72 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreditsActivity.cs" />
+    <Compile Include="GraphScreenActivity.cs" />
+    <Compile Include="Services\TTtunerService.cs" />
+    <Compile Include="SettingsActivity.cs" />
+    <Compile Include="StatsActivity.cs" />
+    <Compile Include="Views\SwipeIndicatorView.cs" />
+    <Compile Include="Views\TunerScalesView.cs" />
+    <None Include="ICON FILES\ICON1.pdn" />
+    <None Include="ICON FILES\icon2.pdn" />
     <None Include="MainActivity.cs.old" />
+    <Compile Include="Adapters\MainFragmentAdapter.cs" />
+    <Compile Include="Audio\AudioFileImporter.cs" />
+    <Compile Include="Audio\AudioRecorder.cs" />
+    <Compile Include="Audio\AudioTrack_AudioPlayer.cs" />
+    <Compile Include="Audio\ConvertAudioFileToWave.cs" />
+    <Compile Include="Audio\ConvertPcmToWave.cs" />
+    <Compile Include="Audio\IAudioPlayer.cs" />
+    <Compile Include="Audio\Media_AudioPlayer.cs" />
+    <Compile Include="Audio\RubberBand_AudioPlayer.cs" />
+    <Compile Include="Classes\Common.cs" />
+    <Compile Include="Common\cEventHelper.cs" />
+    <Compile Include="Common\Common.cs" />
+    <Compile Include="Common\Factory.cs" />
+    <Compile Include="Common\FireBaseEventLogger.cs" />
+    <Compile Include="Common\Logger.cs" />
+    <Compile Include="Common\SettingsMethods.cs" />
+    <Compile Include="Common\SettingsProperties.cs" />
+    <Compile Include="DataGrid\Cells\GridImageCell.cs" />
+    <Compile Include="DataGrid\Styles\Darkstyle.cs" />
+    <Compile Include="DataGrid\Styles\LightStyle.cs" />
+    <Compile Include="DSP\Decibel.cs" />
+    <Compile Include="DSP\MPM.cs" />
+    <Compile Include="FilePicker\FileListAdapter.cs" />
+    <Compile Include="FilePicker\FileListFragment.cs" />
+    <Compile Include="FilePicker\FileListRowViewHolder.cs" />
+    <Compile Include="FilePicker\FilePickerActivity.cs" />
+    <Compile Include="FilePicker\Helpers.cs" />
+    <Compile Include="FilePicker\PopUpMenuListAdapter.cs" />
+    <Compile Include="Fragments\GaugeFragment.cs" />
+    <Compile Include="Fragments\NumericalAxisExtForScatterFrag.cs" />
+    <Compile Include="Fragments\ScatterPlotFragment.cs" />
+    <Compile Include="Fragments\StatsViewFragment.cs" />
+    <Compile Include="Fragments\TunerFragment.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Music\DbStats.cs" />
+    <Compile Include="Music\NotePitchMap.cs" />
+    <Compile Include="Music\NoteStats.cs" />
+    <Compile Include="Plot\ChartEventArgs.cs" />
+    <Compile Include="Plot\ChartExt_Dcb.cs" />
+    <Compile Include="Plot\ChartExt_Freq.cs" />
+    <Compile Include="Plot\ChartOverviewExt.cs" />
+    <Compile Include="Plot\ChartZoomPanBehaviorExt.cs" />
+    <Compile Include="Plot\DataPointHelper.cs" />
+    <Compile Include="Plot\GraphHelper.cs" />
+    <Compile Include="Plot\IDataPointHelper.cs" />
+    <Compile Include="Plot\Models\IChart.cs" />
+    <Compile Include="Plot\Models\ISerialisableDataPoint.cs" />
+    <Compile Include="Plot\Models\Serializable_DataPoint.cs" />
+    <Compile Include="Plot\Models\Serializable_DataPoint_Std.cs" />
+    <Compile Include="Plot\NumericalAxisExt.cs" />
+    <Compile Include="Plot\PitchPlotHelper.cs" />
+    <Compile Include="PopUpDialogFragments\PopUpFilePorgress.cs" />
+    <Compile Include="PopUpDialogFragments\PopUpForLongGraphClick.cs" />
+    <Compile Include="PopUpDialogFragments\PopUpForTuningSystemSelection.cs" />
+    <Compile Include="PopUpDialogFragments\PopUpGraphConfiguration.cs" />
+    <Compile Include="PopUpDialogFragments\PopUpWithSeekerDialog.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -136,6 +210,9 @@
     </PackageReference>
     <PackageReference Include="Syncfusion.Xamarin.SfNumericTextBox.Android">
       <Version>20.3.0.48</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO.FileSystem">
+      <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Xml.XDocument">
       <Version>4.3.0</Version>
@@ -905,6 +982,13 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ICON FILES\icon.png" />
+    <Content Include="ICON FILES\ICON1.png" />
+    <Content Include="ICON FILES\icon3.png" />
+    <Content Include="ICON FILES\ic_launcher.png" />
+    <Content Include="ICON FILES\note.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

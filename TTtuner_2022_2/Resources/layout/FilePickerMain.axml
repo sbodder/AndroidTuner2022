@@ -25,7 +25,7 @@
             android:layout_marginLeft="10dip"
             android:text="0" />
         <fragment
-            class="TuneTracker.FileListFragment"
+            class="TTtuner_2022_2.FileListFragment"
             android:id="@+id/file_list_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
