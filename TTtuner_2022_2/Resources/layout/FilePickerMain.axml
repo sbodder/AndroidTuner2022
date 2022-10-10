@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="#000000"
+    android:id="@+id/framelayoutFiles"     
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="10dip"
+        android:background="#000000"
+        android:id="@+id/llFiles"
+        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <include
+            android:id="@+id/toolbar3"
+            layout="@layout/toolbar" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:id="@+id/textDataFolderDisplay"
+            android:layout_marginLeft="10dip"
+            android:text="0" />
+        <fragment
+            class="TuneTracker.FileListFragment"
+            android:id="@+id/file_list_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</FrameLayout>

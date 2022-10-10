@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_marginTop="50dp"
+    android:layout_marginLeft="50dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+  <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayoutContainer"
+      android="center">
+         <TextView
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop ="10dp"
+            android:layout_marginLeft ="10dp"
+            android:layout_marginBottom ="10dp"
+            android:layout_marginRight ="10dp"
+            android:text ="Graph Configuration" />
+          <TextView
+           android:textAppearance="?android:attr/textAppearanceMedium"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom ="15dp"
+          android:layout_marginLeft ="10dp"
+          android:layout_marginRight ="10dp" 
+           android:id="@+id/textGraphConfigurationPrompt" />
+
+  
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:background="#FFFFFF"
+            android:padding="5dp"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+          <TextView
+              android:layout_width="0dp"
+              android:layout_weight="2"
+              android:layout_height="fill_parent"
+              android:text="@string/NotesGraph_prompt" />
+          <Switch
+              android:id="@+id/SwitchNotesGraphOption"
+              android:layout_width="0dp"
+              android:layout_weight="1"
+              android:layout_height="fill_parent"
+              android:checked="true" />
+        </LinearLayout>
+        <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="fill_parent"
+          android:background="#FFFFFF"
+          android:padding="5dp"
+          android:layout_height="0dp"
+          android:layout_weight="1">
+          <TextView
+              android:layout_width="0dp"
+              android:layout_weight="2"
+              android:layout_height="fill_parent"
+              android:text="@string/DecibelGraph_prompt" />
+          <Switch
+              android:id="@+id/SwitchDecibelGraphOption"
+              android:layout_width="0dp"
+              android:layout_weight="1"
+              android:layout_height="fill_parent"
+              android:checked="true" />
+        </LinearLayout>
+
+        <LinearLayout
+              android:orientation="horizontal"
+              android:layout_width="fill_parent"
+              android:background="#FFFFFF"
+              android:padding="5dp"
+              android:layout_height="0dp"
+              android:layout_weight="2">
+
+              <LinearLayout
+               android:orientation="vertical"
+               android:padding="0dip"
+               android:background="#FFFFFF"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content">
+                  <TextView
+                      android:layout_width="fill_parent"                      
+                      android:layout_height="wrap_content"
+                      android:textStyle="bold"
+                      android:text="@string/GraphOverview_prompt" />
+                  <Spinner
+                  android:id="@+id/spinnerGraphOverview"
+                  android:layout_width="fill_parent"
+                  android:layout_marginTop="10dip"
+                  android:layout_marginLeft="10dip"
+                  android:textColor="#000000"
+                  android:layout_height="wrap_content"
+                  android:prompt="@string/GraphOverview_prompt" />
+                </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+  </LinearLayout>

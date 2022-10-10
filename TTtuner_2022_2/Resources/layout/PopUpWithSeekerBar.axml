@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:p1="http://schemas.android.com/apk/res/android"
+    p1:minWidth="25px"
+    p1:minHeight="25px"
+    p1:layout_width="match_parent"
+    p1:layout_height="match_parent"
+    p1:id="@+id/scrollView1">
+  <LinearLayout
+      p1:orientation="vertical"
+      p1:minWidth="25px"
+      p1:minHeight="25px"
+      p1:layout_width="match_parent"
+      p1:layout_height="wrap_content"
+      p1:id="@+id/linearLayoutContainer"
+      p1.gravity="center">
+    <TextView
+        p1:textAppearance="?android:attr/textAppearanceLarge"
+        p1:layout_width="wrap_content"
+        p1:layout_height="wrap_content"
+        p1:layout_gravity="left"
+        p1:layout_marginTop ="10dp"
+        p1:layout_marginLeft ="10dp"
+        p1:layout_marginBottom ="10dp"
+        p1:layout_marginRight ="10dp"
+        p1:id="@+id/textTitle" />
+    <TextView
+        p1:textAppearance="?android:attr/textAppearanceMedium"
+        p1:layout_width="wrap_content"
+        p1:layout_height="wrap_content"
+         p1:layout_marginBottom ="15dp"
+         p1:layout_marginLeft ="10dp"
+         p1:layout_marginRight ="10dp"
+        p1:id="@+id/textDescription" />
+
+    <SeekBar
+      p1:layout_width="fill_parent"
+      p1:layout_height="fill_parent"
+         p1:layout_marginTop ="15dp"
+      p1:layout_marginLeft ="10dp"
+         p1:layout_marginBottom ="15dp"
+      p1:id="@+id/seekBarPopUp" />
+    
+ 
+    <LinearLayout
+        p1:orientation="horizontal"
+        p1:layout_marginTop ="15dp"
+        p1:layout_marginLeft ="10dp"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/linearLayout1">
+      <Button
+          p1:layout_width="0dp"
+           p1:textAppearance="?android:attr/textAppearanceLarge"
+          p1:text = "-"
+          p1:layout_height="match_parent"
+          p1:layout_weight="1"
+          p1:gravity="center"
+          p1:id="@+id/ButtonMinus" />
+      <TextView
+          p1:text="4 "
+          p1:textAppearance="?android:attr/textAppearanceMedium"
+          p1:layout_width="0dp"
+           p1:layout_weight="1"
+          p1:gravity="center"
+          p1:layout_height="match_parent"
+          p1:id="@+id/textSeekValue" />
+      <!--<TextView
+        p1:text=" ms"
+        p1:textAppearance="?android:attr/textAppearanceMedium"
+        p1:layout_width="0dp"
+        p1:gravity="center"
+          p1:layout_weight="1"
+        p1:layout_height="match_parent"
+        p1:id="@+id/textSeekUnits" />-->
+      <Button
+        p1:layout_width="0dp"
+         p1:textAppearance="?android:attr/textAppearanceLarge"
+        p1:text = "+"
+        p1:gravity="center"
+        p1:layout_height="match_parent"
+        p1:layout_weight="1"
+        p1:id="@+id/ButtonPlus" />
+    </LinearLayout>
+    
+   
+  </LinearLayout>
+</ScrollView>

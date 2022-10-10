@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="Hello">Hello World, Click Me!</string>
+  <string name="ApplicationName">TTtuner</string>
+  <string name="app_name">TTtuner</string>
+
+  <string name="tuning_prompt">Tuning System</string>
+  
+  <string name="com.crashlytics.android.build_id">15</string>
+
+  <string name="SnapGrid_prompt">Snap to Note</string>
+  <string name="DefaultZoom_prompt">Default Zoom</string>
+  <string name="Zoom_Horizontal">Zoom Horizonal</string>
+  <string name="Zoom_Vertical">Zoom Vertical</string>
+  <string name="NotesGraph_prompt">Notes Graph</string>
+  <string name="DecibelGraph_prompt">Decibel Graph</string>
+
+  <string name="NotesView_prompt">Notes View</string>
+  <string name="DbView_prompt">dB levels View</string>
+
+  <string name="A4Ref_prompt">A4 Reference</string>
+  <string name="GraphConfig_prompt">These settings specify what graphs will be shown on the graph screen</string>
+
+
+  <string name="ScaleSelection_prompt">Scale</string>
+  <string-array name="ScaleSelection_array">
+    <item>A</item>
+    <item>A# / Bb</item>
+    <item>B</item>
+    <item>C</item>
+    <item>C# / Db</item>
+    <item>D</item>
+    <item>D# / Eb</item>
+    <item>E</item>
+    <item>F</item>
+    <item>F# / Gb</item>
+    <item>G</item>
+    <item>G# / Ab</item>
+  </string-array>
+
+  <string name="Transpose_prompt">Transposition</string>
+  <string-array name="TransposeSelection_array">
+    <item>C  (C->C)</item>
+    <item>C# (C->B)</item>
+    <item>D  (C->A#)</item>
+    <item>D# (C->A)</item>
+    <item>E  (C->G#)</item>
+    <item>F  (C->G)</item>
+    <item>F# (C->F#)</item>
+    <item>G  (C->F)</item>
+    <item>G# (C->E)</item>
+    <item>A  (C->D#)</item>
+    <item>A# (C->D)</item>
+    <item>B  (C->C#)</item>
+  </string-array>
+
+
+  <string name="SampleRate_prompt">Recording Sampling Rate</string>
+  <string-array name="SampleRate_array">
+    <item>8000</item>
+    <item>11025</item>
+    <item>16000</item>
+    <item>22050</item>
+    <item>44100</item>
+    <item>48000</item>
+  </string-array>
+
+  <string-array name="AudioPlayer_array">
+    <item>TimeStretch</item>
+    <item>Standard</item>
+  </string-array>
+
+  <string name="GraphOverview_prompt">Graph Overview</string>
+  <string-array name="GraphOverview_array">
+    <item>Notes Graph</item>
+    <item>Decibel Graph</item>
+  </string-array>
+</resources>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:local="http://schemas.android.com/apk/res-auto">
+  <item
+       android:id="@+id/menu_record1"
+       android:icon="@drawable/ic_action_content_create"
+       local:showAsAction="never"
+       android:title="Record" />
+  <item
+       android:id="@+id/menu_open1"
+       android:icon="@drawable/ic_action_content_save"
+       local:showAsAction="never"
+       android:title="Archive" />
+  <item
+       android:id="@+id/menu_export_stats"
+       android:icon="@drawable/ic_action_content_save"
+       local:showAsAction="never"
+       android:title="Save Stats" />
+
+  <item
+       android:id="@+id/menu_trash"
+       android:icon="@drawable/ic_trash"
+       local:showAsAction="ifRoom"
+       android:title="Delete Stats" />
+  <item
+       android:id="@+id/menu_settings1"
+        android:icon="@drawable/ic_settings"
+       local:showAsAction="ifRoom"
+       android:title="Settings" />
+</menu>
