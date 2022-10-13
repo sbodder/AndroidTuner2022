@@ -49,12 +49,21 @@ namespace TTtuner_2022_2.Common
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = System.IO.Path.Combine(documentsPath, "Settings.Xml");
 
-            XmlDocument doc = new XmlDocument();
+            XmlDocument  doc = new XmlDocument();
             doc.PreserveWhitespace = true;
 
             try
             {
-                // doc.Load(filePath);
+                doc.Load(filePath);
+
+                //XmlNode root = doc.FirstChild;
+                //root = root.NextSibling;
+
+                XmlNodeList value = doc.GetElementsByTagName(key);
+
+                 value.Item(0).InnerText = strNewValue;
+
+                doc.Save(filePath);
 
 
             }
@@ -63,29 +72,40 @@ namespace TTtuner_2022_2.Common
 
             }
 
-            //using (var reader = new StreamReader(filePath))
-            //{
-            //    var doc = XmlDocument.Parse(reader.ReadToEnd());
-            //    reader.Close();
-            //    doc.Element("settings").Element(key).Value = strNewValue;
 
-            //    doc.Save(filePath);
-            //}
         }
 
         private static void WriteXmlSetting(string firstChild, string secondChild, string strNewValue)
         {
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = System.IO.Path.Combine(documentsPath, "Settings.Xml");
+            XmlDocument doc = new XmlDocument();
 
-            using (var reader = new StreamReader(filePath))
+            try
             {
-                //var doc = System.Xml.Linq.XDocument.Parse(reader.ReadToEnd());
-                //reader.Close();
-                //doc.Element("settings").Element(firstChild).Element(secondChild).Value = strNewValue;
+                doc.Load(filePath);
 
-                //doc.Save(filePath);
+                XmlNodeList firstChildList = doc.GetElementsByTagName(firstChild);
+
+                XmlNode childNode = firstChildList.Item(0);
+
+                foreach (var elem in childNode.ChildNodes)
+                {
+
+                    XmlNode childN = elem as XmlNode;
+                    if (!childN.OuterXml.Contains("<" + firstChild + ">") && childN.OuterXml.Contains("<" + secondChild + ">"))
+                    {
+                        childN.Value = strNewValue;
+                        doc.Save(filePath);
+                        return;
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                string var = ex.Message;
+            }
+            return;
 
         }
 
@@ -93,15 +113,26 @@ namespace TTtuner_2022_2.Common
         {
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = System.IO.Path.Combine(documentsPath, "Settings.Xml");
+            XmlDocument doc = new XmlDocument();
+            string retS = null;
 
-            //using (var reader = new StreamReader(filePath))
-            //{
-            //    var doc = System.Xml.Linq.XDocument.Parse(reader.ReadToEnd());
-            //    reader.Close();
-            //    return doc.Element("settings").Element(key).Value;
-            //}
 
-            return "";
+            try 
+            {
+                doc.Load(filePath);
+
+
+                XmlNodeList value = doc.GetElementsByTagName(key);
+
+                retS = value.Item(0).InnerText;
+            }
+            catch (Exception ex)
+            {
+                string var = ex.Message;
+            }
+            return retS;
+
+
         }
 
         private static string ReadXmlSetting(string firstChild, string secondChild)
@@ -109,13 +140,33 @@ namespace TTtuner_2022_2.Common
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = System.IO.Path.Combine(documentsPath, "Settings.Xml");
 
-            //using (var reader = new StreamReader(filePath))
-            //{
-            //    var doc = System.Xml.Linq.XDocument.Parse(reader.ReadToEnd());
-            //    reader.Close();
-            //    return doc.Element("settings").Element(firstChild).Element(secondChild).Value;
-            //}
+            XmlDocument doc = new XmlDocument();
+            string retS;
 
+
+            try
+            {
+                doc.Load(filePath);
+
+
+                XmlNodeList firstChildList = doc.GetElementsByTagName(firstChild);
+
+                XmlNode childNode = firstChildList.Item(0);
+
+                foreach ( var elem in childNode.ChildNodes)
+                {
+                    XmlNode childN = elem as XmlNode;
+                    if (!childN.OuterXml.Contains("<" + firstChild + ">") && childN.OuterXml.Contains("<" + secondChild + ">"))
+                    {
+                        return childN.InnerText;
+                    }
+                }
+                   
+            }
+            catch (Exception ex)
+            {
+                string var = ex.Message;
+            }
             return "";
         }
 
@@ -422,17 +473,19 @@ namespace TTtuner_2022_2.Common
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = System.IO.Path.Combine(documentsPath, "Settings.Xml");
 
+           
+
             using (Java.IO.File fl1 = new Java.IO.File(filePath))
             {
-
-                //  resource = "TTtuner_2022_2.Android.Settings.xml";
-               // using (var stream = m_namespaceType.Assembly.GetManifestResourceStream(resource))
-                //using (var reader = new StreamReader(stream))
-                //{
-                //    var doc = System.Xml.Linq.XDocument.Parse(reader.ReadToEnd());
-                //    doc.Save(fl1.Path);
-                //    reader.Close();
-                //}
+               
+                using (var stream = m_namespaceType.Assembly.GetManifestResourceStream(resource))
+                using (var reader = new StreamReader(stream))
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(reader.ReadToEnd());
+                    doc.Save(fl1.Path);
+                    reader.Close();
+                }
 
                 // file doesn't exist
             }

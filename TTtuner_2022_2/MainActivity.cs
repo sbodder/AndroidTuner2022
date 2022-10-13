@@ -33,7 +33,7 @@ using Android.Graphics;
 
 namespace TTtuner_2022_2
 {
-    [Activity(Label = "TTtuner", MainLauncher = true, Icon = "@drawable/icon", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Activity(Label = "TTtuner",  Icon = "@drawable/icon", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
     {
         private int LED_NOTIFICATION_ID = 0; //arbitrary constant   
@@ -191,18 +191,39 @@ namespace TTtuner_2022_2
 
         private void RequestPermissions()
         {
-            if (AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.ReadExternalStorage) == (int)Permission.Granted)
+
+            if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
-                // We have permissions, go ahead and use the app
-                m_blPermissionsOK = true;
+                if (AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.Internet) == (int)Permission.Granted
+          && AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.RecordAudio) == (int)Permission.Granted)
+
+                {
+                    m_blPermissionsOK = true;
+                }
+                else
+                {
+                    AndroidX.Core.App.ActivityCompat.RequestPermissions(this,
+                        new String[] { Manifest.Permission.RecordAudio, Manifest.Permission.Internet },
+                        REQUEST_PERMISSIONS);
+                }
             }
             else
             {
-                m_blPermissionsOK = false;
-                //  permissions are not granted. If necessary display rationale & request.
-                AndroidX.Core.App.ActivityCompat.RequestPermissions(this,
-                    new String[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage, Manifest.Permission.RecordAudio, Manifest.Permission.Internet },
-                    REQUEST_PERMISSIONS);
+                if (AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.ReadExternalStorage) == (int)Permission.Granted
+               && AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) == (int)Permission.Granted
+              )
+                {
+                    // We have permissions, go ahead and use the app
+                    m_blPermissionsOK = true;
+                }
+                else
+                {
+                    m_blPermissionsOK = false;
+                    //  permissions are not granted. If necessary display rationale & request.
+                    AndroidX.Core.App.ActivityCompat.RequestPermissions(this,
+                           new String[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage, Manifest.Permission.RecordAudio, Manifest.Permission.Internet },
+                           REQUEST_PERMISSIONS);
+                }
             }
         }
 
@@ -229,6 +250,10 @@ namespace TTtuner_2022_2
                     }
                 }
                 DoPostPermissionGrantSetup();
+            }
+            else
+            {
+                base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         }
 
@@ -343,11 +368,11 @@ namespace TTtuner_2022_2
         {
             Common.CommonFunctions comFunc = new Common.CommonFunctions();
             int intSecElap = (int)e.Time;
-            FireBaseEventLogger fb = new FireBaseEventLogger(this);
+            //FireBaseEventLogger fb = new FireBaseEventLogger(this);
 
             if (!AllFragementsAreSetup())
             {
-                fb.SendEvent(fb.events.PITCH_REC_FRAGS_NOT_SETUP, "");
+                //fb.SendEvent(fb.events.PITCH_REC_FRAGS_NOT_SETUP, "");
                 return;
             }
 
@@ -380,7 +405,7 @@ namespace TTtuner_2022_2
 
                 if ((_pitch_i < 100) && (_pitch_i % 10 == 0))
                 {
-                    fb.SendEvent(fb.events.PITCH_REC_ADDED_DP, e.Note);
+                    //fb.SendEvent(fb.events.PITCH_REC_ADDED_DP, e.Note);
                 }
                 if (!blRecordButtonEnabled)
                 {
@@ -401,7 +426,7 @@ namespace TTtuner_2022_2
 
                 if ((_pitch_i < 50) && (_pitch_i % 10 == 0))
                 {
-                    fb.SendEvent(fb.events.PITCH_REC_NO_NOTE, "");
+                    //fb.SendEvent(fb.events.PITCH_REC_NO_NOTE, "");
                 }
 
             }

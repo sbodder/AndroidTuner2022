@@ -19,6 +19,7 @@ using System.Globalization;
 using Java.Nio.Channels;
 using TTtuner_2022_2.Plot;
 using System.Collections.ObjectModel;
+using Environment = Android.OS.Environment;
 
 namespace TTtuner_2022_2.Common
 {
@@ -168,8 +169,18 @@ namespace TTtuner_2022_2.Common
                 if (m_strDataFolder == null)
                 {
                     // read from xmlFile
+                    m_strDataFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
 
                     m_strDataFolder = ReadXmlSetting("DataFolder");
+
+                    if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+
+                     if (m_strDataFolder == "")
+                    {
+                        //m_strDataFolder = Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDocuments).AbsolutePath;
+                        //m_strDataFolder = Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDocuments).AbsolutePath;
+                          
+                    }
 
                 }
 

@@ -127,8 +127,8 @@ namespace TTtuner_2022_2.Fragments
             catch (Exception e)
             {
                 Common.CommonFunctions comFunc = new Common.CommonFunctions();
-                FireBaseEventLogger fb = new FireBaseEventLogger(m_act);
-                fb.SendEvent(fb.events.GAUGE_FRAG_CREATE_EXCEP, comFunc.TruncateStringRight(e.Message, 99));
+                //FireBaseEventLogger fb = new FireBaseEventLogger(m_act);
+                //fb.SendEvent(fb.events.GAUGE_FRAG_CREATE_EXCEP, comFunc.TruncateStringRight(e.Message, 99));
                 throw e;
             }
 

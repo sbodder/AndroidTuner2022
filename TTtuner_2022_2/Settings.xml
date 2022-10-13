@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <TimeLag>0</TimeLag>
+  <PitchSmaplingFrequency>100</PitchSmaplingFrequency>
+  <TuningSystem>Equal Temperament</TuningSystem>
+  <A4reference>440</A4reference>
+  <RootScale>A</RootScale>  
+  <Transpose>C (C->C)</Transpose>
+  <SampleRate>16000</SampleRate>
+  <DataFolder>/storage/emulated/0/TTtuner</DataFolder>
+  <AudioPlayer>TimeStretch</AudioPlayer>
+  <MinNumberOfSamplesForNote>5</MinNumberOfSamplesForNote>
+  <DisplayNotesGraph>True</DisplayNotesGraph>
+  <DisplayDecibelGraph>False</DisplayDecibelGraph>
+  <GraphOverlay>Notes Graph</GraphOverlay>
+  <FrequencyGraph>
+    <SnapToNote>True</SnapToNote>
+    <DefaultZoom>True</DefaultZoom>
+    <ZoomLevelXms>2000</ZoomLevelXms>
+    <ZoomLevelY>10</ZoomLevelY>
+  </FrequencyGraph>
+  <DecibelGraph>
+    <SnapToNote>True</SnapToNote>
+    <DefaultZoom>True</DefaultZoom>
+    <ZoomLevelXms>2000</ZoomLevelXms>
+    <ZoomLevelY>30</ZoomLevelY>
+  </DecibelGraph>
+  <PositionOfPageAdapterOnMainActivity>0</PositionOfPageAdapterOnMainActivity>
+  <LastColumnBrowsedOnStatsGrid>Image2</LastColumnBrowsedOnStatsGrid>
+  <NoteClarity>0.3</NoteClarity>
+</settings>

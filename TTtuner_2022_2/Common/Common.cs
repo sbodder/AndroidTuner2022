@@ -862,9 +862,8 @@ namespace TTtuner_2022_2.Common
                 {
                     //  strText = System.IO.File.ReadAllText(filePath);
 
-
                     //Get the text file
-                    Java.IO.File file = new Java.IO.File(filePath);
+                    Java.IO.File file = new Java.IO.File(filePath);                   
 
                     //Read text from file
                     StringBuilder text = new StringBuilder();

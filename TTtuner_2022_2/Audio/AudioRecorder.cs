@@ -155,7 +155,7 @@ namespace TTtuner_2022_2.Audio
             int intWindowTimeMs = (int)(flWindowTime * 1000);
             byte[] bData;
             int i = 0;
-            FireBaseEventLogger fb = new FireBaseEventLogger(this);
+            //FireBaseEventLogger fb = new FireBaseEventLogger(this);
 
             if (blSaveAudioDataToFile)
             { 
@@ -176,7 +176,7 @@ namespace TTtuner_2022_2.Audio
             if (m_recorder.State == State.Initialized)
             {
                 m_recorder.StartRecording();
-                fb.SendEvent(fb.events.AUDIO_INIT, $"Buffer size: {_audioBufferSize}");
+                //fb.SendEvent(fb.events.AUDIO_INIT, $"Buffer size: {_audioBufferSize}");
             }
             else
             {
@@ -196,7 +196,7 @@ namespace TTtuner_2022_2.Audio
                 if (retRead < 1 && !sentError)
                 {
                     sentError = true;
-                    fb.SendEvent(fb.events.AUDIO_READ_ERROR, $"error: {retRead}");
+                    //fb.SendEvent(fb.events.AUDIO_READ_ERROR, $"error: {retRead}");
                 }
 #if Release_LogOutput
 
@@ -306,12 +306,12 @@ namespace TTtuner_2022_2.Audio
         {
             _audioBufferSize = AudioRecord.GetMinBufferSize(m_sampleRate, ChannelIn.Mono, Encoding.Pcm16bit);
             m_recorder = new AudioRecord(AudioSource.Mic, m_sampleRate, ChannelIn.Mono, Encoding.Pcm16bit, _audioBufferSize * 10);
-            FireBaseEventLogger fb = new FireBaseEventLogger(this);
+            //FireBaseEventLogger fb = new FireBaseEventLogger(this);
 
             if (error)
             {
-                fb.SendEvent(fb.events.AUDIO_NOT_INIT, $"Record state is {m_recorder.State.ToString()}," +
-                    $" buffer size is {_audioBufferSize}, sample Rate is {m_sampleRate}");                
+                //fb.SendEvent(fb.events.AUDIO_NOT_INIT, $"Record state is {m_recorder.State.ToString()}," +
+                //    $" buffer size is {_audioBufferSize}, sample Rate is {m_sampleRate}");                
             }
         }
 
