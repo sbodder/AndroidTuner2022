@@ -82,6 +82,11 @@
     <Compile Include="StatsActivity.cs" />
     <Compile Include="Views\SwipeIndicatorView.cs" />
     <Compile Include="Views\TunerScalesView.cs" />
+    <AndroidAsset Include="Assets\arm64-v8a_ffmpeg" />
+    <AndroidAsset Include="Assets\armeabi-v7a-neon_ffmpeg" />
+    <AndroidAsset Include="Assets\armeabi-v7a_ffmpeg" />
+    <AndroidAsset Include="Assets\x86_64_ffmpeg" />
+    <AndroidAsset Include="Assets\x86_ffmpeg" />
     <None Include="ICON FILES\ICON1.pdn" />
     <None Include="ICON FILES\icon2.pdn" />
     <None Include="MainActivity.cs.old" />

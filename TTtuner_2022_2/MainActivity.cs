@@ -75,7 +75,7 @@ namespace TTtuner_2022_2
 
         protected override void OnCreate(Bundle bundle)
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzMyMzk5QDMxMzgyZTMzMmUzMEdZWU1sallKYjF3eU1tRi9HQUpCOUlRTmlXM0xNTE1TUHZ5aHRCZnlGc289");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NzQwNjc3QDMyMzAyZTMzMmUzMGlONnlkYXFuNlF5TUpOVk40RE1xRmhYWlljeVIxVzZHY0d2eldWdWozZEU9");
             base.OnCreate(bundle);
             CommonFunctions comFunc = new CommonFunctions();
 
@@ -116,7 +116,7 @@ namespace TTtuner_2022_2
             SetupFiles();
             SetupPageAdapter();
             SetupGaugeFragment();
-            SetupScatterPlotFragment();
+            //SetupScatterPlotFragment();
             m_viewPager.SetCurrentItem(Common.Settings.PositionOfPageAdapterOnMainActivity, false);
             StartServiceUsedToHookAppCloseEvent();
             SetupAudio();
@@ -126,7 +126,8 @@ namespace TTtuner_2022_2
 
         private bool AllFragementsAreSetup()
         {
-            return (_tunerFrag.SetupComplete && _statsFrag.SetupComplete && _scatterFrag.SetupComplete && _gaugeFrag.SetupComplete);
+            //return (_tunerFrag.SetupComplete && _statsFrag.SetupComplete && _scatterFrag.SetupComplete && _gaugeFrag.SetupComplete);
+            return (_tunerFrag.SetupComplete && _statsFrag.SetupComplete );
         }
 
         private void SetupScatterPlotFragment()
@@ -416,13 +417,13 @@ namespace TTtuner_2022_2
                 {
                     if (!m_blCollectionPaused) { m_dataPtHelper.AddDataPointToCollection(dp); _statsFrag.AddPointToGrid(dp); }
 
-                    _scatterFrag.AddPointToChart(dp);
+                    //_scatterFrag.AddPointToChart(dp);
                 }
             }
             else
             {
                 _gaugeFrag.SetGaugePointerValue(-100);
-                _scatterFrag.AddPointToChart(new Serializable_DataPoint(e.Time, 0, -60, ""));
+                //_scatterFrag.AddPointToChart(new Serializable_DataPoint(e.Time, 0, -60, ""));
 
                 if ((_pitch_i < 50) && (_pitch_i % 10 == 0))
                 {
