@@ -147,7 +147,7 @@ namespace TTtuner_2022_2
 
                     properties.Root = ExternalDir;
 
-                    m_FileDialog.Properties = properties;
+                    //m_FileDialog.Properties = properties;
 
                     m_FileDialog.SetDialogSelectionListener(lis1);
                     m_FileDialog.Show();
