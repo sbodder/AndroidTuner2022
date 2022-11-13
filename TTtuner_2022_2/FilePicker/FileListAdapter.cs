@@ -66,39 +66,39 @@ namespace TTtuner_2022_2
             int resourceIdOfFileIcon;
             global::Android.Views.View row = null;
 
-            //if (convertView == null)
-            //{
-            //    //todo: fix below
-            //    //row = _context.GetLayoutInflater().Inflate(Resource.Layout.FilePickerListItem, parent, false);
-            //    //viewHolder = new FileListRowViewHolder(row.FindViewById<TextView>(Resource.Id.file_picker_text2), row.FindViewById<ImageView>(Resource.Id.file_picker_image2), row.FindViewById<ProgressBar>(Resource.Id.PrgBar));
-            //    //viewHolder.ProgressBar.Visibility = ViewStates.Gone;
+            if (convertView == null)
+            {
+                //todo: fix below
+                row = _context.GetLayoutInflater().Inflate(Resource.Layout.FilePickerListItem, parent, false);
+                viewHolder = new FileListRowViewHolder(row.FindViewById<TextView>(Resource.Id.file_picker_text2), row.FindViewById<ImageView>(Resource.Id.file_picker_image2), row.FindViewById<ProgressBar>(Resource.Id.PrgBar));
+                viewHolder.ProgressBar.Visibility = global::Android.Views.ViewStates.Gone;
 
-            //    //row.Tag = viewHolder;
+                row.Tag = viewHolder;
 
-            //    //ListViewHolder.Add(viewHolder);
-            //}
-            //else
-            //{
-            //    row = convertView;
-            //    viewHolder = (FileListRowViewHolder)row.Tag;
-            //}
+                ListViewHolder.Add(viewHolder);
+            }
+            else
+            {
+                row = convertView;
+                viewHolder = (FileListRowViewHolder)row.Tag;
+            }
 
-            //if (fileSystemEntry.IsDirectory())
-            //{
-            //    resourceIdOfFileIcon = Resource.Drawable.folder;
-            //}
-            //else if (comFun.GetFileNameExtension(fileSystemEntry.Name) == "WAV")
-            //{
-            //    resourceIdOfFileIcon = Resource.Drawable.file;
-            //}
-            //else
-            //{
-            //    resourceIdOfFileIcon = Resource.Drawable.fileStat;
-            //}
+            if (fileSystemEntry.IsDirectory())
+            {
+                resourceIdOfFileIcon = Resource.Drawable.folder;
+            }
+            else if (comFun.GetFileNameExtension(fileSystemEntry.Name) == "WAV")
+            {
+                resourceIdOfFileIcon = Resource.Drawable.file;
+            }
+            else
+            {
+                resourceIdOfFileIcon = Resource.Drawable.fileStat;
+            }
 
-            //viewHolder.Update(fileSystemEntry.Name, resourceIdOfFileIcon);
+            viewHolder.Update(fileSystemEntry.Name, resourceIdOfFileIcon);
 
-            //return row;
+            return row;
 
             return null;
         }

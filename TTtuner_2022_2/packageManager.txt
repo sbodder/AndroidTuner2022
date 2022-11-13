@@ -1,0 +1,75 @@
+﻿Find-Package xamarin
+Find-Package syncfusion
+Find-Package sfChart
+Find-Package sfDataGrid
+Find-Package Linq
+
+Find-Package Xamarin.Firebase
+
+Find-Package Xamarin.Firebase.Analytics -AllVersions -ExactMatch
+
+Find-Package Xamarin.AndroidX.Core -AllVersions -ExactMatch
+
+Find-Package Xamarin.Android.Support.V7.AppCompat
+
+Useful commands:
+- To forcefully uninstall a package use eg:
+
+uninstall-package -Force Xamarin.Android.Support.Compat -ProjectName TuneTracker.Android
+
+
+- To list all the installed packages:
+
+Get-Package | Format-Table -AutoSize
+
+Get-Package | select -Unique Id
+
+
+- To install a package:
+
+Install-Package Xamarin.Android.Support.Compat -ProjectName TuneTracker.Android;
+
+
+- To view the dependencies of a package :
+
+  get-package -list <package name> | select dependencies
+
+
+
+
+
+
+
+Install-Package Xamarin.Android.Support.Compat -ProjectName TuneTracker.Android;
+
+Install-Package Xamarin.Android.Support.v4 -ProjectName TuneTracker.Android;
+
+Install-Package Syncfusion.Xamarin.SfChart.Android -ProjectName TuneTracker.Android;
+
+Install-Package Syncfusion.Xamarin.SfDataGrid.Android  -ProjectName TuneTracker.Android;
+
+Install-Package Syncfusion.Xamarin.SfGauge.Android  -ProjectName TuneTracker.Android;
+
+Install-Package System.linq  -ProjectName TuneTracker.Android;
+
+Install-Package Android.Support.V7  -ProjectName TuneTracker.Android;
+
+Install-Package Xamarin.Android.Support.V7.AppCompat  -ProjectName TuneTracker.Android;
+
+Install-Package Xamarin.Firebase.Analytics -Version  119.0.1.5 -ProjectName TuneTracker.Android;
+
+
+Install-Package Xamarin.AndroidX.Core -Version 1.7.0 -ProjectName TuneTracker.Android;
+
+
+Install-Package Xamarin.Firebase.Analytics -ProjectName TuneTracker.Android;
+
+Syncfusion.Xamarin.Core -ProjectName TuneTracker.Android;
+
+Newtonsoft.Json -ProjectName TuneTracker.Android;
+
+
+
+
+
+

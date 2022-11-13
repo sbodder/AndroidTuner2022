@@ -132,6 +132,8 @@ namespace TTtuner_2022_2.Audio
         {
             const int STREAM_MUSIC = 3;
             m_bufferSize = AudioTrack.GetMinBufferSize(m_intSampleRate, m_chNum, global::Android.Media.Encoding.Pcm16bit);
+
+            var currentContext = global::Android.App.Application.Context;
 #if Release_LogOutput
             Logger.Info(Common.CommonFunctions.APP_NAME, "In rubberband player : SetupAudioProcessors, starting ");
 #endif
@@ -140,7 +142,7 @@ namespace TTtuner_2022_2.Audio
 #if Release_LogOutput
                 Logger.Info(Common.CommonFunctions.APP_NAME, "In rubberband player : SetupAudioProcessors, m_ad ");
 #endif
-                m_ad = AudioDispatcherFactory.FromPipeControllable(m_strWaveFileName, m_intSampleRate, m_bufferSize, 0);
+                m_ad = AudioDispatcherFactory.FromPipeControllable(currentContext,m_strWaveFileName, m_intSampleRate, m_bufferSize, 0);
                 m_TarosFormat = m_ad.Format;
 
                 if (dbStartTime > 0)
@@ -156,6 +158,9 @@ namespace TTtuner_2022_2.Audio
 #endif
                 m_rbs = new RubberBandAudioProcessor(m_intSampleRate, dbTimeRatio, 1.0);
                 m_ad.AddAudioProcessor(m_rbs);
+
+                Logger.Info(Common.CommonFunctions.APP_NAME, "In rubberband player : SetupAudioProcessors, m_rbs ");
+
             }
 
             if (m_ap == null)

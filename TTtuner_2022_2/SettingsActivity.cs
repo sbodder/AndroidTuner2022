@@ -55,6 +55,7 @@ namespace TTtuner_2022_2
         FileSelectionListener lis1;
 
         internal class FileSelectionListener : Java.Lang.Object, IDialogSelectionListener, IJavaObject, IDisposable
+       // internal class FileSelectionListener : Java.Lang.Object, IJavaObject, IDisposable
         {
             internal Activity act;
 
@@ -147,7 +148,7 @@ namespace TTtuner_2022_2
 
                     properties.Root = ExternalDir;
 
-                    //m_FileDialog.Properties = properties;
+                    m_FileDialog.Properties = properties;
 
                     m_FileDialog.SetDialogSelectionListener(lis1);
                     m_FileDialog.Show();

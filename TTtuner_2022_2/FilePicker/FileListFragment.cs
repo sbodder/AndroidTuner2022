@@ -73,9 +73,9 @@ namespace TTtuner_2022_2
 
         internal void CreateFileListAdapter()
         {
-            // todo : get context and pass in below
-            //_adapter = new FileListAdapter( , new FileSystemInfo[0]);
-            //ListAdapter = _adapter;
+       // todo: get context and pass in below
+           _adapter = new FileListAdapter(Activity, new FileSystemInfo[0]);
+           ListAdapter = _adapter;
         }
 
         internal void OnListItemLongClick(object listview, AdapterView.ItemLongClickEventArgs view)
@@ -107,7 +107,7 @@ namespace TTtuner_2022_2
         public override void OnListItemClick(ListView l, View v, int position, long id)
         {
             //todo fix call below
-           // var fileSystemInfo = _adapter.GetItem(position);
+            var fileSystemInfo = _adapter.GetItem(position);
             ProgressBar prg;
             View listItemView;
             bool blAtleastOneFileSelected = false;
@@ -137,20 +137,20 @@ namespace TTtuner_2022_2
                 return;
             }
 
-            //if (fileSystemInfo.IsFile())
-            //{
+            if (fileSystemInfo.IsFile())
+            {
 
-            //    m_strFullFilename = fileSystemInfo.FullName;
-            //    m_viewListItemClicked = v;
-            //    //set alert for executing the task
-            //    AndroidX.AppCompat.App.AlertDialog.Builder alert = new AndroidX.AppCompat.App.AlertDialog.Builder(v.Context, Resource.Style.MyAlertDialogStyle);
-            //    PlayFile();
-            //}
-            //else
-            //{
-            //    // Dig into this directory, and display it's contents
-            //    RefreshFilesList(fileSystemInfo.FullName);
-            //}
+                m_strFullFilename = fileSystemInfo.FullName;
+                m_viewListItemClicked = v;
+                //set alert for executing the task
+                AndroidX.AppCompat.App.AlertDialog.Builder alert = new AndroidX.AppCompat.App.AlertDialog.Builder(v.Context, Resource.Style.MyAlertDialogStyle);
+                PlayFile();
+            }
+            else
+            {
+                // Dig into this directory, and display it's contents
+                RefreshFilesList(fileSystemInfo.FullName);
+            }
 
             base.OnListItemClick(l, v, position, id);
         }
