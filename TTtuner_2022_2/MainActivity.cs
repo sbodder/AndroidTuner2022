@@ -30,7 +30,6 @@ using Android.Content;
 using System.Threading.Tasks;
 using System.Threading;
 using Android.Graphics;
-using TTtuner_2022_2.FilePicker;
 using Xamarin.Essentials;
 
 namespace TTtuner_2022_2

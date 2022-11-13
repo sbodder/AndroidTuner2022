@@ -75,7 +75,6 @@
   <ItemGroup>
     <Compile Include="Classes\Android11PlusPermissionClickHandler.cs" />
     <Compile Include="CreditsActivity.cs" />
-    <Compile Include="FilePicker\FileActivityEssentials.cs" />
     <Compile Include="GraphScreenActivity.cs" />
     <Compile Include="Services\TTtunerService.cs" />
     <Compile Include="SettingsActivity.cs" />
