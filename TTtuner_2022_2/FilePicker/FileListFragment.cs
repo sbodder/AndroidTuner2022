@@ -81,26 +81,26 @@ namespace TTtuner_2022_2
         internal void OnListItemLongClick(object listview, AdapterView.ItemLongClickEventArgs view)
         {
             string strFileName;
-            //Toast.MakeText(Activity, "On long click listener", ToastLength.Long).Show();
-            //todo: fix call below
-            //var fileSystemInfo = _adapter.GetView(view.Position);
+            
+       // todo: fix call below
+        var fileSystemInfo = _adapter.GetItem(view.Position);
 
-           // strFileName = fileSystemInfo.FullName;
+            strFileName = fileSystemInfo.FullName;
 
-            //if ((view.View as LinearLayout).Background.Alpha < 150)
-            //{
-            //    // item selected already, now deselect
-            //    (view.View as LinearLayout).SetBackgroundColor(Color.Black);
+            if ((view.View as LinearLayout).Background.Alpha < 150)
+            {
+                // item selected already, now deselect
+                (view.View as LinearLayout).SetBackgroundColor(Color.Black);
 
-            //    (Activity as FilePickerActivity).FileItemDeSelected(listview as ListView, strFileName);
-            //}
-            //else
-            //{
-            //    // select item
-            //    (Activity as FilePickerActivity).FileSelected(listview as ListView, strFileName);
-            //    (view.View as LinearLayout).SetBackgroundColor(Color.Green);
-            //    (view.View as LinearLayout).Background.Alpha = 100;
-            //}
+                (Activity as FilePickerActivity).FileItemDeSelected(listview as ListView, strFileName);
+            }
+            else
+            {
+                // select item
+                (Activity as FilePickerActivity).FileSelected(listview as ListView, strFileName);
+                (view.View as LinearLayout).SetBackgroundColor(Color.Green);
+                (view.View as LinearLayout).Background.Alpha = 100;
+            }
         }
 
 

@@ -15,7 +15,7 @@ using TTtuner_2022_2.Plot;
 
 namespace TTtuner_2022_2
 {
-    [Activity(Label = "SplashScreenActivity", MainLauncher = true)]
+    [Activity(Label = "TTtuner", MainLauncher = true)]
     public class SplashScreenActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -57,7 +57,7 @@ namespace TTtuner_2022_2
             if (!Environment.IsExternalStorageManager)
             {
 
-                Snackbar.Make(FindViewById(global::Android.Resource.Id.Content), "Permission needed!", Snackbar.LengthIndefinite)
+                Snackbar.Make(FindViewById(global::Android.Resource.Id.Content), "Permission needed! Allow TTtuner access the file system in settings", Snackbar.LengthIndefinite)
                 .SetAction("Settings", new Android12PlusPermissionClickHandler(this)).Show();
             }
             else
