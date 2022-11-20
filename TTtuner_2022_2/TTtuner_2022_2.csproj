@@ -51,15 +51,17 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <BundleAssemblies>false</BundleAssemblies>
+    <MandroidI18n />
+    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ObfFull|AnyCPU'">
     <DebugSymbols>false</DebugSymbols>
@@ -71,6 +73,10 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ObTrial|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -82,6 +88,10 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FilesAndDirPicker2022">
@@ -108,10 +118,10 @@
     <Compile Include="StatsActivity.cs" />
     <Compile Include="Views\SwipeIndicatorView.cs" />
     <Compile Include="Views\TunerScalesView.cs" />
-    <AndroidNativeLibrary Include="Assets\libs\arm64-v8a\ffmpeg" />
-    <AndroidNativeLibrary Include="Assets\libs\armeabi-v7a\ffmpeg" />
-    <AndroidNativeLibrary Include="Assets\libs\x86\ffmpeg" />
-    <AndroidNativeLibrary Include="Assets\libs\x86_64\ffmpeg" />
+    <AndroidNativeLibrary Include="Assets\libs\arm64-v8a\libffmpeg.so" />
+    <AndroidNativeLibrary Include="Assets\libs\armeabi-v7a\libffmpeg.so" />
+    <AndroidNativeLibrary Include="Assets\libs\x86\libffmpeg.so" />
+    <AndroidNativeLibrary Include="Assets\libs\x86_64\libffmpeg.so" />
     <None Include="ICON FILES\ICON1.pdn" />
     <None Include="ICON FILES\icon2.pdn" />
     <None Include="MainActivity.cs.old" />
