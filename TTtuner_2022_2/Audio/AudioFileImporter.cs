@@ -212,7 +212,7 @@ namespace TTtuner_2022_2.Audio
             // the conversion gets 20 % of the progress and the GenerateFrequencyTextFile gets 80%
             try
             {
-                cvAudio = new ConvertAudioFileToWave(Common.Settings.SampleRateInt, 1, fileName, strDestPath);
+                cvAudio = new ConvertAudioFileToWave(m_act, Common.Settings.SampleRateInt, 1, fileName, strDestPath);
 
                 cvAudio.CalculateDuration();
 

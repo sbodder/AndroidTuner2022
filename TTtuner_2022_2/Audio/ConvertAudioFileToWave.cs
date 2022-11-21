@@ -29,6 +29,7 @@ namespace TTtuner_2022_2.Audio
         private int m_intBufferSize;
         private string m_strWaveFileNameOutput;
         private bool m_blFinished;
+        Activity m_act;
 
         public float DurationInSeconds
         {
@@ -60,11 +61,12 @@ namespace TTtuner_2022_2.Audio
         }
 
 
-        internal ConvertAudioFileToWave(int targetSampleRate, short nChannels, string strFileNameInput, string strWaveFileNameOutput)
+        internal ConvertAudioFileToWave(Activity act, int targetSampleRate, short nChannels, string strFileNameInput, string strWaveFileNameOutput)
         {    
             m_strFileNameInput = strFileNameInput;
             m_intTargetSampleRate = targetSampleRate;
             m_strWaveFileNameOutput = strWaveFileNameOutput;
+            m_act = act;
 
             m_intBufferSize = AudioTrack.GetMinBufferSize(targetSampleRate, ChannelOut.Mono, global::Android.Media.Encoding.Pcm16bit);
             // input = new DataInputStream(new System.IO.FileStream(strFileNameInput, System.IO.FileMode.Open, System.IO.FileAccess.Read));
@@ -91,7 +93,7 @@ namespace TTtuner_2022_2.Audio
             Java.IO.RandomAccessFile fout;
 
             m_blFinished = false;
-            m_ad = AudioDispatcherFactory.FromPipe(m_strFileNameInput, m_intTargetSampleRate, m_intBufferSize, 0);
+            m_ad = AudioDispatcherFactory.FromPipe(m_act, m_strFileNameInput, m_intTargetSampleRate, m_intBufferSize, 0);
             fout = new RandomAccessFile(m_strWaveFileNameOutput, "rw");
             m_wp = new WriterProcessor(m_ad.Format, fout);
             m_ad.AddAudioProcessor(m_wp);
