@@ -30,7 +30,6 @@ using Android.Content;
 using System.Threading.Tasks;
 using System.Threading;
 using Android.Graphics;
-using Xamarin.Essentials;
 
 namespace TTtuner_2022_2
 {
@@ -81,7 +80,6 @@ namespace TTtuner_2022_2
             CommonFunctions comFunc = new CommonFunctions();
 
 
-            Xamarin.Essentials.Platform.Init(this, bundle);
 
 
             //Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
@@ -326,31 +324,7 @@ namespace TTtuner_2022_2
             return base.OnOptionsItemSelected(item);
         }
 
-        async Task<FileResult> PickAndShow(PickOptions options)
-        {
-            try
-            {
-                var result = await Xamarin.Essentials.FilePicker.PickAsync(options);
-                //if (result != null)
-                //{
-                //    Text = $"File Name: {result.FileName}";
-                //    if (result.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
-                //        result.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-                //    {
-                //        var stream = await result.OpenReadAsync();
-                //        Image = ImageSource.FromStream(() => stream);
-                //    }
-                //}
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                // The user canceled or something went wrong
-            }
-
-            return null;
-        }
+      
 
         private void ContinueCollectionStats(bool blContinue)
         {
