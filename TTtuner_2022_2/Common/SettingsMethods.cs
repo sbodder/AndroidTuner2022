@@ -49,7 +49,7 @@ namespace TTtuner_2022_2.Common
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = System.IO.Path.Combine(documentsPath, "Settings.Xml");
 
-            XmlDocument  doc = new XmlDocument();
+            XmlDocument doc = new XmlDocument();
             doc.PreserveWhitespace = true;
 
             try
@@ -61,7 +61,7 @@ namespace TTtuner_2022_2.Common
 
                 XmlNodeList value = doc.GetElementsByTagName(key);
 
-                 value.Item(0).InnerText = strNewValue;
+                value.Item(0).InnerText = strNewValue;
 
                 doc.Save(filePath);
 
@@ -117,7 +117,7 @@ namespace TTtuner_2022_2.Common
             string retS = null;
 
 
-            try 
+            try
             {
                 doc.Load(filePath);
 
@@ -153,7 +153,7 @@ namespace TTtuner_2022_2.Common
 
                 XmlNode childNode = firstChildList.Item(0);
 
-                foreach ( var elem in childNode.ChildNodes)
+                foreach (var elem in childNode.ChildNodes)
                 {
                     XmlNode childN = elem as XmlNode;
                     if (!childN.OuterXml.Contains("<" + firstChild + ">") && childN.OuterXml.Contains("<" + secondChild + ">"))
@@ -161,7 +161,7 @@ namespace TTtuner_2022_2.Common
                         return childN.InnerText;
                     }
                 }
-                   
+
             }
             catch (Exception ex)
             {
@@ -473,11 +473,11 @@ namespace TTtuner_2022_2.Common
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = System.IO.Path.Combine(documentsPath, "Settings.Xml");
 
-           
+
 
             using (Java.IO.File fl1 = new Java.IO.File(filePath))
             {
-               
+
                 using (var stream = m_namespaceType.Assembly.GetManifestResourceStream(resource))
                 using (var reader = new StreamReader(stream))
                 {
@@ -600,13 +600,11 @@ namespace TTtuner_2022_2.Common
 
         internal static void LoadTuningSytems(Activity act)
         {
-            // f2  frrom cents formula
-            // f2 = f1 * 2^( C / 1200 )
             string strFileText;
             double dbVal;
 
 
-            strFileText = FileHelper.LoadText(act, "TuningSystems.csv", true);
+            strFileText = FileHelper.LoadText(act, Settings.TuningSystemsCsvFileName, true, ".txt");
             var styles = NumberStyles.AllowLeadingSign | NumberStyles.AllowParentheses | NumberStyles.AllowTrailingSign | NumberStyles.Float | NumberStyles.AllowDecimalPoint;
 
             var fmt = new NumberFormatInfo();
@@ -627,9 +625,7 @@ namespace TTtuner_2022_2.Common
                 TuningSystem tsNew = new TuningSystem();
                 List<double> lsNew = new List<double>();
                 string[] arrFields = arrLines[i].Split('|');
-
                 tsNew.Name = arrFields[0];
-
                 for (int j = 1; j < arrFields.Count(); j++)
                 {
                     if (!double.TryParse(arrFields[j], styles, CultureInfo.InvariantCulture, out dbVal))
@@ -640,37 +636,31 @@ namespace TTtuner_2022_2.Common
                     lsNew.Add(Convert.ToDouble(arrFields[j], CultureInfo.InvariantCulture));
                 }
                 tsNew.lstCentsDeviation = lsNew;
-
                 m_lstTuningSystems.Add(tsNew);
             }
 
             //check that the tuning system is contained  in the list
 
             int matches = m_lstTuningSystems.Where(item => item.Name == Settings.TuningSytem).Count();
-
-
             if (matches != 1)
             {
                 Settings.TuningSytem = m_lstTuningSystems[0].Name;
             }
-
-
         }
 
         internal static void WriteCsvFileFromManifestToInternalStorage(Activity activity)
         {
-            string resource = m_namespaceType.Namespace + ".TuningSystems.csv";
+            string resource = m_namespaceType.Namespace + "." + Settings.TuningSystemsCsvFileName;
             string result;
             // check if file exits
             var documentsPath = Settings.DataFolder;
-            var filePath = System.IO.Path.Combine(documentsPath, "TuningSystems.csv");
+            var filePath = System.IO.Path.Combine(documentsPath, Settings.TuningSystemsCsvFileName);
             // make sure that the default directory is created
 
             FileHelper.CreateDefaultDirectory(activity);
 
             using (Java.IO.File fl1 = new Java.IO.File(filePath))
             {
-
                 try
                 {
                     using (var stream = m_namespaceType.Assembly.GetManifestResourceStream(resource))
@@ -683,8 +673,6 @@ namespace TTtuner_2022_2.Common
                             // Use write method to write to the file specified above
                             fileStream.Write(bytesInStream, 0, bytesInStream.Length);
                         }
-
-
                     }
                 }
                 catch (Exception e1)
@@ -692,11 +680,31 @@ namespace TTtuner_2022_2.Common
                     Toast.MakeText(activity, "Problem writing csv file to data folder :" + documentsPath, ToastLength.Long).Show();
 
                 }
-
                 // file doesn't exist
             }
+        }
 
+        internal static string GetCsvFileTextFromManifest(Activity activity)
+        {
+            string resource = m_namespaceType.Namespace + Settings.TuningSystemsCsvFileName;
+            string result;
+            try
+            {
+                using (var stream = m_namespaceType.Assembly.GetManifestResourceStream(resource))
+                {
+                    // Initialize the bytes array with the stream length and then fill it with data
+                    byte[] bytesInStream = new byte[stream.Length];
+                    stream.Read(bytesInStream, 0, bytesInStream.Length);
+                    var str = System.Text.Encoding.Default.GetString(bytesInStream);
+                    return str;
+                }
+            }
+            catch (Exception e1)
+            {
+                Toast.MakeText(activity, "Problem reading data from tuning systems csv in manifest", ToastLength.Long).Show();
 
+            }
+            return null;
         }
     }
 }

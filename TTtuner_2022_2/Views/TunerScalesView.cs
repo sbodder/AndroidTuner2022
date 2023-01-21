@@ -23,7 +23,7 @@ namespace TTtuner_2022_2
         Context m_Context;
         private int m_intMaxCents = 50;
 
-        const int m_BUFFER_ARRAY_SIZE = 10;
+        const int m_BUFFER_ARRAY_SIZE = 30;
         private int intCurrentArrayIndex = 0;
         double[] m_dlArray = new double[m_BUFFER_ARRAY_SIZE];
 

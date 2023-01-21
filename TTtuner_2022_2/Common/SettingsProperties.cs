@@ -174,12 +174,8 @@ namespace TTtuner_2022_2.Common
                     m_strDataFolder = ReadXmlSetting("DataFolder");
 
                     if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Q)
-
-                     if (m_strDataFolder == "")
                     {
-                        //m_strDataFolder = Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDocuments).AbsolutePath;
-                        //m_strDataFolder = Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDocuments).AbsolutePath;
-                          
+                        m_strDataFolder = Settings.MediaStoreFolder;
                     }
 
                 }
@@ -758,6 +754,24 @@ namespace TTtuner_2022_2.Common
                 m_intZoomY_DbGraph = (int)(value * 100);
 
                 WriteXmlSetting("DecibelGraph", "ZoomLevelY", m_intZoomY_DbGraph.ToString());
+            }
+        }
+
+        internal static string MediaStoreFolder
+        {
+            get
+            {
+                //this setting is not stored in the xml setting file as its constant and cant be changed. Its only used on android >= api 29
+                return System.IO.Path.Combine(global::Android.OS.Environment.DirectoryDownloads, "TTtuner") + "/"; 
+            }
+        }
+
+        internal static string TuningSystemsCsvFileName
+        {
+            get
+            {
+                //this setting is not stored in the xml setting file as its constant and cant be changed. Its only used on android >= api 29
+                return "TuningSystems.csv";
             }
         }
 

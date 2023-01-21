@@ -15,6 +15,9 @@ using global::Android.Widget;
 using TTtuner_2022_2.Common;
 using TTtuner_2022_2.DSP;
 using TTtuner_2022_2.Music;
+using Java.Util;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace TTtuner_2022_2.Plot
 {
@@ -116,6 +119,7 @@ namespace TTtuner_2022_2.Plot
 
                 //Logger.Info(Common.CommonFunctions.APP_NAME, "there are " + m_dictPointCollection[FRQ_I].Count + " points in PitchPoints");
 #endif
+                long fileLength;
                 List<T> lsDp = new List<T>();
                 List<T> orderderlsDp = new List<T>();
                 //(d_item.Value.TypeOfDatapoint) lsDp = new List<ISerialisableDataPoint>();
@@ -132,7 +136,17 @@ namespace TTtuner_2022_2.Plot
 
                 orderderlsDp = lsDp.OrderBy(n => (n as ISerialisableDataPoint).XVal).ToList();
 
-                using (System.IO.Stream stream = File.Open(filePath, FileMode.Create))
+                using (Stream stream = new MemoryStream())
+                {
+                    IFormatter formatter = new BinaryFormatter();
+
+                    formatter.Serialize(stream, orderderlsDp);
+                    fileLength = stream.Length;
+                   //stream.Length;
+                }
+
+
+                using (System.IO.Stream stream = FileHelper.OpenFileOutputStream(strFileName, fileLength))
                 {
                     var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
@@ -153,7 +167,7 @@ namespace TTtuner_2022_2.Plot
 
         internal void LoadDataPointsFromFile(string strFilePath, bool blRecalculateNotes = false)
         {
-            var filePath = System.IO.Path.Combine(Common.Settings.DataFolder, strFilePath);
+            
             List<T> lsDp = new List<T>();
 
             ClearData();
@@ -165,7 +179,7 @@ namespace TTtuner_2022_2.Plot
             try
             {
 
-                using (System.IO.Stream stream = File.Open(filePath, FileMode.Open))
+                using (System.IO.Stream stream = FileHelper.OpenFileInputStream(strFilePath))
                 {
                     var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 

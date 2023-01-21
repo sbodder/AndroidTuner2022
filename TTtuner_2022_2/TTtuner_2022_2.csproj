@@ -113,6 +113,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Android11PlusPermissionClickHandler.cs" />
+    <Compile Include="Common\FileHelper.cs" />
+    <Compile Include="Common\MediaStoreHelper.cs" />
     <Compile Include="CreditsActivity.cs" />
     <Compile Include="GraphScreenActivity.cs" />
     <Compile Include="Services\TTtunerService.cs" />
@@ -226,6 +228,9 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Plugin.CurrentActivity">
+      <Version>2.1.0.4</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Licensing">
       <Version>20.3.0.48</Version>
@@ -458,6 +463,9 @@
     </PackageReference>
     <PackageReference Include="Xamarin.Build.Download">
       <Version>0.11.3</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Essentials.Interfaces">
+      <Version>1.7.4</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Firebase.Annotations">
       <Version>116.1.0</Version>

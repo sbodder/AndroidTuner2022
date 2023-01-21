@@ -39,15 +39,15 @@ namespace TTtuner_2022_2
             string strMess;
             // m_prgBAr.Visibility = ViewStates.Gone;
 
-            if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
-            {
+            //if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
+            //{
 
-                checkAndRequestPermissionsForAndroid11Plus();
-            }
-            else
-            {
+            //    checkAndRequestPermissionsForAndroid11Plus();
+            //}
+            //else
+            //{
                 startMainActivity();
-            }
+            //}
 
 
         }

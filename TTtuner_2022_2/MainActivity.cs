@@ -196,7 +196,7 @@ namespace TTtuner_2022_2
         private void RequestPermissions()
         {
 
-            if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
+            if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
                 if (AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.Internet) == (int)Permission.Granted
           && AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.RecordAudio) == (int)Permission.Granted)
