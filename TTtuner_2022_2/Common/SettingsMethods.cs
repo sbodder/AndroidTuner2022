@@ -686,7 +686,7 @@ namespace TTtuner_2022_2.Common
 
         internal static string GetCsvFileTextFromManifest(Activity activity)
         {
-            string resource = m_namespaceType.Namespace + Settings.TuningSystemsCsvFileName;
+            string resource = m_namespaceType.Namespace + "." + Settings.TuningSystemsCsvFileName;
             string result;
             try
             {

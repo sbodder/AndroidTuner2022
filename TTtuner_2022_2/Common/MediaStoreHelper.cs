@@ -1,6 +1,9 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Database;
+using Android.Graphics;
+using Android.Provider;
+using Android.Systems;
 using Android.Widget;
 using BE.Tarsos.Dsp.Mfcc;
 using Javax.Security.Auth;
@@ -20,7 +23,7 @@ namespace TTtuner_2022_2.Common
             return uri == null? false : true;
         }
 
-        static private global::Android.Net.Uri GetFileUri(Activity act, string filename, string mediaStoreExtension = "")
+        static private global::Android.Net.Uri GetFileUri(Activity act, string filename, string mediaStoreExtension = "", string mimeType = null)
         {
             // READ FILE from folder in Downloads
             var documentsPath = Settings.MediaStoreFolder;
@@ -45,7 +48,7 @@ namespace TTtuner_2022_2.Common
 
                 var selectionArgs = new List<string>()
                     {
-                        "text/plain", documentsPath, newfilename
+                        mimeType == null? "text/plain" : mimeType, documentsPath, newfilename
                     };
 
 
@@ -115,9 +118,11 @@ namespace TTtuner_2022_2.Common
             }
         }
 
-        static internal Stream OpenFileInputStream( string filename, string mediaStoreExtension)
+        static internal Stream OpenFileInputStream( string filepath, string mediaStoreExtension = "", string mimeType = null)
         {
-            var uri = GetFileUri(CrossCurrentActivity.Current.Activity, filename, mediaStoreExtension);
+            CommonFunctions comF = new CommonFunctions();
+            var filename = comF.GetFileNameFromPath(filepath);
+            var uri = GetFileUri(CrossCurrentActivity.Current.Activity, filename, mediaStoreExtension, mimeType);
 
             if (uri == null)
             {
@@ -131,9 +136,21 @@ namespace TTtuner_2022_2.Common
             return resolver.OpenInputStream(uri);           
         }
 
-        static internal Stream OpenFileOutputStream(string filename, long lengthInBytes)
+        static internal bool DeleteFile(string filename, string mediaStoreExtension = "")
         {
-            var uri = CreateFileUri(filename, lengthInBytes);
+            var uri = GetFileUri(CrossCurrentActivity.Current.Activity, filename, mediaStoreExtension);
+            return DeleteUri(uri);
+        }
+
+        static private bool DeleteUri(global::Android.Net.Uri uri)
+        {
+            ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
+            return resolver.Delete(uri, null) > 0;
+        }
+
+        static internal Stream OpenFileOutputStream(string filename, long lengthInBytes, string mimeType = null )
+        {
+            var uri = CreateFileUri(filename, lengthInBytes, mimeType);
 
             if (uri == null)
             {
@@ -142,12 +159,16 @@ namespace TTtuner_2022_2.Common
 
             ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
 
-            return resolver.OpenOutputStream(uri);
+            var os = resolver.OpenOutputStream(uri);
+
+            return os;
         }
 
-        static internal global::Android.Net.Uri CreateFileUri(string filename, long lengthInByles)
+
+
+        static internal global::Android.Net.Uri CreateFileUri(string filename, long lengthInByles = -1, string mimeType=null)
         {
-            string fileNameWithoutExt = Path.ChangeExtension(filename, null);
+            string fileNameWithoutExt = System.IO.Path.ChangeExtension(filename, null);
 
             int fileSize = (int)lengthInByles;
 
@@ -158,8 +179,11 @@ namespace TTtuner_2022_2.Common
 
 
             values.Put(global::Android.Provider.MediaStore.IMediaColumns.Title, filename);
-            values.Put(global::Android.Provider.MediaStore.IMediaColumns.MimeType, "text/plain");
-            values.Put(global::Android.Provider.MediaStore.IMediaColumns.Size, fileSize);
+            values.Put(global::Android.Provider.MediaStore.IMediaColumns.MimeType, mimeType !=null ? mimeType : "text/plain");
+            if (lengthInByles != -1)
+            {
+                values.Put(global::Android.Provider.MediaStore.IMediaColumns.Size, fileSize);
+            }
             values.Put(global::Android.Provider.MediaStore.IMediaColumns.RelativePath, relativeLocation);
             values.Put(global::Android.Provider.MediaStore.Downloads.InterfaceConsts.DisplayName, filename);
 
@@ -182,11 +206,20 @@ namespace TTtuner_2022_2.Common
 
         }
 
-        static internal bool WriteFile(string contents, string filename)
+        static internal string GetNewFilePath(string filename)
+        {
+            return System.IO.Path.Combine(Settings.MediaStoreFolder, filename);
+        }
+
+        static internal bool WriteFile(string contents, string filename, string mimeType = null)
         {
             System.IO.Stream saveStream;
             ContentResolver contentResolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
-            var uri = CreateFileUri(filename, contents.Length);
+
+            if (string.IsNullOrEmpty(contents)) {
+                return false;
+            } 
+            var uri = CreateFileUri(filename, contents.Length, mimeType);
 
             if (uri == null)
             {

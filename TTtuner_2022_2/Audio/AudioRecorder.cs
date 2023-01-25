@@ -18,6 +18,7 @@ using TTtuner_2022_2.Common;
 using TTtuner_2022_2.EventHandlersTidy;
 using TTtuner_2022_2.DSP;
 using Firebase.Analytics;
+//using MediaFormat;
 
 namespace TTtuner_2022_2.Audio
 {
@@ -148,7 +149,7 @@ namespace TTtuner_2022_2.Audio
             double dblCentsCloseness = 0.0;
             double? dbLevel;
             string strNote;
-            System.IO.FileStream os = null;
+            System.IO.Stream os = null;
             int intSamplingPeriodMs;
             Decibel dbLib = new Decibel();
             double flWindowTime = SAMPLES_IN_BUFF / (double)m_sampleRate;
@@ -177,7 +178,7 @@ namespace TTtuner_2022_2.Audio
             {
                 m_recorder.StartRecording();
                 //fb.SendEvent(fb.events.AUDIO_INIT, $"Buffer size: {_audioBufferSize}");
-            }
+           }
             else
             {
                 // throw new Exception("Audio Recorder couuld not initialise");

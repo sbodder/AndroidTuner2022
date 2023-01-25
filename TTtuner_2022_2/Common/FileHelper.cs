@@ -26,6 +26,7 @@ using Android.Media;
 using Java.Net;
 using Stream = System.IO.Stream;
 using File = System.IO.File;
+using Android.Systems;
 
 namespace TTtuner_2022_2.Common
 {
@@ -37,14 +38,49 @@ namespace TTtuner_2022_2.Common
 
         internal static void DeleteFile(string sourcePath)
         {
+            CommonFunctions comF = new CommonFunctions();
+            var fileName = comF.GetFileNameFromPath(sourcePath);
+            string filePath;
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+            }
+            else
+            {
+                filePath = sourcePath;
+            }
+
+
             // delete the  file
-            Java.IO.File fl = new Java.IO.File(sourcePath);
+            Java.IO.File fl = new Java.IO.File(filePath);
             if (fl.Exists())
             {
                 fl.Delete();
             }
 
             fl.Dispose();
+
+        }
+
+        internal static string GetNewFilePath(string filename, bool internalAppDir, string mimetype = null)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                if (internalAppDir)
+                {
+                    return System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), filename);
+                }
+                else
+                {
+                    return MediaStoreHelper.GetNewFilePath(filename);
+                }
+            }
+            else
+            {
+                string strPersonalPath = DataDirectory;
+                return System.IO.Path.Combine(strPersonalPath, filename);
+            }
         }
 
         internal static void CopyFile(string sourcePath, string destPath)
@@ -62,36 +98,38 @@ namespace TTtuner_2022_2.Common
             fl2.Dispose();
         }
 
-        internal static Stream OpenFileInputStream(string fileName)
+        internal static Stream OpenFileInputStream(string filePath)
         {
+            string newfilePath;
+            CommonFunctions comF = new CommonFunctions();
+            var fileName = comF.GetFileNameFromPath(filePath);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                return MediaStoreHelper.OpenFileInputStream(fileName, "");
+                newfilePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
             }
             else
             {
-                var filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);
-                return File.Open(filePath, FileMode.Open);
+                newfilePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);               
             }
 
-
+            return File.Open(newfilePath, FileMode.Open);
         }
 
         internal static Stream OpenFileOutputStream(string fileName, long lenghtInBytes)
         {
+            string filePath;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                return MediaStoreHelper.OpenFileOutputStream(fileName, lenghtInBytes);
+                filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
             }
             else
             {
-                var filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);
-                return File.Open(filePath, FileMode.Create);
+                filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);               
             }
 
-
+            return File.Open(filePath, FileMode.Create);
         }
 
         internal static long GetLengthOfFile(string filePath)
@@ -170,8 +208,33 @@ namespace TTtuner_2022_2.Common
             }
         }
 
-        static internal FileStream CreateFile(Activity act, string filename, bool blExternal)
+        static internal Stream CreateFile(Activity act, string filename, bool blExternal, string mimeType = null)
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                if (mimeType == null)
+                {
+                    // can only write binary data to app space  
+                    System.IO.FileStream os = null;
+                    var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                    var filePath = Path.Combine(documentsPath, filename);
+                    os = new System.IO.FileStream(filePath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    return os;
+                }
+                else
+                {
+                    return MediaStoreHelper.OpenFileOutputStream(filename, -1, mimeType);
+                }
+            }
+            else
+            {
+                return CreateFileLegacy(act, filename, blExternal);   
+            }
+        }
+
+        static private FileStream CreateFileLegacy(Activity act, string filename, bool blExternal)
+        {
+            // this func can be deleted once you stop supporting android < 29 api
             System.IO.FileStream os = null;
             CheckExternalStorageAvailable();
 
@@ -199,9 +262,6 @@ namespace TTtuner_2022_2.Common
             }
 
             return os;
-
-
-
         }
         static internal void SaveTextFile(Activity act, string filename, string text, bool blExternal)
         {

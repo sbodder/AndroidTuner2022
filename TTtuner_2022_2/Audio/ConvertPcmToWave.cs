@@ -10,6 +10,9 @@ using Android.Runtime;
 using global::Android.Views;
 using global::Android.Widget;
 using Java.IO;
+using System.IO;
+using TTtuner_2022_2.Common;
+using Android.Media;
 
 namespace TTtuner_2022_2.Audio
 {
@@ -80,6 +83,93 @@ namespace TTtuner_2022_2.Audio
         internal ConvertPcmToWave(int sampleRate, short nChannels, string strPcmFileNameInput, string strWaveFileNameOutput)
         {
 
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                ConvertPcmToWaveApi29Plus(sampleRate, nChannels, strPcmFileNameInput, strWaveFileNameOutput);
+            }
+            else
+            {
+                ConvertPcmToWaveLegacy(sampleRate, nChannels, strPcmFileNameInput, strWaveFileNameOutput);
+            }
+
+
+        }
+
+        private void ConvertPcmToWaveApi29Plus(int sampleRate, short nChannels, string strPcmFileNameInput, string strWaveFileNameOutput)
+        {
+
+            byte[] rawData = null;
+            sbyte[] sBytes;
+
+            //Java.IO.File fl = new Java.IO.File(strPcmFileNameInput);
+            //long lgLength = fl.Length();
+
+            //fl.Dispose();
+
+            System.IO.Stream input = null;
+
+
+
+            if (!InstanceFieldsInitialized)
+            {
+                InitializeInstanceFields();
+                InstanceFieldsInitialized = true;
+            }
+
+            try
+            {
+                //input = new DataInputStream(new System.IO.FileStream(strPcmFileNameInput, System.IO.FileMode.Open, System.IO.FileAccess.Read));
+
+                //rawData = new byte[(int)lgLength];
+                //sBytes = new sbyte[(int)lgLength];
+                //input.Read(rawData);
+
+                
+                //input = MediaStoreHelper.OpenFileInputStream(strPcmFileNameInput, string.Empty, MediaFormat.MimetypeAudioRaw);
+
+                input = FileHelper.OpenFileInputStream(strPcmFileNameInput);
+
+                if (input == null)
+                {
+                    return;
+                }
+
+                rawData = ReadAllBytes(input);
+
+                sBytes = new sbyte[(int)rawData.Length];
+
+
+            }
+            finally
+            {
+                if (input != null)
+                {
+                    input.Close();
+                }
+            }
+
+            // now we have read all the data from the .pcm file - delete the file
+
+            FileHelper.DeleteFile(strPcmFileNameInput);
+
+
+
+            // short[] shorts = Array.ConvertAll(rawData, b => (short)b);
+            // sBytes = Array.ConvertAll(rawData, b => (sbyte)b);
+
+            for (int i = 0; i < rawData.Length; i++)
+            {
+                sBytes[i] = (sbyte)rawData[i];
+            }
+
+            CreateDataInOutputBuffer(sampleRate, nChannels, sBytes, 0, sBytes.Length);
+
+            WriteToFile(strWaveFileNameOutput);
+
+        }
+        private void ConvertPcmToWaveLegacy(int sampleRate, short nChannels, string strPcmFileNameInput, string strWaveFileNameOutput)
+        {
+
             byte[] rawData;
             sbyte[] sBytes;
 
@@ -104,6 +194,8 @@ namespace TTtuner_2022_2.Audio
                 rawData = new byte[(int)lgLength];
                 sBytes = new sbyte[(int)lgLength];
                 input.Read(rawData);
+
+
             }
             finally
             {
@@ -132,6 +224,22 @@ namespace TTtuner_2022_2.Audio
             CreateDataInOutputBuffer(sampleRate, nChannels, sBytes, 0, sBytes.Length);
 
             WriteToFile(strWaveFileNameOutput);
+
+        }
+
+
+
+
+        private byte[] ReadAllBytes(System.IO.Stream instream)
+        {
+            if (instream is MemoryStream)
+                return ((MemoryStream)instream).ToArray();
+
+            using (var memoryStream = new MemoryStream())
+            {
+                instream.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
 
         private void CreateDataInOutputBuffer(int sampleRate, short nChannels, sbyte[] data, int start, int end)

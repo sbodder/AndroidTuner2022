@@ -30,6 +30,7 @@ using Android.Content;
 using System.Threading.Tasks;
 using System.Threading;
 using Android.Graphics;
+using Android.Media;
 
 namespace TTtuner_2022_2
 {
@@ -447,8 +448,8 @@ namespace TTtuner_2022_2
             string fileNameWav = m_strTimeStampForFileName + ".WAV";
 
             string strPersonalPath = FileHelper.DataDirectory;
-            string strPcmInputFilepath = System.IO.Path.Combine(strPersonalPath, fileNamePcm);
-            string strWavInputFilepath = System.IO.Path.Combine(strPersonalPath, fileNameWav);
+            string strPcmInputFilepath = FileHelper.GetNewFilePath(fileNamePcm, true);
+            string strWavInputFilepath = FileHelper.GetNewFilePath(fileNameWav, false, "audio/wav");
 
             if (blRecordButtonEnabled)
             {
