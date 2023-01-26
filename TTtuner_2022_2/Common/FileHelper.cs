@@ -36,15 +36,22 @@ namespace TTtuner_2022_2.Common
         static bool mExternalStorageAvailable = false;
         static bool mExternalStorageWriteable = false;
 
-        internal static void DeleteFile(string sourcePath)
+        internal static void DeleteFile(string sourcePath, bool internalAppSpace = true)
         {
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(sourcePath);
-            string filePath;
+            string filePath = null;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+                if (internalAppSpace)
+                {
+                    filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+                }
+                else
+                {
+                    MediaStoreHelper.DeleteFile(sourcePath);
+                }
             }
             else
             {
@@ -98,7 +105,7 @@ namespace TTtuner_2022_2.Common
             fl2.Dispose();
         }
 
-        internal static Stream OpenFileInputStream(string filePath)
+        internal static Stream OpenFileInputStream(string filePath, bool internalAppSpace = true, string mimetype = null)
         {
             string newfilePath;
             CommonFunctions comF = new CommonFunctions();
@@ -106,7 +113,15 @@ namespace TTtuner_2022_2.Common
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                newfilePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+                if (internalAppSpace)
+                {
+                    newfilePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+                }
+                else
+                {
+                    return MediaStoreHelper.OpenFileInputStream(fileName, String.Empty, mimetype);
+
+                }
             }
             else
             {
@@ -116,9 +131,39 @@ namespace TTtuner_2022_2.Common
             return File.Open(newfilePath, FileMode.Open);
         }
 
-        internal static Stream OpenFileOutputStream(string fileName, long lenghtInBytes)
+
+
+        internal static Stream OpenFileOutputStream(string filePath, bool internalAppSpace = true, long lengthInBytes = 0, string mimetype = null, bool append= false)
         {
-            string filePath;
+            CommonFunctions comF = new CommonFunctions();
+            var fileName = comF.GetFileNameFromPath(filePath);
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                
+
+                if (internalAppSpace)
+                {
+                    filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+                }
+                else
+                {
+                    return MediaStoreHelper.OpenFileOutputStream(fileName, lengthInBytes, mimetype, append ? "wa" : string.Empty);
+
+                }
+            }
+            else
+            {
+                filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);               
+            }
+
+            return File.Open(filePath,  append ? FileMode.Append : FileMode.Create);
+        }
+
+        internal static long GetLengthOfFile(string filePath)
+        {
+            CommonFunctions comF = new CommonFunctions();
+            var fileName = comF.GetFileNameFromPath(filePath);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
@@ -126,14 +171,8 @@ namespace TTtuner_2022_2.Common
             }
             else
             {
-                filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);               
+                filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);
             }
-
-            return File.Open(filePath, FileMode.Create);
-        }
-
-        internal static long GetLengthOfFile(string filePath)
-        {
             Java.IO.File fl = new Java.IO.File(filePath);
             long lgLength = fl.Length();
 
@@ -304,30 +343,40 @@ namespace TTtuner_2022_2.Common
 
         }
 
-        static internal bool CheckIfFileExists(Activity act, string fileName, string mediaStoreFileExt)
+        static internal bool CheckIfFileExists(string fileName, bool internalAppSpace = true, string mediaStoreFileExt = "")
         {
+            string filePath = null;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                return MediaStoreHelper.CheckIfFileExists(act, fileName, mediaStoreFileExt);
-
+                if (internalAppSpace)
+                {
+                    return MediaStoreHelper.CheckIfFileExists(CrossCurrentActivity.Current.Activity, fileName, mediaStoreFileExt);
+                }
+                else
+                {
+                    CommonFunctions comF = new CommonFunctions();
+                    var fn = comF.GetFileNameFromPath(fileName);
+                    var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                    filePath = Path.Combine(documentsPath, fn);                    
+                }
             }
             else
             {
                 // check if xml file exits
                 var documentsPath = Settings.DataFolder;
-                var filePath = System.IO.Path.Combine(documentsPath, fileName);
-
-                using (Java.IO.File fl1 = new Java.IO.File(filePath))
-                {
-                    if (fl1.Exists())
-                    {
-                        return true;
-                    }
-                    // file doesn't exist
-                }
-
-                return false;
+                filePath = System.IO.Path.Combine(documentsPath, fileName);                         
             }
+
+            using (Java.IO.File fl1 = new Java.IO.File(filePath))
+            {
+                if (fl1.Exists())
+                {
+                    return true;
+                }
+                // file doesn't exist
+            }
+
+            return false;
 
         }
 

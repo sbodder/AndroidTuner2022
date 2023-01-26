@@ -449,7 +449,7 @@ namespace TTtuner_2022_2
 
             string strPersonalPath = FileHelper.DataDirectory;
             string strPcmInputFilepath = FileHelper.GetNewFilePath(fileNamePcm, true);
-            string strWavInputFilepath = FileHelper.GetNewFilePath(fileNameWav, false, "audio/wav");
+            string strWavInputFilepath = FileHelper.GetNewFilePath(fileNameWav, false, MediaStoreHelper.MIMETYPE_WAV);
 
             if (blRecordButtonEnabled)
             {

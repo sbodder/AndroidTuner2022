@@ -146,7 +146,7 @@ namespace TTtuner_2022_2.Plot
                 }
 
 
-                using (System.IO.Stream stream = FileHelper.OpenFileOutputStream(strFileName, fileLength))
+                using (System.IO.Stream stream = FileHelper.OpenFileOutputStream(strFileName, true,  fileLength))
                 {
                     var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 

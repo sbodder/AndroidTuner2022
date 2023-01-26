@@ -21,7 +21,7 @@ namespace TTtuner_2022_2.Audio
 {
     public class RubberBand_AudioPlayer : IAudioPlayer
     {
-        private System.IO.FileStream m_fsInput;
+        private System.IO.Stream m_fsInput;
         private int m_intSampleRate;
         private long m_numChannels;
         const int WAVE_HEADER_SIZE_BYTES = 44;
@@ -110,7 +110,7 @@ namespace TTtuner_2022_2.Audio
             }
             try
             {
-                m_fsInput = new System.IO.FileStream(strFilename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                m_fsInput = FileHelper.OpenFileInputStream(strFilename, false, MediaStoreHelper.MIMETYPE_WAV);
                 m_fsInput.Read(arrHeader, 0, (int)WAVE_HEADER_SIZE_BYTES);
             }
             catch (System.Exception e1)

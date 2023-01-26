@@ -16,6 +16,7 @@ namespace TTtuner_2022_2.Common
 {
     internal static class MediaStoreHelper
     {
+        public const string MIMETYPE_WAV = "audio/wav";
         static internal bool CheckIfFileExists(Activity act, string filename, string mediaStoreExtension)
         {
             var uri = GetFileUri(act, filename, mediaStoreExtension);
@@ -81,7 +82,7 @@ namespace TTtuner_2022_2.Common
             }
             catch (Exception e1)
             {
-                Toast.MakeText(act, "Cannot find file " + newfilename + " : " + comFunc.TruncateStringRight(e1.Message, 35), ToastLength.Long).Show();
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, "Cannot find file " + newfilename + " : " + comFunc.TruncateStringRight(e1.Message, 35), ToastLength.Long).Show();
 
             }
             finally
@@ -148,7 +149,7 @@ namespace TTtuner_2022_2.Common
             return resolver.Delete(uri, null) > 0;
         }
 
-        static internal Stream OpenFileOutputStream(string filename, long lengthInBytes, string mimeType = null )
+        static internal Stream OpenFileOutputStream(string filename, long lengthInBytes, string mimeType = null, string openMode = "" )
         {
             var uri = CreateFileUri(filename, lengthInBytes, mimeType);
 
@@ -159,7 +160,7 @@ namespace TTtuner_2022_2.Common
 
             ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
 
-            var os = resolver.OpenOutputStream(uri);
+            var os =  openMode == string.Empty ? resolver.OpenOutputStream(uri) : resolver.OpenOutputStream(uri, openMode);
 
             return os;
         }
@@ -211,7 +212,7 @@ namespace TTtuner_2022_2.Common
             return System.IO.Path.Combine(Settings.MediaStoreFolder, filename);
         }
 
-        static internal bool WriteFile(string contents, string filename, string mimeType = null)
+        static internal bool WriteTextToFile(string contents, string filename, string mimeType = null)
         {
             System.IO.Stream saveStream;
             ContentResolver contentResolver = CrossCurrentActivity.Current.AppContext.ContentResolver;

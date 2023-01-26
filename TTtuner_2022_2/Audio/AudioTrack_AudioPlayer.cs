@@ -24,7 +24,7 @@ namespace TTtuner_2022_2.Audio
         // this should be the same as the recorder sameplerate
 
         private AudioTrack m_audTrack = null;
-        System.IO.FileStream m_fsInput = null;
+        System.IO.Stream m_fsInput = null;
         private byte[] m_rawData = null;
         const int WAVE_HEADER_SIZE_BYTES = 44;
         private int m_BufferSize;
@@ -333,14 +333,8 @@ namespace TTtuner_2022_2.Audio
             }
 
             try
-            {
-                //m_input = new DataInputStream(new System.IO.FileStream(strFileName, System.IO.FileMode.Open, System.IO.FileAccess.Read));
-                m_fsInput = new System.IO.FileStream(strFileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-
-                //m_rawData = new byte[(int)intFlLength];
-                //m_input.Read(m_rawData, 0, (int)intFlLength);
-
-
+            {                
+                m_fsInput = FileHelper.OpenFileInputStream(strFileName, false, MediaStoreHelper.MIMETYPE_WAV);
                 m_fsInput.Read(arrHeader, 0, (int)WAVE_HEADER_SIZE_BYTES);
             }
             catch (Exception e1)

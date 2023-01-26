@@ -1,5 +1,7 @@
-﻿using Android.Util;
+﻿using Android.OS;
+using Android.Util;
 using System;
+using System.IO;
 using System.Text;
 
 namespace TTtuner_2022_2.Common
@@ -18,7 +20,18 @@ namespace TTtuner_2022_2.Common
         {
             get
             {
-                string path = Settings.DataFolder;
+                string path;
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                {
+                    path = Settings.MediaStoreFolder;
+ 
+                }
+                else
+                {
+                    path = Settings.DataFolder;
+                }
+
                 string logFilePath = System.IO.Path.Combine(path, "log.txt");
 
                 return logFilePath;
@@ -41,11 +54,17 @@ namespace TTtuner_2022_2.Common
 
         static public void CreateLogFile()
         {
-            if (!System.IO.File.Exists(LOG_FILE_PATH))
+            if (!FileHelper.CheckIfFileExists(LOG_FILE_PATH, false))
             {
-                using (System.IO.StreamWriter writer = new System.IO.StreamWriter(LOG_FILE_PATH, true))
+                string strToWrite = "Starting logging at " + System.DateTime.Now.ToString();
+
+                System.IO.Stream os = FileHelper.OpenFileOutputStream(LOG_FILE_PATH, false, strToWrite.Length, null, true);
+
+                using (StreamWriter writer = new StreamWriter(os))
                 {
-                    writer.WriteLine("Starting logging at " + System.DateTime.Now.ToString());
+                    writer.Write(strToWrite);
+                    writer.Close();
+                    writer.DisposeAsync();
                 }
             }
         }
@@ -53,15 +72,17 @@ namespace TTtuner_2022_2.Common
 
         static public void DeleteLogFile()
         {
-            if (System.IO.File.Exists(LOG_FILE_PATH))
+            if (FileHelper.CheckIfFileExists(LOG_FILE_PATH, false))
             {
-                System.IO.File.Delete(LOG_FILE_PATH);
+                FileHelper.DeleteFile(LOG_FILE_PATH, false);
             }
         }
 
         static public void FlushBufferToFile()
         {
-            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(LOG_FILE_PATH, true))
+            System.IO.Stream os = FileHelper.OpenFileOutputStream(LOG_FILE_PATH, false, builder.ToString().Length, null, true);
+
+            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(os))
             {
                 writer.Write(builder.ToString());
             }

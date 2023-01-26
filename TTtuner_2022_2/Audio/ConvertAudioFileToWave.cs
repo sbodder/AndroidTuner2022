@@ -69,7 +69,6 @@ namespace TTtuner_2022_2.Audio
             m_act = act;
 
             m_intBufferSize = AudioTrack.GetMinBufferSize(targetSampleRate, ChannelOut.Mono, global::Android.Media.Encoding.Pcm16bit);
-            // input = new DataInputStream(new System.IO.FileStream(strFileNameInput, System.IO.FileMode.Open, System.IO.FileAccess.Read));
         }
 
 

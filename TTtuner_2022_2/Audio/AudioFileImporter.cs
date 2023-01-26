@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using TTtuner_2022_2.Common;
 using TTtuner_2022_2.Plot;
 
 namespace TTtuner_2022_2.Audio
@@ -105,7 +106,7 @@ namespace TTtuner_2022_2.Audio
 
                 string path = System.IO.Path.Combine(Common.Settings.DataFolder, fileNAme);
 
-                if (System.IO.File.Exists(path))
+                if (FileHelper.CheckIfFileExists( path, false, String.Empty))
                 {
                     dlMessage = new AndroidX.AppCompat.App.AlertDialog.Builder(act);
 
@@ -233,45 +234,7 @@ namespace TTtuner_2022_2.Audio
                 throw new Exception("Error Importing " + fileName + " - " + e.Message);
             }
             return true;
-        }
-
-        private int FindDataChuckStartOffset(string strFilePath)
-        {
-            DataInputStream input = null;
-            byte[] rawData;
-
-            Java.IO.File fl = new Java.IO.File(strFilePath);
-            long lgLength = fl.Length();
-
-            fl.Dispose();
-
-            rawData = new byte[lgLength];
-
-            try
-            {
-                input = new DataInputStream(new System.IO.FileStream(strFilePath, System.IO.FileMode.Open, System.IO.FileAccess.Read));
-
-                input.Read(rawData, 0, (int)lgLength);
-                // input.Read(rawData);
-            }
-            finally
-            {
-                if (input != null)
-                {
-                    input.Close();
-                }
-            }
-
-            for (int i = 0; i < rawData.Length; i++)
-            {
-                if ((rawData[i] == 'd') && (rawData[i + 1] == 'a') && (rawData[i + 2] == 't') && (rawData[i + 3] == 'a'))
-                {
-                    return i + 8;
-                }
-            }
-
-            return -1;
-        }
+        }     
 
  
         private void ProcessWaveFileWithAudioFunctionsAndStore(string strFilePath, List<DataProcessorAndStore> lstDataGnStore,
@@ -339,6 +302,7 @@ namespace TTtuner_2022_2.Audio
         public static System.Collections.Generic.IEnumerable<byte[]> GetDataChunkFromWaveFile(string strFilePath, int intChunkSize)
         {
             DataInputStream input = null;
+            Stream si;
             byte[] headerData = new byte[(int)WAVE_HEADER_SIZE_BYTES];
             byte[] rawData;
             long lgLength = Common.FileHelper.GetLengthOfFile(strFilePath);
@@ -346,7 +310,8 @@ namespace TTtuner_2022_2.Audio
 
             try
             {
-                input = new DataInputStream(new System.IO.FileStream(strFilePath, System.IO.FileMode.Open, System.IO.FileAccess.Read));
+                si = FileHelper.OpenFileInputStream(strFilePath, false, MediaStoreHelper.MIMETYPE_WAV);
+                input = new DataInputStream(si);
 
                 rawData = new byte[(int)intChunkSize];
                 totalBytesRead += input.Read(headerData, 0, WAVE_HEADER_SIZE_BYTES);
@@ -425,88 +390,7 @@ namespace TTtuner_2022_2.Audio
             }
         }
 
-        private void ConvertTo16bitMono(string fileName, string destPath, int indexOfFile)
-        {
-
-            //.1 open file
-            // 2 read raw data 
-            // 3. downsample raw data
-            // 4. change header to 16 bit
-            // 5. save file to data folder
-            Int16 numChannels = 0;
-            Int32 sampleRate = 0;
-            int filezise = 0;
-            short bitDepth = 0;
-            short intBlockAlign = 0;
-            byte[] rawData;
-            byte[] newData;
-            byte[] finalData;
-            byte[] header;
-            //sbyte[] sBytes;
-
-            DataInputStream input = null;
-
-            Java.IO.File fl = new Java.IO.File(fileName);
-            long lgLength = fl.Length();
-
-            fl.Dispose();
-
-            int dataChunkStartOffset = FindDataChuckStartOffset(fileName);
-
-            header = new byte[(int)dataChunkStartOffset];
-
-            try
-            {
-                input = new DataInputStream(new System.IO.FileStream(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Read));
-
-                rawData = new byte[(int)lgLength - dataChunkStartOffset];
-
-
-                //sBytes = new sbyte[(int)lgLength];
-                input.Read(header, 0, dataChunkStartOffset);
-
-                numChannels = BitConverter.ToInt16(header, 22);
-                sampleRate = BitConverter.ToInt32(header, 24);
-                filezise = BitConverter.ToInt32(header, 4);
-                bitDepth = BitConverter.ToInt16(header, 34);
-                intBlockAlign = BitConverter.ToInt16(header, 32);
-
-                if (bitDepth == 16)
-                {
-                    newData = new byte[(int)((lgLength - dataChunkStartOffset))];
-                }
-                else if (bitDepth == 24)
-                {
-                    newData = new byte[(int)(((lgLength - dataChunkStartOffset) * 2) / 3)];
-                }
-                else //(bitDepth == 32)
-                {
-                    newData = new byte[(int)(((lgLength - dataChunkStartOffset)) / 2)];
-                }
-
-                finalData = numChannels == 1 ? new byte[(int)((newData.Length))] : new byte[(int)((newData.Length) / 2)];
-
-                input.Read(rawData, 0, (int)lgLength - dataChunkStartOffset);
-            }
-            finally
-            {
-                if (input != null)
-                {
-                    input.Close();
-                }
-            }
-
-            // 1st resmaple if 32bit or 24 bit
-
-            ResampleBitDepthToNewData(rawData, newData, bitDepth, indexOfFile);
-
-            // now data is 16 bit -  convert steroToMono
-
-            StereoToMono(newData, finalData, numChannels, indexOfFile);
-
-            //   ConvertToWave cnVert = new ConvertToWave(sampleRate, numChannels, newData, strFilePath);
-            ConvertPcmToWave cnVert = new ConvertPcmToWave(sampleRate, 1, finalData, destPath);
-        }
+       
 
         private void StereoToMono(byte[] rawData, byte[] newData, short numChannels, int indexOfFile)
         {
@@ -643,9 +527,9 @@ namespace TTtuner_2022_2.Audio
             //float [] right;
             try
             {
-                using (FileStream fs = System.IO.File.Open(filename, FileMode.Open))
+                using (Stream st = FileHelper.OpenFileInputStream(filename, false, MediaStoreHelper.MIMETYPE_WAV))
                 {
-                    BinaryReader reader = new BinaryReader(fs);
+                    BinaryReader reader = new BinaryReader(st);
 
                     // chunk 0
                     int chunkID = reader.ReadInt32();

@@ -279,13 +279,13 @@ namespace TTtuner_2022_2.Common
         internal bool DoesDcbFileExistForThisFreqFile(string strTextFilePath)
         {
             string strDecibelFilepath = GetFileNameWtihoutExtension(strTextFilePath) + ".dcb";
-            return System.IO.File.Exists(strDecibelFilepath) ? true : false;
+            return FileHelper.CheckIfFileExists(strDecibelFilepath) ? true : false;
         }
 
         internal bool DoesWavFileExistForThisFreqFile(string strTextFilePath)
         {
             string strWavFilepath = GetFileNameWtihoutExtension(strTextFilePath) + ".wav";
-            return System.IO.File.Exists(strWavFilepath) ? true : false;
+            return FileHelper.CheckIfFileExists(strWavFilepath, false) ? true : false;
         }
 
         internal string GetDcbFileNameForThisFreqFile(string strTextFilePath)
@@ -448,14 +448,14 @@ namespace TTtuner_2022_2.Common
             var fileName = Settings.TuningSystemsCsvFileName;
 
 
-            if (FileHelper.CheckIfFileExists(act, fileName, ".txt")) {
+            if (FileHelper.CheckIfFileExists( fileName, false, ".txt")) {
                 return;
             }
            
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
                 string csvText = Settings.GetCsvFileTextFromManifest(act);
-                MediaStoreHelper.WriteFile(csvText, fileName);
+                MediaStoreHelper.WriteTextToFile(csvText, fileName);
             }
             else
             {

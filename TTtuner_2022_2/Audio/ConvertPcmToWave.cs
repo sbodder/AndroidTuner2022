@@ -101,11 +101,6 @@ namespace TTtuner_2022_2.Audio
             byte[] rawData = null;
             sbyte[] sBytes;
 
-            //Java.IO.File fl = new Java.IO.File(strPcmFileNameInput);
-            //long lgLength = fl.Length();
-
-            //fl.Dispose();
-
             System.IO.Stream input = null;
 
 
@@ -118,15 +113,6 @@ namespace TTtuner_2022_2.Audio
 
             try
             {
-                //input = new DataInputStream(new System.IO.FileStream(strPcmFileNameInput, System.IO.FileMode.Open, System.IO.FileAccess.Read));
-
-                //rawData = new byte[(int)lgLength];
-                //sBytes = new sbyte[(int)lgLength];
-                //input.Read(rawData);
-
-                
-                //input = MediaStoreHelper.OpenFileInputStream(strPcmFileNameInput, string.Empty, MediaFormat.MimetypeAudioRaw);
-
                 input = FileHelper.OpenFileInputStream(strPcmFileNameInput);
 
                 if (input == null)
@@ -332,11 +318,16 @@ namespace TTtuner_2022_2.Audio
 
             try
             {
-                Java.IO.File path = new Java.IO.File(strFilePath);
-                FileOutputStream outFile = new FileOutputStream(path);
-                outFile.Write(outputByte, 0, outputSbyte.Length);
-                outFile.Close();
+                //Java.IO.File path = new Java.IO.File(strFilePath);
+                //FileOutputStream outFile = new FileOutputStream(path);
+                //outFile.Write(outputByte, 0, outputSbyte.Length);
+                //outFile.Close();
+                //ok = true;
+                var os = FileHelper.OpenFileOutputStream(strFilePath, false, outputByte.Length, MediaStoreHelper.MIMETYPE_WAV);
+                os.Write(outputByte, 0, outputSbyte.Length);
+                os.Close();
                 ok = true;
+
             }
             catch (Java.IO.FileNotFoundException e)
             {

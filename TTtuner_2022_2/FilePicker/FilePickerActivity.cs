@@ -591,7 +591,7 @@
             CommonFunctions cmFunc = new CommonFunctions();
 
             var intent = new Intent(Intent.ActionSendMultiple);
-            intent.SetType("audio/wav");
+            intent.SetType(MediaStoreHelper.MIMETYPE_WAV);
 
             intent.AddFlags(ActivityFlags.GrantReadUriPermission);
 
