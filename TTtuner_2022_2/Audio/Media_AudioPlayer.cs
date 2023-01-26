@@ -11,6 +11,7 @@ using global::Android.Views;
 using global::Android.Widget;
 using Android.Media;
 using TTtuner_2022_2.EventHandlersTidy;
+using TTtuner_2022_2.Common;
 
 namespace TTtuner_2022_2.Audio
 {
@@ -18,6 +19,8 @@ namespace TTtuner_2022_2.Audio
 
     {
         private MediaPlayer m_medPlayer = null;
+
+        private bool _deleteFileOnExit;
 
         private string m_strWaveFileName;
 
@@ -106,7 +109,13 @@ namespace TTtuner_2022_2.Audio
                 m_medPlayer.Dispose();
                 m_medPlayer = null;
             }
-           
+
+            if (_deleteFileOnExit)
+            {
+                FileHelper.DeleteFile(m_strWaveFileName);
+            }
+
+
         }
 
         public void SeekTo(int intPosition)
@@ -121,10 +130,11 @@ namespace TTtuner_2022_2.Audio
             SetupPlayer(m_strWaveFileName, flSpeed, blsPlaying, this.CurrentPosition);
         }
 
-        public void SetupPlayer( string strFileName, float flPlayerSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom = 0)
+        public void SetupPlayer( string strFileName, float flPlayerSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom = 0, bool deleteFileOnExit = false)
         {
             m_strWaveFileName = strFileName;
             m_intCurrentTimePostion = intPositionToStartFrom;
+            _deleteFileOnExit = deleteFileOnExit;
 
             
 

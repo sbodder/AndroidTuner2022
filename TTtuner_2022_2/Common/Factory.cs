@@ -15,6 +15,7 @@ using System;
 using Syncfusion.Data;
 using System.Collections.Specialized;
 using TTtuner_2022_2.DataGrid.Cells;
+using Android.OS;
 
 namespace TTtuner_2022_2.Common
 {
@@ -323,8 +324,15 @@ namespace TTtuner_2022_2.Common
         internal IAudioPlayer CreateAudioPlayer(string strWavFilePath)
         {
             IAudioPlayer audPlay;
+            bool deleteFileOnExit = false;
 
-            // if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.M)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                // becasue of scoped storage we need to copy the file to internal storage and delete when the object is destroyed
+                strWavFilePath = FileHelper.CopyFileFromScopedStorageToInternal(strWavFilePath);
+                deleteFileOnExit = true;
+            }
+
 
             if (Common.Settings.AudioPlayer == "TimeStretch")
             {
@@ -335,7 +343,9 @@ namespace TTtuner_2022_2.Common
                 audPlay = new AudioTrack_AudioPlayer();
             }
 
-            audPlay.SetupPlayer(strWavFilePath, 1.0f, false);
+ 
+
+            audPlay.SetupPlayer(strWavFilePath, 1.0f, false, 0, deleteFileOnExit);
 
             return audPlay;
         }

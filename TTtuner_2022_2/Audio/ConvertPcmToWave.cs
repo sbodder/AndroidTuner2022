@@ -323,7 +323,7 @@ namespace TTtuner_2022_2.Audio
                 //outFile.Write(outputByte, 0, outputSbyte.Length);
                 //outFile.Close();
                 //ok = true;
-                var os = FileHelper.OpenFileOutputStream(strFilePath, false, outputByte.Length, MediaStoreHelper.MIMETYPE_WAV);
+                var os = FileHelper.OpenFileOutputStream(strFilePath, false, outputSbyte.Length, MediaStoreHelper.MIMETYPE_WAV);
                 os.Write(outputByte, 0, outputSbyte.Length);
                 os.Close();
                 ok = true;

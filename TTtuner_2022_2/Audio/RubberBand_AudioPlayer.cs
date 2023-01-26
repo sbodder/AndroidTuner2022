@@ -16,6 +16,7 @@ using BE.Tarsos.Dsp.IO;
 using BE.Tarsos.Dsp.IO.Android;
 using BE.Tarsos.Dsp.Rubberband;
 using TTtuner_2022_2.Common;
+using System.IO;
 
 namespace TTtuner_2022_2.Audio
 {
@@ -35,6 +36,7 @@ namespace TTtuner_2022_2.Audio
         int m_intDuration;
         double m_dbSecondsElasped = 0f;
         int m_bufferSize;
+        bool _deleteFileOnExit;
 
         public int Duration
         {
@@ -85,14 +87,14 @@ namespace TTtuner_2022_2.Audio
         
 
 
-        public void SetupPlayer(string strFilename, float flSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom = 0)
-        {
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        public void SetupPlayer(string strFilename, float flSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom = 0, bool deleteFileOnExit = false)
+        {            
             m_dbTimeRatio = Math.Round(1 / flSpeed, 1);
             m_chNum = ChannelOut.Mono;
             m_strWaveFileName = strFilename;
+            _deleteFileOnExit = deleteFileOnExit;
 
-            mmr.SetDataSource(m_strWaveFileName);
+            MediaMetadataRetriever mmr = MediaMetaFacade.GetRetriever(m_strWaveFileName);
 
             String durationStr = mmr.ExtractMetadata(MetadataKey.Duration);
             m_intDuration = Convert.ToInt32(durationStr);
@@ -142,7 +144,7 @@ namespace TTtuner_2022_2.Audio
 #if Release_LogOutput
                 Logger.Info(Common.CommonFunctions.APP_NAME, "In rubberband player : SetupAudioProcessors, m_ad ");
 #endif
-                m_ad = AudioDispatcherFactory.FromPipeControllable(currentContext,m_strWaveFileName, m_intSampleRate, m_bufferSize, 0);
+                m_ad = AudioDispatcherFactory.FromPipeControllable(currentContext, m_strWaveFileName, m_intSampleRate, m_bufferSize, 0);
                 m_TarosFormat = m_ad.Format;
 
                 if (dbStartTime > 0)
@@ -268,6 +270,11 @@ namespace TTtuner_2022_2.Audio
             {
                 m_fsInput.Close();
                 m_fsInput.Dispose();
+            }
+
+            if (_deleteFileOnExit)
+            {
+                FileHelper.DeleteFile(m_strWaveFileName);
             }
 
         }

@@ -14,6 +14,7 @@ using BE.Tarsos.Dsp;
 using BE.Tarsos.Dsp.IO.Android;
 using BE.Tarsos.Dsp.Writer;
 using Java.IO;
+using TTtuner_2022_2.Common;
 
 namespace TTtuner_2022_2.Audio
 {
@@ -73,10 +74,8 @@ namespace TTtuner_2022_2.Audio
 
 
         public void CalculateDuration()
-        {   
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-
-            mmr.SetDataSource(m_strFileNameInput);
+        {
+            MediaMetadataRetriever mmr = MediaMetaFacade.GetRetriever(m_strFileNameInput);
 
             String durationStr = mmr.ExtractMetadata(MetadataKey.Duration);
             m_dbDurationInSeconds = Convert.ToDouble(durationStr) / 1000f;

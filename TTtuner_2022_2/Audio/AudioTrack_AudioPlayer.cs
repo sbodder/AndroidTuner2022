@@ -39,6 +39,7 @@ namespace TTtuner_2022_2.Audio
         private bool m_blEndPlayback = false;
         private int m_intSampleRate;
         private float m_flSpeed = 1f;
+        private bool _deleteFileOnExit;
 
         private long BytesPerSecondInAudioFile
         {
@@ -144,6 +145,12 @@ namespace TTtuner_2022_2.Audio
             }
 
             m_blEndPlayback = true;
+
+            if (_deleteFileOnExit)
+            {
+                FileHelper.DeleteFile(m_strWaveFileName);
+            }
+
         }
 
         public void ChangeSpeed(float flSpeed)
@@ -303,14 +310,13 @@ namespace TTtuner_2022_2.Audio
             }
         }
 
-        public void SetupPlayer(string strFileName, float flPlayerSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom = 0)
-        {
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-
+        public void SetupPlayer(string strFileName, float flPlayerSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom = 0, bool deleteFileOnExit = false)
+        {        
             ChannelOut chNum = ChannelOut.Mono;
             m_strWaveFileName = strFileName;
+            _deleteFileOnExit = deleteFileOnExit;
 
-            mmr.SetDataSource(m_strWaveFileName);
+            MediaMetadataRetriever mmr = MediaMetaFacade.GetRetriever(m_strWaveFileName);
 
             String durationStr = mmr.ExtractMetadata(MetadataKey.Duration);
             m_intDuration = Convert.ToInt32(durationStr);

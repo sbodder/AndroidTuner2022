@@ -27,6 +27,9 @@ using Java.Net;
 using Stream = System.IO.Stream;
 using File = System.IO.File;
 using Android.Systems;
+using Java.Security.Cert;
+using Android.Util;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace TTtuner_2022_2.Common
 {
@@ -131,17 +134,49 @@ namespace TTtuner_2022_2.Common
             return File.Open(newfilePath, FileMode.Open);
         }
 
+        internal static string CopyFileFromScopedStorageToInternal(string filePath)
+        {
+            Java.IO.File fl2;
+            Stream si = null, os = null;
+            CommonFunctions comF = new CommonFunctions();
+            var fileName = comF.GetFileNameFromPath(filePath);
+
+            try
+            {
+                si = MediaStoreHelper.OpenFileInputStream(filePath);   
+                os = FileHelper.OpenFileOutputStream(filePath, true);
+                si.CopyTo(os);                
+            }
+            catch (Exception e1)
+            {
+                Log.Error(Common.CommonFunctions.APP_NAME, e1.Message);
+                return null;
+            }
+            finally
+            {
+                if (si != null)
+                {
+                    si.Close();
+
+                }
+                if (os != null)
+                {
+                    os.Close();
+                }
+            }
+
+            return System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName); ;
+        }
 
 
-        internal static Stream OpenFileOutputStream(string filePath, bool internalAppSpace = true, long lengthInBytes = 0, string mimetype = null, bool append= false)
+
+       internal static Stream OpenFileOutputStream(string filePath, bool internalAppSpace = true, long lengthInBytes = 0, string mimetype = null, bool append= false)
         {
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(filePath);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
-            {
-                
-
+            { 
                 if (internalAppSpace)
                 {
                     filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
@@ -350,14 +385,15 @@ namespace TTtuner_2022_2.Common
             {
                 if (internalAppSpace)
                 {
-                    return MediaStoreHelper.CheckIfFileExists(CrossCurrentActivity.Current.Activity, fileName, mediaStoreFileExt);
-                }
-                else
-                {
                     CommonFunctions comF = new CommonFunctions();
                     var fn = comF.GetFileNameFromPath(fileName);
                     var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-                    filePath = Path.Combine(documentsPath, fn);                    
+                    filePath = Path.Combine(documentsPath, fn);
+                    
+                }
+                else
+                {
+                    return MediaStoreHelper.CheckIfFileExists(fileName, mediaStoreFileExt);
                 }
             }
             else

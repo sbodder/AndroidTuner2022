@@ -36,7 +36,7 @@ namespace TTtuner_2022_2.Audio
 
         void SeekTo(int intPosition);
 
-        void SetupPlayer( string strFilename, float flSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom  = 0);
+        void SetupPlayer( string strFilename, float flSpeed, bool blStartPlayAfterSetup, int intPositionToStartFrom  = 0, bool deleteFileOnExit = false);
 
         void Pause(bool stopPlay = true);
 

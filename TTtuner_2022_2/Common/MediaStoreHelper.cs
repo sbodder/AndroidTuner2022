@@ -17,19 +17,20 @@ namespace TTtuner_2022_2.Common
     internal static class MediaStoreHelper
     {
         public const string MIMETYPE_WAV = "audio/wav";
-        static internal bool CheckIfFileExists(Activity act, string filename, string mediaStoreExtension)
+        static internal bool CheckIfFileExists(string filename, string mediaStoreExtension)
         {
-            var uri = GetFileUri(act, filename, mediaStoreExtension);
+            var uri = GetFileUri(filename, mediaStoreExtension);
 
             return uri == null? false : true;
         }
 
-        static private global::Android.Net.Uri GetFileUri(Activity act, string filename, string mediaStoreExtension = "", string mimeType = null)
+        static internal global::Android.Net.Uri GetFileUri(string fileName, string mediaStoreExtension = "", string mimeType = null)
         {
             // READ FILE from folder in Downloads
             var documentsPath = Settings.MediaStoreFolder;
             CommonFunctions comFunc = new CommonFunctions();
-            var newfilename = filename + mediaStoreExtension;
+            var fn = comFunc.GetFileNameFromPath(fileName);
+            var newfilename = fn + mediaStoreExtension;
             ICursor cursor = null;
 
             try
@@ -44,12 +45,15 @@ namespace TTtuner_2022_2.Common
                         global::Android.Provider.MediaStore.Downloads.InterfaceConsts.MimeType,
                     }.ToArray();
 
-                string selection = global::Android.Provider.MediaStore.Downloads.InterfaceConsts.MimeType + " = ? AND " + global::Android.Provider.MediaStore.Downloads.InterfaceConsts.RelativePath + " = ? AND " +
+                string selection = 
+                    //global::Android.Provider.MediaStore.Downloads.InterfaceConsts.MimeType + " = ? AND " +
+                    global::Android.Provider.MediaStore.Downloads.InterfaceConsts.RelativePath + " = ? AND " +
                   global::Android.Provider.MediaStore.Downloads.InterfaceConsts.DisplayName + " = ? ";
 
                 var selectionArgs = new List<string>()
                     {
-                        mimeType == null? "text/plain" : mimeType, documentsPath, newfilename
+                        //mimeType == null? "text/plain" : mimeType,
+                    documentsPath, newfilename
                     };
 
 
@@ -100,7 +104,7 @@ namespace TTtuner_2022_2.Common
 
         static internal string GetFileText(Activity act, string filename, string mediaStoreExtension)
         {
-            var uri = GetFileUri(act, filename, mediaStoreExtension);
+            var uri = GetFileUri(filename, mediaStoreExtension);
 
             if (uri == null)
             {
@@ -123,7 +127,7 @@ namespace TTtuner_2022_2.Common
         {
             CommonFunctions comF = new CommonFunctions();
             var filename = comF.GetFileNameFromPath(filepath);
-            var uri = GetFileUri(CrossCurrentActivity.Current.Activity, filename, mediaStoreExtension, mimeType);
+            var uri = GetFileUri(filename, mediaStoreExtension, mimeType);
 
             if (uri == null)
             {
@@ -139,7 +143,7 @@ namespace TTtuner_2022_2.Common
 
         static internal bool DeleteFile(string filename, string mediaStoreExtension = "")
         {
-            var uri = GetFileUri(CrossCurrentActivity.Current.Activity, filename, mediaStoreExtension);
+            var uri = GetFileUri(filename, mediaStoreExtension);
             return DeleteUri(uri);
         }
 
