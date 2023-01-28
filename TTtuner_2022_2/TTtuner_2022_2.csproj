@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="Classes\Android11PlusPermissionClickHandler.cs" />
     <Compile Include="Common\FileHelper.cs" />
+    <Compile Include="Common\FileItem.cs" />
     <Compile Include="Common\MediaMetaFacade.cs" />
     <Compile Include="Common\MediaStoreHelper.cs" />
     <Compile Include="CreditsActivity.cs" />

@@ -155,7 +155,7 @@
                 AndroidX.AppCompat.App.AlertDialog.Builder dlErrorMessage = new AndroidX.AppCompat.App.AlertDialog.Builder(this);
 
                 dlErrorMessage.SetTitle("Error");
-                dlErrorMessage.SetMessage("Could not imports files. EXception :" + ex.Message);
+                dlErrorMessage.SetMessage("Could not imports files. Exception :" + ex.Message);
                 dlErrorMessage.SetPositiveButton("OK", (senderAlert, argus) => { });
                 dlErrorMessage.Show();
             }
@@ -233,7 +233,7 @@
                     AndroidX.AppCompat.App.AlertDialog.Builder dlErrorMessage = new AndroidX.AppCompat.App.AlertDialog.Builder(this);
 
                     dlErrorMessage.SetTitle("Error");
-                    dlErrorMessage.SetMessage("Could not delete file. EXception :" + e1.Message);
+                    dlErrorMessage.SetMessage("Could not delete file. Exception :" + e1.Message);
                     dlErrorMessage.SetPositiveButton("OK", (senderAlert, argus) => { });
                     dlErrorMessage.Show();
 

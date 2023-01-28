@@ -8,13 +8,13 @@ namespace TTtuner_2022_2
     using System.Reflection;
     using TTtuner_2022_2.Common;
 
-    internal class FileListAdapter : global::Android.Widget.ArrayAdapter<FileSystemInfo>
+    internal class FileListAdapter : global::Android.Widget.ArrayAdapter<FileInfoItem>
     {
         private readonly global::Android.Content.Context _context;
 
         internal List<FileListRowViewHolder> ListViewHolder { get; set; }
 
-        internal FileListAdapter(global::Android.Content.Context context, IList<FileSystemInfo> fsi)
+        internal FileListAdapter(global::Android.Content.Context context, IList<FileInfoItem> fsi)
             : base(context, Resource.Layout.FilePickerListItem, global::Android.Resource.Id.Text1, fsi)
         {
             _context = context;
@@ -28,7 +28,7 @@ namespace TTtuner_2022_2
         /// <param name="directoryContents"> </param>
 
    
-        internal void AddDirectoryContents(IEnumerable<FileSystemInfo> directoryContents)
+        internal void AddDirectoryContents(IEnumerable<FileInfoItem> directoryContents)
         {
             Clear();
             // Notify the _adapter that things have changed or that there is nothing 
@@ -60,7 +60,7 @@ namespace TTtuner_2022_2
        
         public override global::Android.Views.View GetView(int position, global::Android.Views.View convertView, global::Android.Views.ViewGroup parent)
         {
-            var fileSystemEntry = GetItem(position);
+            var fileInfoItem = GetItem(position);
             FileListRowViewHolder viewHolder;
             CommonFunctions comFun = new CommonFunctions();
             int resourceIdOfFileIcon;
@@ -83,11 +83,11 @@ namespace TTtuner_2022_2
                 viewHolder = (FileListRowViewHolder)row.Tag;
             }
 
-            if (fileSystemEntry.IsDirectory())
+            if (fileInfoItem.IsDirectory)
             {
                 resourceIdOfFileIcon = Resource.Drawable.folder;
             }
-            else if (comFun.GetFileNameExtension(fileSystemEntry.Name) == "WAV")
+            else if (comFun.GetFileNameExtension(fileInfoItem.Name) == "WAV")
             {
                 resourceIdOfFileIcon = Resource.Drawable.file;
             }
@@ -96,11 +96,10 @@ namespace TTtuner_2022_2
                 resourceIdOfFileIcon = Resource.Drawable.fileStat;
             }
 
-            viewHolder.Update(fileSystemEntry.Name, resourceIdOfFileIcon);
+            viewHolder.Update(fileInfoItem.Name, resourceIdOfFileIcon);
 
             return row;
 
-            return null;
         }
     }
 }

@@ -175,7 +175,7 @@ namespace TTtuner_2022_2.Common
 
                     if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
-                        m_strDataFolder = Settings.MediaStoreFolder;
+                        m_strDataFolder =  Settings.MediaStoreFolder;
                     }
 
                 }

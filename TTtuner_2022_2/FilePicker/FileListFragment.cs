@@ -73,19 +73,20 @@ namespace TTtuner_2022_2
 
         internal void CreateFileListAdapter()
         {
-       // todo: get context and pass in below
-           _adapter = new FileListAdapter(Activity, new FileSystemInfo[0]);
-           ListAdapter = _adapter;
+            // todo: get context and pass in below
+            _adapter = new FileListAdapter(Activity, new FileInfoItem[0]);
+            ListAdapter = _adapter;
         }
 
         internal void OnListItemLongClick(object listview, AdapterView.ItemLongClickEventArgs view)
         {
             string strFileName;
-            
-       // todo: fix call below
-        var fileSystemInfo = _adapter.GetItem(view.Position);
 
-            strFileName = fileSystemInfo.FullName;
+            // todo: fix call below
+            var fileInfoItem = _adapter.GetItem(view.Position);
+
+            //strFileName = fileInfoItem.FullName;
+            strFileName = fileInfoItem.FullPath;
 
             if ((view.View as LinearLayout).Background.Alpha < 150)
             {
@@ -107,7 +108,7 @@ namespace TTtuner_2022_2
         public override void OnListItemClick(ListView l, View v, int position, long id)
         {
             //todo fix call below
-            var fileSystemInfo = _adapter.GetItem(position);
+            var fileInfoItem = _adapter.GetItem(position);
             ProgressBar prg;
             View listItemView;
             bool blAtleastOneFileSelected = false;
@@ -137,10 +138,10 @@ namespace TTtuner_2022_2
                 return;
             }
 
-            if (fileSystemInfo.IsFile())
+            if (!fileInfoItem.IsDirectory)
             {
 
-                m_strFullFilename = fileSystemInfo.FullName;
+                m_strFullFilename = fileInfoItem.FullPath;
                 m_viewListItemClicked = v;
                 //set alert for executing the task
                 AndroidX.AppCompat.App.AlertDialog.Builder alert = new AndroidX.AppCompat.App.AlertDialog.Builder(v.Context, Resource.Style.MyAlertDialogStyle);
@@ -149,7 +150,7 @@ namespace TTtuner_2022_2
             else
             {
                 // Dig into this directory, and display it's contents
-                RefreshFilesList(fileSystemInfo.FullName);
+                RefreshFilesList(fileInfoItem.FullPath);
             }
 
             base.OnListItemClick(l, v, position, id);
@@ -201,14 +202,14 @@ namespace TTtuner_2022_2
             ListView.ItemLongClick -= OnListItemLongClick;
 
             ListView.RemoveAllViews();
-            ListView.Dispose();        
+            ListView.Dispose();
             ListAdapter.Dispose();
             this.Dispose();
             base.Dispose();
         }
 
 
-   
+
         public override void OnResume()
         {
             base.OnResume();
@@ -224,8 +225,10 @@ namespace TTtuner_2022_2
 
         internal void RefreshFilesList(string directory)
         {
-            IList<FileSystemInfo> visibleThings = new List<FileSystemInfo>();
+            IList<FileInfoItem> visibleThings = new List<FileInfoItem>();
             var dir = new DirectoryInfo(directory);
+
+            var list = MediaStoreHelper.GetMediaFilesInAppDirectory();
             _directory = dir;
             int i = 0;
             try
@@ -235,7 +238,7 @@ namespace TTtuner_2022_2
                     .OrderByDescending(s => s.Name))
                 {
                     i++;
-                    visibleThings.Add(item);
+                    visibleThings.Add(new FileInfoItem(item.Name, item.FullName, ViewHelpers.IsDirectory(item)));
                 }
 
                 if (i == 0)

@@ -23,6 +23,7 @@ namespace TTtuner_2022_2
         /// </summary>
         /// <param name="fsi"> </param>
         /// <returns> </returns>
+
         internal static bool IsDirectory(this FileSystemInfo fsi)
         {
             if (fsi == null || !fsi.Exists)

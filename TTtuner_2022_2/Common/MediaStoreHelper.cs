@@ -35,20 +35,11 @@ namespace TTtuner_2022_2.Common
 
             try
             {
-                var projection = new List<string>()
-                    {
-                        global::Android.Provider.MediaStore.Downloads.InterfaceConsts.Id,
-                        global::Android.Provider.MediaStore.Downloads.InterfaceConsts.DisplayName,
-                        global::Android.Provider.MediaStore.Downloads.InterfaceConsts.DateAdded,
-                        global::Android.Provider.MediaStore.Downloads.InterfaceConsts.Title,
-                        global::Android.Provider.MediaStore.Downloads.InterfaceConsts.RelativePath,
-                        global::Android.Provider.MediaStore.Downloads.InterfaceConsts.MimeType,
-                    }.ToArray();
-
                 string selection = 
                     //global::Android.Provider.MediaStore.Downloads.InterfaceConsts.MimeType + " = ? AND " +
-                    global::Android.Provider.MediaStore.Downloads.InterfaceConsts.RelativePath + " = ? AND " +
-                  global::Android.Provider.MediaStore.Downloads.InterfaceConsts.DisplayName + " = ? ";
+                    MediaStore.Downloads.InterfaceConsts.RelativePath + " = ? AND " +
+                  MediaStore.Downloads.InterfaceConsts.DisplayName + " = ? ";
+               
 
                 var selectionArgs = new List<string>()
                     {
@@ -58,13 +49,11 @@ namespace TTtuner_2022_2.Common
 
 
                 ContentResolver contentResolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
-                cursor = contentResolver.Query(global::Android.Provider.MediaStore.Downloads.ExternalContentUri, projection, selection, selectionArgs.ToArray(), null);
+                cursor = contentResolver.Query(global::Android.Provider.MediaStore.Downloads.ExternalContentUri, GetProjectionList(), selection, selectionArgs.ToArray(), null);
 
                 if (cursor != null && cursor.Count > 0)
                 {
-                    int idColumn = cursor.GetColumnIndexOrThrow(global::Android.Provider.MediaStore.Downloads.InterfaceConsts.Id);
-                    int dispNameColumn = cursor.GetColumnIndexOrThrow(global::Android.Provider.MediaStore.Downloads.InterfaceConsts.DisplayName);
-                    int relativePathCol = cursor.GetColumnIndexOrThrow(global::Android.Provider.MediaStore.Downloads.InterfaceConsts.RelativePath);
+                    var (idColumn, dispNameColumn, relativePathCol) = GetIdNameAndPathCols(cursor);
 
                     cursor.MoveToFirst();
 
@@ -102,6 +91,82 @@ namespace TTtuner_2022_2.Common
 
         }
 
+        static internal List<FileInfoItem> GetMediaFilesInAppDirectory()
+        {
+            // READ FILE from folder in Downloads
+            var documentsPath = Settings.MediaStoreFolder;
+            CommonFunctions comFunc = new CommonFunctions();
+            ICursor cursor = null;
+
+            List<FileInfoItem> fiArray = new List<FileInfoItem>();
+
+            try
+            {
+                string selection =
+                    //global::Android.Provider.MediaStore.Downloads.InterfaceConsts.MimeType + " = ? AND " +
+                    MediaStore.Downloads.InterfaceConsts.RelativePath + " = ? AND " +
+                  MediaStore.Downloads.InterfaceConsts.DisplayName + " like ? ";
+
+
+                var selectionArgs = new List<string>()
+                    {
+                        //mimeType == null? "text/plain" : mimeType,
+                    documentsPath, "%.WAV"
+                    };
+
+
+                ContentResolver contentResolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
+                cursor = contentResolver.Query(global::Android.Provider.MediaStore.Downloads.ExternalContentUri, GetProjectionList(), selection, selectionArgs.ToArray(), null);
+
+                if (cursor != null && cursor.Count > 0)
+                {
+                    var (idColumn, dispNameColumn, relativePathCol) = GetIdNameAndPathCols(cursor);
+
+                    cursor.MoveToFirst();
+
+                    do
+                    {
+                        long id = cursor.GetLong(idColumn);
+                        string displayName = cursor.GetString(dispNameColumn);
+                        string relativePath = cursor.GetString(relativePathCol);
+
+                        fiArray.Add(new FileInfoItem(displayName, relativePath));
+
+
+                    }
+                    while (cursor.MoveToNext());
+                }
+            }
+            catch (Exception e1)
+            {
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, "Cannot find files " + comFunc.TruncateStringRight(e1.Message, 35), ToastLength.Long).Show();
+                return null;
+            }
+            return fiArray;
+        }
+
+        static private (int, int, int) GetIdNameAndPathCols(ICursor cursor)
+        {
+            int idColumn = cursor.GetColumnIndexOrThrow(global::Android.Provider.MediaStore.Downloads.InterfaceConsts.Id);
+            int dispNameColumn = cursor.GetColumnIndexOrThrow(global::Android.Provider.MediaStore.Downloads.InterfaceConsts.DisplayName);
+            int relativePathCol = cursor.GetColumnIndexOrThrow(global::Android.Provider.MediaStore.Downloads.InterfaceConsts.RelativePath);
+
+            return (idColumn, dispNameColumn, relativePathCol);
+        }
+
+        static private string[] GetProjectionList()
+        {
+            return new List<string>()
+                    {
+                        MediaStore.Downloads.InterfaceConsts.Id,
+                        MediaStore.Downloads.InterfaceConsts.DisplayName,
+                        MediaStore.Downloads.InterfaceConsts.DateAdded,
+                        MediaStore.Downloads.InterfaceConsts.Title,
+                        MediaStore.Downloads.InterfaceConsts.RelativePath,
+                        MediaStore.Downloads.InterfaceConsts.MimeType,
+                    }.ToArray();
+        }
+
         static internal string GetFileText(Activity act, string filename, string mediaStoreExtension)
         {
             var uri = GetFileUri(filename, mediaStoreExtension);
@@ -134,10 +199,7 @@ namespace TTtuner_2022_2.Common
                 return null;
             }
 
-            ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
-
-           
-
+            ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;     
             return resolver.OpenInputStream(uri);           
         }
 
@@ -252,6 +314,6 @@ namespace TTtuner_2022_2.Common
             }
 
             return true;
-        }
+        }         
     }
 }
