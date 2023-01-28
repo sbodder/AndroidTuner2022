@@ -5,10 +5,10 @@
     // is used on the list adapter that lists files in a dir
     internal class FileInfoItem
     {
-        public FileInfoItem(string name, string path, bool isDirectory = false)
+        public FileInfoItem(string name, string fullPath, bool isDirectory = false)
         {
             Name = name;
-            FullPath = path;
+            FullPath = fullPath;
             IsDirectory = isDirectory;
         }
 

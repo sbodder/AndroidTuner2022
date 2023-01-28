@@ -30,6 +30,8 @@ using Android.Systems;
 using Java.Security.Cert;
 using Android.Util;
 using System.Runtime.InteropServices.ComTypes;
+using Android.Views.Inspectors;
+using static Android.Provider.ContactsContract;
 
 namespace TTtuner_2022_2.Common
 {
@@ -61,15 +63,70 @@ namespace TTtuner_2022_2.Common
                 filePath = sourcePath;
             }
 
-
             // delete the  file
             Java.IO.File fl = new Java.IO.File(filePath);
             if (fl.Exists())
             {
                 fl.Delete();
             }
-
             fl.Dispose();
+        }
+
+        static internal IList<FileInfoItem> GetStatsFileInInternalAppSpace()
+        {
+            var dir = new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal));
+            IList <FileInfoItem> files = new List<FileInfoItem>();
+
+            foreach (var item in dir.GetFileSystemInfos().Where(item =>  item.Extension.ToUpper() == ".STT").OrderByDescending(s => s.Name))
+            {
+                files.Add(new FileInfoItem(item.Name, item.FullName));
+            }
+
+            return files;
+        }
+
+        static internal IList<FileInfoItem> GetMediaFileListInDirectory(string directory)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                var list = MediaStoreHelper.GetMediaFilesInAppDirectory();
+                var list2 = GetStatsFileInInternalAppSpace();
+                // this is the only directory that will be useful to retrieve if on scoped storage
+
+                foreach (var item in list2)
+                {
+                    list.Add(item);
+                }
+                return list.OrderBy(s => s.Name).ToList(); 
+            }
+
+            //legacy
+            IList<FileInfoItem> visibleThings = new List<FileInfoItem>();
+            var dir = new DirectoryInfo(directory);
+
+            int i = 0;
+            try
+            {
+                foreach (var item in dir.GetFileSystemInfos()
+                    .Where(item => item.Extension.ToUpper() == ".WAV" || item.Extension.ToUpper() == ".STT")
+                    .OrderByDescending(s => s.Name))
+                {
+                    i++;
+                    visibleThings.Add(new FileInfoItem(item.Name, item.FullName, ViewHelpers.IsDirectory(item)));
+                }
+
+                return visibleThings;
+
+            }
+            catch (Exception ex)
+            {
+#if Debug
+                    Logger.Error("FileListFragment", "Couldn't access the directory " + _directory.FullName + "; " + ex);
+                    Toast.MakeText(Activity, "Problem retrieving contents of " + directory, ToastLength.Long).Show();
+#endif
+                throw ex;
+
+            }
 
         }
 

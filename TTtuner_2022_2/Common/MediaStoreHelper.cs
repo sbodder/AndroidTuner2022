@@ -91,14 +91,15 @@ namespace TTtuner_2022_2.Common
 
         }
 
-        static internal List<FileInfoItem> GetMediaFilesInAppDirectory()
+
+        static internal IList<FileInfoItem> GetMediaFilesInAppDirectory()
         {
             // READ FILE from folder in Downloads
             var documentsPath = Settings.MediaStoreFolder;
             CommonFunctions comFunc = new CommonFunctions();
             ICursor cursor = null;
 
-            List<FileInfoItem> fiArray = new List<FileInfoItem>();
+            IList<FileInfoItem> fiArray = new List<FileInfoItem>();
 
             try
             {
@@ -130,7 +131,7 @@ namespace TTtuner_2022_2.Common
                         string displayName = cursor.GetString(dispNameColumn);
                         string relativePath = cursor.GetString(relativePathCol);
 
-                        fiArray.Add(new FileInfoItem(displayName, relativePath));
+                        fiArray.Add(new FileInfoItem(displayName, System.IO.Path.Combine(relativePath, displayName) ));
 
 
                     }

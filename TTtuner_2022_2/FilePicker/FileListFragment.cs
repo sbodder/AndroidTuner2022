@@ -223,43 +223,20 @@ namespace TTtuner_2022_2
             RefreshFilesList(str);
         }
 
-        internal void RefreshFilesList(string directory)
+        internal void RefreshFilesList(string directory)       
         {
-            IList<FileInfoItem> visibleThings = new List<FileInfoItem>();
-            var dir = new DirectoryInfo(directory);
+            var fileList = FileHelper.GetMediaFileListInDirectory(directory);
 
-            var list = MediaStoreHelper.GetMediaFilesInAppDirectory();
-            _directory = dir;
-            int i = 0;
-            try
+            if (fileList.Count == 0)
             {
-                foreach (var item in dir.GetFileSystemInfos()
-                    .Where(item => item.Extension.ToUpper() == ".WAV" || item.Extension.ToUpper() == ".STT")
-                    .OrderByDescending(s => s.Name))
-                {
-                    i++;
-                    visibleThings.Add(new FileInfoItem(item.Name, item.FullName, ViewHelpers.IsDirectory(item)));
-                }
-
-                if (i == 0)
-                {
-                    AndroidX.AppCompat.App.AlertDialog.Builder dlMsg = new AndroidX.AppCompat.App.AlertDialog.Builder(Activity);
-                    dlMsg.SetMessage("No files Saved");
-                    dlMsg.SetPositiveButton("OK", (senderAlert, argus) => { });
-                    dlMsg.SetPositiveButton("OK", (senderAlert, argus) => { });
-                    dlMsg.Show();
-                }
+                AndroidX.AppCompat.App.AlertDialog.Builder dlMsg = new AndroidX.AppCompat.App.AlertDialog.Builder(Activity);
+                dlMsg.SetMessage("No files Saved");
+                dlMsg.SetPositiveButton("OK", (senderAlert, argus) => { });
+                dlMsg.SetPositiveButton("OK", (senderAlert, argus) => { });
+                dlMsg.Show();
             }
-            catch (Exception ex)
-            {
-#if Debug
-                    Logger.Error("FileListFragment", "Couldn't access the directory " + _directory.FullName + "; " + ex);
-                    Toast.MakeText(Activity, "Problem retrieving contents of " + directory, ToastLength.Long).Show();
-#endif
-                throw ex;
 
-            }
-            _adapter.AddDirectoryContents(visibleThings);
+            _adapter.AddDirectoryContents(fileList);
             // If we don't do this, then the ListView will not update itself when then data set 
             // in the adapter changes. It will appear to the user that nothing has happened.
             ListView.RefreshDrawableState();
