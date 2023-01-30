@@ -22,6 +22,7 @@ using TTtuner_2022_2.Plot;
 using System.Collections.ObjectModel;
 using Plugin.CurrentActivity;
 using Xamarin.Essentials;
+using static System.Net.WebRequestMethods;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("TTtunerUnitTests")]
 
@@ -158,6 +159,11 @@ namespace TTtuner_2022_2.Common
     internal class CommonFunctions
     {
         internal const string APP_NAME = "TUNE_TRACK";
+        internal const string TEXT_EXTENSION = ".txt";
+        internal const string STAT_FILE_EXTENSION = ".stt";
+        internal const string WAV_FILE_EXTENSION = ".wav";
+        internal const string DCB_FILE_EXTENSION = ".dcb";
+
 
 
         internal string TruncateStringLeft(string str, int intLength)
@@ -278,19 +284,19 @@ namespace TTtuner_2022_2.Common
 
         internal bool DoesDcbFileExistForThisFreqFile(string strTextFilePath)
         {
-            string strDecibelFilepath = GetFileNameWtihoutExtension(strTextFilePath) + ".dcb";
+            string strDecibelFilepath = GetFilePathAndNameWtihoutExtension(strTextFilePath) + CommonFunctions.DCB_FILE_EXTENSION;
             return FileHelper.CheckIfFileExists(strDecibelFilepath) ? true : false;
         }
 
         internal bool DoesWavFileExistForThisFreqFile(string strTextFilePath)
         {
-            string strWavFilepath = GetFileNameWtihoutExtension(strTextFilePath) + ".wav";
+            string strWavFilepath = GetFilePathAndNameWtihoutExtension(strTextFilePath) + CommonFunctions.WAV_FILE_EXTENSION;
             return FileHelper.CheckIfFileExists(strWavFilepath, false) ? true : false;
         }
 
         internal string GetDcbFileNameForThisFreqFile(string strTextFilePath)
         {
-            return GetFileNameWtihoutExtension(strTextFilePath) + ".dcb";
+            return GetFilePathAndNameWtihoutExtension(strTextFilePath) + CommonFunctions.DCB_FILE_EXTENSION;
         }
 
 
@@ -336,12 +342,16 @@ namespace TTtuner_2022_2.Common
         }
 
 
-        internal string GetFileNameWtihoutExtension(string path)
+        internal string GetFilePathAndNameWtihoutExtension(string path)
         {
             int intIndex = path.LastIndexOf('.');
             return path.Substring(0, intIndex);
         }
 
+        internal string GetFileNameWtihoutExtension(string path)
+        {
+            return path.Substring(path.LastIndexOf('/') + 1, path.LastIndexOf('.') - path.LastIndexOf('/') - 1);
+        }
         internal string GetFileNameExtension(string path)
         {
             int intIndex = path.LastIndexOf('.');
@@ -448,7 +458,7 @@ namespace TTtuner_2022_2.Common
             var fileName = Settings.TuningSystemsCsvFileName;
 
 
-            if (FileHelper.CheckIfFileExists( fileName, false, ".txt")) {
+            if (FileHelper.CheckIfFileExists( fileName, false, CommonFunctions.TEXT_EXTENSION)) {
                 return;
             }
            

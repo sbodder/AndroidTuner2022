@@ -361,7 +361,7 @@ namespace TTtuner_2022_2
                 }
                 rtString = editTextView.Text;
 
-                m_dataPtHelper.SaveDataPointsToFile(rtString + ".STT");
+                m_dataPtHelper.SaveDataPointsToFile(rtString + CommonFunctions.STAT_FILE_EXTENSION);
                 Toast.MakeText(this, "File saved. Access via the Archive Menu Item.", ToastLength.Long).Show();
 
             });
@@ -445,11 +445,11 @@ namespace TTtuner_2022_2
         internal void SaveAudioAndFinishActivity()
         {
             string fileNamePcm = m_strTimeStampForFileName + ".PCM";
-            string fileNameWav = m_strTimeStampForFileName + ".WAV";
+            string fileNameWav = m_strTimeStampForFileName + CommonFunctions.WAV_FILE_EXTENSION;
 
             string strPersonalPath = FileHelper.DataDirectory;
-            string strPcmInputFilepath = FileHelper.GetNewFilePath(fileNamePcm, true);
-            string strWavInputFilepath = FileHelper.GetNewFilePath(fileNameWav, false, MediaStoreHelper.MIMETYPE_WAV);
+            string strPcmInputFilepath = FileHelper.GetFilePath(fileNamePcm, true);
+            string strWavInputFilepath = FileHelper.GetFilePath(fileNameWav, false, MediaStoreHelper.MIMETYPE_WAV);
 
             if (blRecordButtonEnabled)
             {
@@ -481,9 +481,9 @@ namespace TTtuner_2022_2
             {
                 m_audioRecorder.StopRecording();
 
-                m_dataPtHelper.SaveDataPointsToFile(m_strTimeStampForFileName + ".TXT");
+                m_dataPtHelper.SaveDataPointsToFile(m_strTimeStampForFileName + CommonFunctions.TEXT_EXTENSION);
 #if Release_LogOutput
-                        Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity: txt file name is :" + m_strTimeStampForFileName + ".TXT");
+                        Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity: txt file name is :" + m_strTimeStampForFileName + CommonFunctions.TEXT_EXTENSION);
 #endif
                 m_dataPtHelper.ClearData();
 

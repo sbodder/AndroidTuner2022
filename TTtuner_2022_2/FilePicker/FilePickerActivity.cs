@@ -195,35 +195,24 @@
             {
                 try
                 {
-
                     // delete the wav file
-                    Java.IO.File fl = new Java.IO.File(strFilename);
-                    if (fl.Exists())
-                    {
-                        fl.Delete();
-                    }
 
-                    fl.Dispose();
+                    FileHelper.DeleteFile(strFilename, false);
 
                     // delete the data file
 
-                    fl = new Java.IO.File(strFilename.Substring(0, strFilename.Length - 4) + ".TXT");
-                    if (fl.Exists())
-                    {
-                        fl.Delete();
-                    }
+                    string freqFileName = strFilename.Substring(0, strFilename.Length - 4) + CommonFunctions.TEXT_EXTENSION;
 
-                    fl.Dispose();
+                    FileHelper.DeleteFile(freqFileName, true);
+
+                   
 
                     //delete dcb file
 
-                    if (comFun.DoesDcbFileExistForThisFreqFile(strFilename))
+                    if (comFun.DoesDcbFileExistForThisFreqFile(freqFileName))
                     {
-                        fl = new Java.IO.File(comFun.GetDcbFileNameForThisFreqFile(strFilename));
-                        if (fl.Exists())
-                        {
-                            fl.Delete();
-                        }
+                        FileHelper.DeleteFile(comFun.GetDcbFileNameForThisFreqFile(strFilename));
+                       
                     }
 
 
@@ -391,18 +380,18 @@
                     if (extenstion == "STT")
                     {
                         // rename stt file 
-                        strNewSttFilename = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + ".STT";
+                        strNewSttFilename = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + CommonFunctions.STAT_FILE_EXTENSION;
                         comFun.RenameFile(strFileName, strNewSttFilename);
                     }
                     else
                     {
                         // rename wav file 
-                        strNewWaveFileName = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + ".WAV";
+                        strNewWaveFileName = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + CommonFunctions.WAV_FILE_EXTENSION;
                         comFun.RenameFile(strFileName, strNewWaveFileName);
 
                         // rename data file
-                        txtFilename = strFileName.Substring(0, strFileName.Length - 4) + ".TXT";
-                        strNewDataFileName = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + ".TXT";
+                        txtFilename = strFileName.Substring(0, strFileName.Length - 4) + CommonFunctions.TEXT_EXTENSION;
+                        strNewDataFileName = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + CommonFunctions.TEXT_EXTENSION;
                         comFun.RenameFile(txtFilename, strNewDataFileName);
                     }
                     
@@ -626,20 +615,20 @@
             var intentChooser = Intent.CreateChooser(intent, "Share via");
 
             StartActivityForResult(intentChooser, 1);
-             DisplayDefaultMenu();
+            DisplayDefaultMenu();
 #endif
 
         }
 
-        private void ExportWaveFile(string file, List<IParcelable> uris)
+        private File CopyWaveFileToCacheLegacy(string file)
         {
             CommonFunctions cmFunc = new CommonFunctions();
             // FLAG_GRANT_READ_URI_PERMISSION
             // set up wave file in temp dir
-            string strFileName = file.Substring(file.LastIndexOf('/') + 1, file.LastIndexOf('.') - file.LastIndexOf('/') - 1);
+            string strFileName = cmFunc.GetFileNameWtihoutExtension(file);
             string extenstion = cmFunc.GetFileNameExtension(file);
 
-            Java.IO.File temporaryFile = Java.IO.File.CreateTempFile(strFileName + "-", ".wav", ExternalCacheDir);
+            Java.IO.File temporaryFile = Java.IO.File.CreateTempFile(strFileName + "-", CommonFunctions.WAV_FILE_EXTENSION, ExternalCacheDir);
             Java.IO.File fl1 = new Java.IO.File(file);
 
             // copy file to new location
@@ -649,11 +638,39 @@
             dest.TransferFrom(src, 0, src.Size());
             fl1.Dispose();
 
-            Java.IO.File temporaryFile2 = Java.IO.File.CreateTempFile(strFileName + "-", ".txt", ExternalCacheDir);
+            return temporaryFile;
+
+        }
+
+        private void ExportWaveFile(string file, List<IParcelable> uris)
+        {
+            File temporaryFile;
+            File internalFile;
+            CommonFunctions cmFunc = new CommonFunctions();
+            // FLAG_GRANT_READ_URI_PERMISSION
+            // set up wave file in temp dir
+            string strFileName = cmFunc.GetFileNameWtihoutExtension(file);
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                internalFile = new File(FileHelper.CopyFileFromScopedStorageToInternal(file));
+                var newFileName = cmFunc.GetFileNameWtihoutExtension(internalFile.AbsolutePath);
+                temporaryFile = Java.IO.File.CreateTempFile(newFileName + "-", CommonFunctions.WAV_FILE_EXTENSION, ExternalCacheDir);
+
+                FileHelper.CopyFile(internalFile.AbsolutePath, temporaryFile.AbsolutePath);
+
+                internalFile.DeleteOnExit();
+            }
+            else
+            {
+                temporaryFile = CopyWaveFileToCacheLegacy(file);
+            }
+
+            Java.IO.File temporaryFile2 = Java.IO.File.CreateTempFile(strFileName + "-", CommonFunctions.TEXT_EXTENSION, ExternalCacheDir);
 
             try
             {
-                string fileOutput = GetStatsText(strFileName + ".txt");
+                string fileOutput = GetStatsText(strFileName + CommonFunctions.TEXT_EXTENSION);
                 cmFunc.CopyStringToFile(fileOutput, temporaryFile2);
 
                 var statsUri = AndroidX.Core.Content.FileProvider.GetUriForFile(ApplicationContext,
@@ -678,20 +695,23 @@
 
         private void ExportStatsFile(string file, List<IParcelable>  uris)
         {
+            Context CTX = global::Android.App.Application.Context;
             CommonFunctions cmFunc = new CommonFunctions();
             string strFileName = file.Substring(file.LastIndexOf('/') + 1, file.LastIndexOf('.') - file.LastIndexOf('/') - 1);
             
             // set up Stats file in temp dir
             //strFileName = strFileName +"_data";
-            Java.IO.File temporaryFile2 = Java.IO.File.CreateTempFile(strFileName + "-", ".txt", ExternalCacheDir);
+            Java.IO.File temporaryFile2 = Java.IO.File.CreateTempFile(strFileName + "-", CommonFunctions.TEXT_EXTENSION, ExternalCacheDir);
 
             try
             {
-                string fileOutput = GetStatsText(strFileName + ".stt");
+                string fileOutput = GetStatsText(strFileName + CommonFunctions.STAT_FILE_EXTENSION);
                 cmFunc.CopyStringToFile(fileOutput, temporaryFile2);
 
-                var statsUri = AndroidX.Core.Content.FileProvider.GetUriForFile(ApplicationContext,
-                    PackageName + ".provider", temporaryFile2);
+                 //var statsUri = AndroidX.Core.Content.FileProvider.GetUriForFile(ApplicationContext,
+                 //   BuildConfig. + ".provider", temporaryFile2);
+
+                global::Android.Net.Uri statsUri = AndroidX.Core.Content.FileProvider.GetUriForFile(CTX, CTX.PackageName + ".provider", temporaryFile2);
 
                 uris.Add(statsUri);
             }
@@ -709,16 +729,15 @@
         {       
 
             DataPointHelper<Serializable_DataPoint> dataHelperFrq = DataPointCollection.Frq;
-            DataPointHelper<Serializable_DataPoint_Std> dataHelperDcb = DataPointCollection.Dcb;
+            DataPointHelper<Serializable_DataPoint_Std> dataHelperDcb =null;
             NoteStatsGenerator ntStatGen = new NoteStatsGenerator(Settings.MinNumberOfSamplesForNote);
             CommonFunctions comFun = new CommonFunctions();
             string strReturn = "";
-            bool outputDcb = false;
 
             dataHelperFrq.LoadDataPointsFromFile(filename, true);
-            if (comFun.DoesDcbFileExistForThisFreqFile(System.IO.Path.Combine(Common.Settings.DataFolder, filename)))
+            if (comFun.DoesDcbFileExistForThisFreqFile(FileHelper.GetFilePath(filename, true)))
             {
-                outputDcb = true;
+                dataHelperDcb = DataPointCollection.Dcb;
                 dataHelperDcb.LoadDataPointsFromFile(comFun.GetDcbFileNameForThisFreqFile(filename));
             }
 
@@ -732,22 +751,17 @@
             base.OnDestroy();
             m_llFiles.RemoveAllViews();
             cEventHelper.RemoveAllEventHandlers(this.FilesChanged);
-
         }
 
         private void FinishActvity()
         {
-
             Finish();
         }
 
         public override void OnBackPressed()
         {
-
             // always go back to main activity
-
             StartActivity(typeof(MainActivity));
-
         }
     }
 }

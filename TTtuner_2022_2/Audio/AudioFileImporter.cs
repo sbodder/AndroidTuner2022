@@ -205,7 +205,7 @@ namespace TTtuner_2022_2.Audio
             Common.CommonFunctions comFunc = new Common.CommonFunctions();
             int intCurPercent = 0;
             string shFilenameWithExtension = comFunc.GetFileNameFromPath(fileName);
-            string shFilenameDest = comFunc.GetFileNameWtihoutExtension(shFilenameWithExtension) + ".wav";
+            string shFilenameDest = comFunc.GetFilePathAndNameWtihoutExtension(shFilenameWithExtension) + CommonFunctions.WAV_FILE_EXTENSION;
             string strDestPath = System.IO.Path.Combine(Common.Settings.DataFolder, shFilenameDest);
             ConvertAudioFileToWave cvAudio;
 
@@ -378,7 +378,7 @@ namespace TTtuner_2022_2.Audio
 
             // save the file           
             string shFilename = comFunc.GetFileNameFromPath(strFilePath);
-            shFilename = shFilename.Substring(0, (shFilename.LastIndexOf('.'))) + ".TXT";
+            shFilename = shFilename.Substring(0, (shFilename.LastIndexOf('.'))) + CommonFunctions.TEXT_EXTENSION;
             dPandS._dpHlp.SaveDataPointsToFile(shFilename);
             
 

@@ -604,7 +604,7 @@ namespace TTtuner_2022_2.Common
             double dbVal;
 
 
-            strFileText = FileHelper.LoadText(act, Settings.TuningSystemsCsvFileName, true, ".txt");
+            strFileText = FileHelper.LoadText(act, Settings.TuningSystemsCsvFileName, true, CommonFunctions.TEXT_EXTENSION);
             var styles = NumberStyles.AllowLeadingSign | NumberStyles.AllowParentheses | NumberStyles.AllowTrailingSign | NumberStyles.Float | NumberStyles.AllowDecimalPoint;
 
             var fmt = new NumberFormatInfo();

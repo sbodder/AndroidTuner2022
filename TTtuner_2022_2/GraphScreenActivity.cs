@@ -273,7 +273,7 @@ namespace TTtuner_2022_2.Plot
 
             Factory fct = new Factory();
             strTimeStamp = m_strWavFilePath.Substring(0, m_strWavFilePath.Length - 4);
-            m_strTextFilePath = strTimeStamp + ".TXT";
+            m_strTextFilePath = strTimeStamp + CommonFunctions.TEXT_EXTENSION;
 
             m_pchPlotHelper = fct.CreatePlotHelper(this, m_strTextFilePath, m_strWavFilePath, _displayNotesGraph, _displayDecibelGraph, _graphOverlay);
 
