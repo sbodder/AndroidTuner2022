@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Database;
 using Android.Graphics;
 using Android.Provider;
@@ -22,6 +23,35 @@ namespace TTtuner_2022_2.Common
             var uri = GetFileUri(filename, mediaStoreExtension);
 
             return uri == null? false : true;
+        }
+
+        static internal long GetFileSize(string fileName, string mediaStoreExtension = "", string mimeType = null)
+        {
+            // READ FILE from folder in Downloads
+            var documentsPath = Settings.MediaStoreFolder;
+            CommonFunctions comFunc = new CommonFunctions();
+            var fn = comFunc.GetFileNameFromPath(fileName);
+            var newfilename = fn + mediaStoreExtension;
+            ICursor cursor = null;
+
+            try
+            {
+                var uri = GetFileUri(fileName);
+                AssetFileDescriptor fileDescriptor = CrossCurrentActivity.Current.AppContext.ContentResolver.OpenAssetFileDescriptor(uri, "r");
+                long fileSize = fileDescriptor.Length;
+
+                return fileSize;
+             
+            }
+            catch (Exception e1)
+            {
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, "Cannot find file " + newfilename + " : " + comFunc.TruncateStringRight(e1.Message, 35), ToastLength.Long).Show();
+
+            }
+
+            return -1;
+
+
         }
 
         static internal global::Android.Net.Uri GetFileUri(string fileName, string mediaStoreExtension = "", string mimeType = null)
@@ -121,7 +151,7 @@ namespace TTtuner_2022_2.Common
 
                 if (cursor != null && cursor.Count > 0)
                 {
-                    var (idColumn, dispNameColumn, relativePathCol) = GetIdNameAndPathCols(cursor);
+                    var (idColumn, dispNameColumn, relativePathCol, size) = GetIdNameAndPathCols(cursor);
 
                     cursor.MoveToFirst();
 
@@ -132,8 +162,6 @@ namespace TTtuner_2022_2.Common
                         string relativePath = cursor.GetString(relativePathCol);
 
                         fiArray.Add(new FileInfoItem(displayName, System.IO.Path.Combine(relativePath, displayName) ));
-
-
                     }
                     while (cursor.MoveToNext());
                 }

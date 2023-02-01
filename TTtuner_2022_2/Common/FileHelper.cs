@@ -166,6 +166,54 @@ namespace TTtuner_2022_2.Common
             fl2.Dispose();
         }
 
+
+        internal static string CopyFileUriToInternalAppStorage(global::Android.Net.Uri uri)
+        {
+
+            ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
+            var filename = GetFileNameFromUri(uri);
+            var newfilePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), filename);
+
+            using (System.IO.Stream si = resolver.OpenInputStream(uri))
+            {
+                using (System.IO.Stream os = FileHelper.OpenFileOutputStream(newfilePath))
+                {
+                    si.CopyTo(os);
+                }
+            }
+            return newfilePath;
+        }
+
+        internal static string GetFileNameFromUri(global::Android.Net.Uri uri)
+        {
+            String result = null;
+            if (uri.Scheme == "content")
+            {
+                ICursor cursor = CrossCurrentActivity.Current.AppContext.ContentResolver.Query(uri, null, null, null, null);
+                try
+                {
+                    if (cursor != null && cursor.MoveToFirst())
+                    {
+                        result = cursor.GetString(cursor.GetColumnIndex(IOpenableColumns.DisplayName));
+                    }
+                }
+                finally
+                {
+                    cursor.Close();
+                }
+            }
+            if (result == null)
+            {
+                result = uri.Path;
+                int cut = result.LastIndexOf('/');
+                if (cut != -1)
+                {
+                    result = result.Substring(cut + 1);
+                }
+            }
+            return result;
+        }
+
         internal static Stream OpenFileInputStream(string filePath, bool internalAppSpace = true, string mimetype = null)
         {
             string newfilePath;
@@ -192,7 +240,21 @@ namespace TTtuner_2022_2.Common
             return File.Open(newfilePath, FileMode.Open);
         }
 
-        internal static string CopyFileFromScopedStorageToInternal(string filePath)
+        internal static void CopyFileFromInternalStorageToScoped(string filePath)
+        {
+            CommonFunctions comF = new CommonFunctions();
+            string fileName = comF.GetFileNameFromPath(filePath);
+
+            using (Stream si = FileHelper.OpenFileInputStream(filePath))
+            {
+                using (Stream so = MediaStoreHelper.OpenFileOutputStream(fileName, -1, "audio/wav"))
+                {
+                    si.CopyTo(so);
+                }
+            }
+        }
+
+            internal static string CopyFileFromScopedStorageToInternal(string filePath)
         {
             Java.IO.File fl2;
             Stream si = null, os = null;
@@ -253,14 +315,21 @@ namespace TTtuner_2022_2.Common
             return File.Open(filePath,  append ? FileMode.Append : FileMode.Create);
         }
 
-        internal static long GetLengthOfFile(string filePath)
+        internal static long GetLengthOfFile(string filePath, bool internalAppSpace = true)
         {
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(filePath);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+                if (internalAppSpace)
+                {
+                    filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
+                }
+                else
+                {
+                    MediaStoreHelper.GetFileSize(filePath);
+                }
             }
             else
             {

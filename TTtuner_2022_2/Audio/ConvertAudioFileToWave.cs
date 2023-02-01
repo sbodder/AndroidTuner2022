@@ -15,6 +15,7 @@ using BE.Tarsos.Dsp.IO.Android;
 using BE.Tarsos.Dsp.Writer;
 using Java.IO;
 using TTtuner_2022_2.Common;
+using Javax.Security.Auth;
 
 namespace TTtuner_2022_2.Audio
 {
@@ -72,6 +73,14 @@ namespace TTtuner_2022_2.Audio
             m_intBufferSize = AudioTrack.GetMinBufferSize(targetSampleRate, ChannelOut.Mono, global::Android.Media.Encoding.Pcm16bit);
         }
 
+        private string GetProcessedInternalWaveFilePath()
+        {
+            CommonFunctions comFunc = new CommonFunctions();
+            string fileName = comFunc.GetFileNameFromPath(m_strWaveFileNameOutput);
+            string internalFilePath = FileHelper.GetFilePath(fileName, true);
+            return internalFilePath;
+        }
+
 
         public void CalculateDuration()
         {
@@ -89,10 +98,12 @@ namespace TTtuner_2022_2.Audio
         public void DoConversion()
         {
             Java.IO.RandomAccessFile fout;
+            string internalfilePath = GetProcessedInternalWaveFilePath();
 
             m_blFinished = false;
             m_ad = AudioDispatcherFactory.FromPipe(m_act, m_strFileNameInput, m_intTargetSampleRate, m_intBufferSize, 0);
-            fout = new RandomAccessFile(m_strWaveFileNameOutput, "rw");
+            // create the file in internal storage and move it later to scoped storage
+            fout = new RandomAccessFile(internalfilePath, "rw");
             m_wp = new WriterProcessor(m_ad.Format, fout);
             m_ad.AddAudioProcessor(m_wp);
 
@@ -100,9 +111,11 @@ namespace TTtuner_2022_2.Audio
             {
                 m_ad.Run();
             }).ContinueWith((encryptTask) => {
-                m_blFinished = true;
-                m_ad.Dispose();
+                m_ad.Dispose();                
                 m_ad = null;
+                FileHelper.CopyFileFromInternalStorageToScoped(internalfilePath);
+                FileHelper.DeleteFile(internalfilePath);
+                m_blFinished = true;
             });
         }
 

@@ -10,11 +10,11 @@ namespace TTtuner_2022_2.Common
     class MediaMetaFacade
     {
         
-        static public MediaMetadataRetriever GetRetriever(string strFilePath)
+        static public MediaMetadataRetriever GetRetriever(string strFilePath, bool internalAppSpace= true)
         {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if ( (Build.VERSION.SdkInt >= BuildVersionCodes.Q) && !internalAppSpace )
             {
                 //assumes the file is in external storage and the file type is wave
                 mmr.SetDataSource(CrossCurrentActivity.Current.AppContext, MediaStoreHelper.GetFileUri(strFilePath, "", MediaStoreHelper.MIMETYPE_WAV)) ;

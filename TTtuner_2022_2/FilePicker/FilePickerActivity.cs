@@ -29,6 +29,12 @@
     using global::Android.Content;
     using global::Android.Graphics;
     using Xamarin.Forms.Platform.Android;
+    using static AndroidX.Concurrent.Futures.CallbackToFutureAdapter;
+    using Plugin.CurrentActivity;
+    using global::Android.Provider;
+    using global::Android.Database;
+    using Java.Util;
+    using global::Android.Media;
 
     //using System.IO;
 
@@ -36,10 +42,20 @@
     internal class FilePickerActivity : AppCompatActivity
     {
         //private string m_strLastActivity = null;
+        const int FILE_OPEN_CODE = 100111;
+        const string OPEN_FILE_DIALOG_TAG = "Open audio import dialog";
+
+        bool _showImportFileDialog = false;
+        Intent _data = null;
 
         internal class FileSelectionListener : Java.Lang.Object, IDialogSelectionListener, global::Android.Runtime.IJavaObject, IDisposable
         {
             internal AndroidX.Fragment.App.FragmentActivity act;
+
+            internal FileSelectionListener(AndroidX.Fragment.App.FragmentActivity act)
+            {
+                this.act = act;
+            }
             public void OnSelectedFilePaths(string[] p0)
             {
                 AudioFileImporter wvImport = new AudioFileImporter();
@@ -47,14 +63,24 @@
                 var dialog = PopUpFileProgressDialog.NewInstance("Import File Progress", "Current File :", "Total :"
                                                                 , p0.Length, wvImport, (act as FilePickerActivity).UpdateFileList, act);
 
-                dialog.Show(act.GetFragmentManager(), "dialog");
-                
+                dialog.Show(act.GetFragmentManager(), OPEN_FILE_DIALOG_TAG);
+
                 Thread importThread = null;
                 importThread = new Thread(() =>
                 {
                     Looper.Prepare();
                     wvImport.ImportWaveFiles(act, p0, Common.Settings.DataFolder);
-                });
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    {
+                        // the files had to be copied to internal storage so delete them now
+                        foreach (string strFilename in p0)
+                        {
+                            FileHelper.DeleteFile(strFilename);
+                        }
+                    }
+                }
+
+                );
                 importThread.Start();
             }
         }
@@ -72,6 +98,11 @@
         internal event EventHandler<EventArgs> FilesChanged;
         private FilePickerDialog m_FileDialog;
         internal event EventHandler<EventArgs> FilesUpload;
+
+        override protected void OnSaveInstanceState(Bundle outState)
+        {
+            //No call for super(). Bug on API Level > 11.
+        }
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -99,12 +130,12 @@
             this.Window.AddFlags(WindowManagerFlags.NotTouchModal);
             // ...but notify us that it happened.
 
-              this.Window.AddFlags(WindowManagerFlags.WatchOutsideTouch);
+            this.Window.AddFlags(WindowManagerFlags.WatchOutsideTouch);
             FilesUpload += OnUpload;
 
         }
 
- 
+
 
         internal void UpdateFileList()
         {
@@ -115,15 +146,14 @@
             });
         }
 
-
-        internal async void OnUpload(object sender, EventArgs e)
+        internal async void onUploadLegacy()
         {
-            FileSelectionListener lis1 = new FileSelectionListener();
+
+            FileSelectionListener lis1 = new FileSelectionListener(this);
             // string[] strExt = { "wav","mp3", "m4a" };
-            string[] strExt = {  };
+            string[] strExt = { };
             File ExternalDir = new File(global::Android.OS.Environment.ExternalStorageDirectory.AbsolutePath);
 
-            lis1.act = this;
 
             try
             {
@@ -138,7 +168,7 @@
 
                 properties.SelectionType = DialogConfigs.FileSelect;
 
-               // properties.Extensions = strExt;
+                // properties.Extensions = strExt;
 
                 properties.Root = ExternalDir;
 
@@ -160,6 +190,68 @@
                 dlErrorMessage.Show();
             }
         }
+
+
+        internal async void OnUpload(object sender, EventArgs e)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                //var intent = new Intent(Intent.ActionOpenDocument);
+                var intent = new Intent(Intent.ActionOpenDocument);
+                intent.SetType("audio/*");
+                intent.AddCategory(Intent.CategoryOpenable);
+
+                StartActivityForResult(intent, FILE_OPEN_CODE);
+            }
+            else
+            {
+                onUploadLegacy();
+            }
+
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            switch (requestCode)
+            {
+                case FILE_OPEN_CODE:
+                    _data = data;
+                    _showImportFileDialog = true;
+                    break;
+                default:
+                    break;
+            }
+
+            base.OnActivityResult(requestCode, resultCode, data);
+        }
+
+
+
+        override protected void OnResumeFragments()
+        {
+            base.OnResumeFragments();
+
+            // play with fragments here
+            if (_showImportFileDialog)
+            {
+                _showImportFileDialog = false;
+
+                FileSelectionListener lis1 = new FileSelectionListener(this);
+                // Show only if is necessary, otherwise FragmentManager will take care
+                if (SupportFragmentManager.FindFragmentByTag(OPEN_FILE_DIALOG_TAG) == null)
+                {
+                    if (_data == null)
+                    {
+                        return;
+                    }
+                    var uri = _data.Data;
+                    var filepath = FileHelper.CopyFileUriToInternalAppStorage(uri);
+                    string[] strArr = { filepath };
+                    lis1.OnSelectedFilePaths(strArr);
+                }
+            }
+        }
+
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
@@ -196,26 +288,19 @@
                 try
                 {
                     // delete the wav file
-
                     FileHelper.DeleteFile(strFilename, false);
 
                     // delete the data file
 
                     string freqFileName = strFilename.Substring(0, strFilename.Length - 4) + CommonFunctions.TEXT_EXTENSION;
-
                     FileHelper.DeleteFile(freqFileName, true);
 
-                   
 
                     //delete dcb file
-
                     if (comFun.DoesDcbFileExistForThisFreqFile(freqFileName))
                     {
                         FileHelper.DeleteFile(comFun.GetDcbFileNameForThisFreqFile(strFilename));
-                       
                     }
-
-
                 }
                 catch (Exception e1)
                 {
@@ -231,7 +316,6 @@
 
             // refresh the file list    
             FilesChanged(this, new EventArgs());
-
             DisplayDefaultMenu();
 
         }
@@ -253,9 +337,7 @@
 
             if (item.ItemId == Resource.Id.menu_single_share || item.ItemId == Resource.Id.menu_multiple_share)
             {
-
                 ShareFiles();
-
             }
 
             if (item.ItemId == Resource.Id.menu_single_delete || item.ItemId == Resource.Id.menu_multiple_delete)
@@ -394,7 +476,7 @@
                         strNewDataFileName = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + CommonFunctions.TEXT_EXTENSION;
                         comFun.RenameFile(txtFilename, strNewDataFileName);
                     }
-                    
+
                     FilesChanged(this, new EventArgs());
                     DisplayDefaultMenu();
 
@@ -586,14 +668,14 @@
 
             string auth;
 
-//#if Trial_Version
-//           auth = "com.music.Tunetracker";
-//#else
+            //#if Trial_Version
+            //           auth = "com.music.Tunetracker";
+            //#else
             auth = "com.full.Tunetracker";
             //#endif
 
 
-            
+
             var uris = new List<IParcelable>();
             m_lstFilesSelected.ForEach(file =>
             {
@@ -605,7 +687,7 @@
                 }
                 else
                 {
-                   ExportWaveFile(file, uris);                   
+                    ExportWaveFile(file, uris);
                 }
 
             });
@@ -693,12 +775,12 @@
             }
         }
 
-        private void ExportStatsFile(string file, List<IParcelable>  uris)
+        private void ExportStatsFile(string file, List<IParcelable> uris)
         {
             Context CTX = global::Android.App.Application.Context;
             CommonFunctions cmFunc = new CommonFunctions();
             string strFileName = file.Substring(file.LastIndexOf('/') + 1, file.LastIndexOf('.') - file.LastIndexOf('/') - 1);
-            
+
             // set up Stats file in temp dir
             //strFileName = strFileName +"_data";
             Java.IO.File temporaryFile2 = Java.IO.File.CreateTempFile(strFileName + "-", CommonFunctions.TEXT_EXTENSION, ExternalCacheDir);
@@ -708,8 +790,8 @@
                 string fileOutput = GetStatsText(strFileName + CommonFunctions.STAT_FILE_EXTENSION);
                 cmFunc.CopyStringToFile(fileOutput, temporaryFile2);
 
-                 //var statsUri = AndroidX.Core.Content.FileProvider.GetUriForFile(ApplicationContext,
-                 //   BuildConfig. + ".provider", temporaryFile2);
+                //var statsUri = AndroidX.Core.Content.FileProvider.GetUriForFile(ApplicationContext,
+                //   BuildConfig. + ".provider", temporaryFile2);
 
                 global::Android.Net.Uri statsUri = AndroidX.Core.Content.FileProvider.GetUriForFile(CTX, CTX.PackageName + ".provider", temporaryFile2);
 
@@ -726,11 +808,11 @@
         }
 
         private string GetStatsText(string filename)
-        {       
+        {
 
             DataPointHelper<Serializable_DataPoint> dataHelperFrq = DataPointCollection.Frq;
-            DataPointHelper<Serializable_DataPoint_Std> dataHelperDcb =null;
-            NoteStatsGenerator ntStatGen = new NoteStatsGenerator(Settings.MinNumberOfSamplesForNote);
+            DataPointHelper<Serializable_DataPoint_Std> dataHelperDcb = null;
+            NoteStatsGenerator ntStatGen = new NoteStatsGenerator(Common.Settings.MinNumberOfSamplesForNote);
             CommonFunctions comFun = new CommonFunctions();
             string strReturn = "";
 
