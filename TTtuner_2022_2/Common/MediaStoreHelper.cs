@@ -151,7 +151,7 @@ namespace TTtuner_2022_2.Common
 
                 if (cursor != null && cursor.Count > 0)
                 {
-                    var (idColumn, dispNameColumn, relativePathCol, size) = GetIdNameAndPathCols(cursor);
+                    var (idColumn, dispNameColumn, relativePathCol) = GetIdNameAndPathCols(cursor);
 
                     cursor.MoveToFirst();
 

@@ -25,7 +25,7 @@ namespace TTtuner_2022_2.Audio
         const int FILE_GENERATION_PROGESS_PERCENT_INCREMENTS = 3;
 
         private int m_numFiles;
-        
+
         internal event EventHandler<FileProgressArgs> FileProgress;
 
         internal class FileProgressArgs : EventArgs
@@ -71,7 +71,7 @@ namespace TTtuner_2022_2.Audio
             // be passed into the fuction so you can mod an iterator count
             // to know when to read the data. Ie a value of 2 means that the 
             // data will be read only every second time of the iterator
-            internal int _samplingFreqDivBy; 
+            internal int _samplingFreqDivBy;
             internal string unit;
             internal DataProcessorAndStore(AudioDataProcessorDelegate pFunc, IDataPointHelper dtHelper, int sampleFreqDivBy, string strUnit)
             {
@@ -106,7 +106,7 @@ namespace TTtuner_2022_2.Audio
 
                 string path = System.IO.Path.Combine(Common.Settings.DataFolder, fileNAme);
 
-                if (FileHelper.CheckIfFileExists( path, false, String.Empty))
+                if (FileHelper.CheckIfFileExists(path, false, String.Empty))
                 {
                     dlMessage = new AndroidX.AppCompat.App.AlertDialog.Builder(act);
 
@@ -164,7 +164,7 @@ namespace TTtuner_2022_2.Audio
             DSP.Decibel db = new DSP.Decibel();
             int SAMPLES = Common.Settings.NumberOfSamplesInBuffer;
             DataPointHelper<Serializable_DataPoint_Std> dpHlp = DataPointCollection.Dcb;
-            int  samplingFreq;
+            int samplingFreq;
             long lgLength = Common.FileHelper.GetLengthOfFile(strWaveFilePath);
             Common.CommonFunctions comFunc = new Common.CommonFunctions();
 
@@ -175,7 +175,7 @@ namespace TTtuner_2022_2.Audio
                                            1, "dB");
 
             // find out how many samples we need per sec
-            samplingFreq = Common.Settings.PitchSamplingFrequencyInt; 
+            samplingFreq = Common.Settings.PitchSamplingFrequencyInt;
 
             ProcessWaveFileWithAudioFunctionsAndStore(strWaveFilePath, new List<DataProcessorAndStore> { dPandS },
                                                        samplingFreq,
@@ -234,19 +234,19 @@ namespace TTtuner_2022_2.Audio
                 throw new Exception("Error Importing " + fileName + " - " + e.Message);
             }
             return true;
-        }     
+        }
 
- 
+
         private void ProcessWaveFileWithAudioFunctionsAndStore(string strFilePath, List<DataProcessorAndStore> lstDataGnStore,
                                                                 int samplingFreq, int bufferSize, int indexOfFile)
         {
             // this function will also call the fileprogress event handlers (this is why indexoffile was passsed in)
-            DataPointHelper<Serializable_DataPoint> dpHlp = DataPointCollection.Frq; 
+            DataPointHelper<Serializable_DataPoint> dpHlp = DataPointCollection.Frq;
             int sampleRate, samplePeriodBytes;
             int startIndexBytes, indexBytes, intNumChunks, intCurrentPercentTime, intPerctTime = 0;
             Int16 intVal;
             short[] sBuffer = new short[bufferSize];
-            long lgLength = Common.FileHelper.GetLengthOfFile(strFilePath);
+            long lgLength = Common.FileHelper.GetLengthOfFile(strFilePath, false);
             const int CHUNK_SIZE = 1048576;  // 1MB
             double dbTotalTime, dbTime;
             int bytesPerSecondInAudioFile;
@@ -254,11 +254,11 @@ namespace TTtuner_2022_2.Audio
 
             samplePeriodBytes = (int)(bytesPerSecondInAudioFile / samplingFreq);
 
-            dbTotalTime = lgLength / (double) bytesPerSecondInAudioFile;
+            dbTotalTime = lgLength / (double)bytesPerSecondInAudioFile;
 
             intNumChunks = 0;
             foreach (byte[] rawData in GetDataChunkFromWaveFile(strFilePath, CHUNK_SIZE))
-            {                
+            {
                 startIndexBytes = 0;
                 while (startIndexBytes + (sBuffer.Length * 2) + 2 < rawData.Length)
                 {
@@ -294,7 +294,7 @@ namespace TTtuner_2022_2.Audio
                 double? calc = dp._pFuncAudioProcessor(sBuffer);
                 if (calc != null)
                 {
-                    dp._dpHlp.AddDataPointToCollection(time, (double) calc);
+                    dp._dpHlp.AddDataPointToCollection(time, (double)calc);
                 }
             }
         }
@@ -305,8 +305,8 @@ namespace TTtuner_2022_2.Audio
             Stream si;
             byte[] headerData = new byte[(int)WAVE_HEADER_SIZE_BYTES];
             byte[] rawData;
-            long lgLength = Common.FileHelper.GetLengthOfFile(strFilePath);
-            int totalBytesRead = 0, bytesleftToRead ;
+            long lgLength = Common.FileHelper.GetLengthOfFile(strFilePath, false);
+            int totalBytesRead = 0, bytesleftToRead;
 
             try
             {
@@ -318,7 +318,7 @@ namespace TTtuner_2022_2.Audio
 
                 while ((lgLength - totalBytesRead) > 0)
                 {
-                    bytesleftToRead = (int) lgLength - totalBytesRead;
+                    bytesleftToRead = (int)lgLength - totalBytesRead;
                     if (bytesleftToRead >= intChunkSize)
                     {
                         totalBytesRead += input.Read(rawData, 0, (int)intChunkSize);
@@ -330,7 +330,7 @@ namespace TTtuner_2022_2.Audio
                         totalBytesRead += input.Read(rawData, 0, (int)bytesleftToRead);
                     }
                     yield return rawData;
-                }  
+                }
             }
             finally
             {
@@ -348,9 +348,9 @@ namespace TTtuner_2022_2.Audio
             DSP.MPM m_dspLib;
             int sampleRate;
             int SAMPLES = Common.Settings.NumberOfSamplesInBuffer;
-            DataPointHelper<Serializable_DataPoint> dpHlp = DataPointCollection.Frq; 
-            long lgLength = Common.FileHelper.GetLengthOfFile(strFilePath);
-          
+            DataPointHelper<Serializable_DataPoint> dpHlp = DataPointCollection.Frq;
+            long lgLength = Common.FileHelper.GetLengthOfFile(strFilePath, false);
+
             (_, _, _, sampleRate, _) = ReadWavParameters(strFilePath);
 
             m_dspLib = new DSP.MPM(sampleRate, SAMPLES, 0.93f);
@@ -380,7 +380,7 @@ namespace TTtuner_2022_2.Audio
             string shFilename = comFunc.GetFileNameFromPath(strFilePath);
             shFilename = shFilename.Substring(0, (shFilename.LastIndexOf('.'))) + CommonFunctions.TEXT_EXTENSION;
             dPandS._dpHlp.SaveDataPointsToFile(shFilename);
-            
+
 
             if (indexOfFile == m_numFiles - 1)
             {
@@ -390,7 +390,7 @@ namespace TTtuner_2022_2.Audio
             }
         }
 
-       
+
 
         private void StereoToMono(byte[] rawData, byte[] newData, short numChannels, int indexOfFile)
         {
