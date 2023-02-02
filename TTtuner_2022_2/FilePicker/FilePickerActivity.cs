@@ -196,10 +196,10 @@
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                //var intent = new Intent(Intent.ActionOpenDocument);
                 var intent = new Intent(Intent.ActionOpenDocument);
                 intent.SetType("audio/*");
                 intent.AddCategory(Intent.CategoryOpenable);
+                intent.PutExtra(Intent.ExtraAllowMultiple, true);
 
                 StartActivityForResult(intent, FILE_OPEN_CODE);
             }
@@ -240,14 +240,32 @@
                 // Show only if is necessary, otherwise FragmentManager will take care
                 if (SupportFragmentManager.FindFragmentByTag(OPEN_FILE_DIALOG_TAG) == null)
                 {
-                    if (_data == null)
+                    List<string> strArr = new List<string>();
+                    if (_data == null )
                     {
                         return;
                     }
-                    var uri = _data.Data;
-                    var filepath = FileHelper.CopyFileUriToInternalAppStorage(uri);
-                    string[] strArr = { filepath };
-                    lis1.OnSelectedFilePaths(strArr);
+                    if (_data.Data != null)
+                    {
+                        // single file selected
+                        var uri = _data.Data;
+                        var filepath = FileHelper.CopyFileUriToInternalAppStorage(uri);
+                        strArr.Add(filepath);
+                    }
+                    else if (_data.ClipData != null)
+                    {
+                        // multiple files selected
+                        for (int i = 0; i < _data.ClipData.ItemCount; i++)
+                        {
+                            strArr.Add(FileHelper.CopyFileUriToInternalAppStorage(_data.ClipData.GetItemAt(i).Uri));
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }                   
+                    
+                    lis1.OnSelectedFilePaths(strArr.ToArray());
                 }
             }
         }
