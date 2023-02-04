@@ -18,6 +18,7 @@ using TTtuner_2022_2.Music;
 using Java.Util;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace TTtuner_2022_2.Plot
 {
@@ -181,9 +182,18 @@ namespace TTtuner_2022_2.Plot
 
                 using (System.IO.Stream stream = FileHelper.OpenFileInputStream(strFilePath))
                 {
-                    var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                    //var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
-                    lsDp = (List<T>)bformatter.Deserialize(stream);
+                    BinaryFormatter bf = new BinaryFormatter();
+
+                    // deserialize
+
+                    bf.Binder = new BindChanger();
+
+                    // deserialize
+                    lsDp = (List<T>)bf.Deserialize(stream);
+
+                    //lsDp = (List<T>)bformatter.Deserialize(stream);
 
 #if DEBUG
                     Logger.Info(Common.CommonFunctions.APP_NAME, "////////////////////////////////DATA POINTS SPIT OUT/////////////////////////////////////////");
@@ -208,6 +218,24 @@ namespace TTtuner_2022_2.Plot
                 throw new Exception("Exception when opeing the text file : " + e1.Message);
             }
 
+        }
+    }
+
+    class BindChanger : System.Runtime.Serialization.SerializationBinder
+    {
+        public override Type BindToType(string assemblyName, string typeName)
+        { 
+            // Get the current assembly
+            string currentAssembly = Assembly.GetExecutingAssembly().FullName;
+
+            var newType = typeName.Replace("TuneTracker", "TTtuner_2022_2");
+
+            // Create the new type and return it
+            //typeToDeserialize = Type.GetType(string.Format("{0}, {1}", newType, currentAssembly));
+
+            var typeToDeserialize = Type.GetType(newType);
+
+            return typeToDeserialize;
         }
     }
 }

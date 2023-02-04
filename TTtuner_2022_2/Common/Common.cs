@@ -355,7 +355,7 @@ namespace TTtuner_2022_2.Common
         internal string GetFileNameExtension(string path)
         {
             int intIndex = path.LastIndexOf('.');
-            return path.Substring(intIndex + 1, 3).ToUpper(); ;
+            return path.Substring(intIndex + 1, 3).ToUpper();
         }
 
         internal void SetupXmlSettingsFile(Activity act)

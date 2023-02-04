@@ -129,7 +129,7 @@
                 android:textColor="#FFFFFF"
                 android:layout_marginTop="10dip"
 				android:layout_marginBottom="10dip"
-                android:text="The Pitch Sampling Frequency determines the rate at whcih the pitch is sampled on the audio recorded. Please reduce if the audio and graph are out of synch during playback." />
+                android:text="The Pitch Sampling Frequency determines the rate at which the pitch is sampled on the audio recorded. Please reduce if the audio and graph are out of synch during playback." />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

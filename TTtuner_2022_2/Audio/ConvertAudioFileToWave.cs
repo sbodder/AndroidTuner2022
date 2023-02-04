@@ -37,7 +37,7 @@ namespace TTtuner_2022_2.Audio
         {
             get
             {
-                return (float) m_dbDurationInSeconds;
+                return (float)m_dbDurationInSeconds;
             }
         }
 
@@ -48,7 +48,7 @@ namespace TTtuner_2022_2.Audio
             {
                 if (m_ad != null && !m_ad.IsStopped)
                 {
-                    m_dbElapsedTime = m_ad.SecondsProcessed();                  
+                    m_dbElapsedTime = m_ad.SecondsProcessed();
                 }
                 return m_dbElapsedTime;
             }
@@ -64,7 +64,7 @@ namespace TTtuner_2022_2.Audio
 
 
         internal ConvertAudioFileToWave(Activity act, int targetSampleRate, short nChannels, string strFileNameInput, string strWaveFileNameOutput)
-        {    
+        {
             m_strFileNameInput = strFileNameInput;
             m_intTargetSampleRate = targetSampleRate;
             m_strWaveFileNameOutput = strWaveFileNameOutput;
@@ -97,6 +97,11 @@ namespace TTtuner_2022_2.Audio
 
         public void DoConversion()
         {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+            {
+                DoConversionLegacy();
+                return;
+            }
             Java.IO.RandomAccessFile fout;
             string internalfilePath = GetProcessedInternalWaveFilePath();
 
@@ -110,12 +115,34 @@ namespace TTtuner_2022_2.Audio
             Task.Run(() =>
             {
                 m_ad.Run();
-            }).ContinueWith((encryptTask) => {
-                m_ad.Dispose();                
+            }).ContinueWith((encryptTask) =>
+            {
+                m_ad.Dispose();
                 m_ad = null;
                 FileHelper.CopyFileFromInternalStorageToScoped(internalfilePath);
                 FileHelper.DeleteFile(internalfilePath);
                 m_blFinished = true;
+            });
+        }
+
+        private void DoConversionLegacy()
+        {
+            Java.IO.RandomAccessFile fout;
+
+            m_blFinished = false;
+            m_ad = AudioDispatcherFactory.FromPipe(m_act, m_strFileNameInput, m_intTargetSampleRate, m_intBufferSize, 0);
+            fout = new RandomAccessFile(m_strWaveFileNameOutput, "rw");
+            m_wp = new WriterProcessor(m_ad.Format, fout);
+            m_ad.AddAudioProcessor(m_wp);
+
+            Task.Run(() =>
+            {
+                m_ad.Run();
+            }).ContinueWith((encryptTask) =>
+            {
+                m_blFinished = true;
+                m_ad.Dispose();
+                m_ad = null;
             });
         }
 

@@ -78,7 +78,7 @@ namespace TTtuner_2022_2.Common
             var dir = new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal));
             IList <FileInfoItem> files = new List<FileInfoItem>();
 
-            foreach (var item in dir.GetFileSystemInfos().Where(item =>  item.Extension.ToUpper() == CommonFunctions.STAT_FILE_EXTENSION).OrderByDescending(s => s.Name))
+            foreach (var item in dir.GetFileSystemInfos().Where(item =>  item.Extension.ToLower() == CommonFunctions.STAT_FILE_EXTENSION).OrderByDescending(s => s.Name))
             {
                 files.Add(new FileInfoItem(item.Name, item.FullName));
             }
@@ -106,10 +106,12 @@ namespace TTtuner_2022_2.Common
             var dir = new DirectoryInfo(directory);
 
             int i = 0;
+
+            var items = dir.GetFileSystemInfos();
             try
             {
                 foreach (var item in dir.GetFileSystemInfos()
-                    .Where(item => item.Extension.ToUpper() == CommonFunctions.WAV_FILE_EXTENSION || item.Extension.ToUpper() == CommonFunctions.STAT_FILE_EXTENSION)
+                    .Where(item => item.Extension.ToLower() == CommonFunctions.WAV_FILE_EXTENSION || item.Extension.ToLower() == CommonFunctions.STAT_FILE_EXTENSION)
                     .OrderByDescending(s => s.Name))
                 {
                     i++;
