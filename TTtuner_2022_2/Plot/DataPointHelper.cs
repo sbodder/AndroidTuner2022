@@ -182,18 +182,13 @@ namespace TTtuner_2022_2.Plot
 
                 using (System.IO.Stream stream = FileHelper.OpenFileInputStream(strFilePath))
                 {
-                    //var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
                     BinaryFormatter bf = new BinaryFormatter();
 
                     // deserialize
 
                     bf.Binder = new BindChanger();
-
-                    // deserialize
                     lsDp = (List<T>)bf.Deserialize(stream);
-
-                    //lsDp = (List<T>)bformatter.Deserialize(stream);
 
 #if DEBUG
                     Logger.Info(Common.CommonFunctions.APP_NAME, "////////////////////////////////DATA POINTS SPIT OUT/////////////////////////////////////////");
