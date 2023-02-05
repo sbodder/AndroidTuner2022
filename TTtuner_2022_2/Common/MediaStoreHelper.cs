@@ -20,9 +20,12 @@ namespace TTtuner_2022_2.Common
         public const string MIMETYPE_WAV = "audio/wav";
         static internal bool CheckIfFileExists(string filename, string mediaStoreExtension)
         {
-            var uri = GetFileUri(filename, mediaStoreExtension);
 
-            return uri == null? false : true;
+            var uri = CreateFileUri(filename + mediaStoreExtension, -1);
+
+            string newFilename = GetFileNameOfUri(uri);
+
+            return newFilename != filename;
         }
 
         static internal long GetFileSize(string fileName, string mediaStoreExtension = "", string mimeType = null)
@@ -248,6 +251,13 @@ namespace TTtuner_2022_2.Common
         {
             var uri = CreateFileUri(filename, lengthInBytes, mimeType);
 
+            var urlFileName = GetFileNameOfUri(uri);
+
+            if (urlFileName != filename)
+            {
+                throw new Exception("File already exists in the folder, please move/remove and try again");
+            }
+
             if (uri == null)
             {
                 return null;
@@ -258,6 +268,37 @@ namespace TTtuner_2022_2.Common
             var os =  openMode == string.Empty ? resolver.OpenOutputStream(uri) : resolver.OpenOutputStream(uri, openMode);
 
             return os;
+        }
+
+        static public string GetFileNameOfUri(global::Android.Net.Uri uri)
+        {
+            String result = null;
+            if (uri.Scheme =="content")
+            {
+                ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
+                var cursor = resolver.Query(uri, null, null, null, null);
+                try
+                {
+                    if (cursor != null && cursor.MoveToFirst())
+                    {
+                        result = cursor.GetString(cursor.GetColumnIndex(OpenableColumns.DisplayName));
+                    }
+                }
+                finally
+                {
+                    cursor.Close();
+                }
+            }
+            if (result == null)
+            {
+                result = uri.Path;
+                int cut = result.LastIndexOf('/');
+                if (cut != -1)
+                {
+                    result = result.Substring(cut + 1);
+                }
+            }
+            return result;
         }
 
 

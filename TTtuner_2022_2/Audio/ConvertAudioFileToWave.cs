@@ -31,6 +31,7 @@ namespace TTtuner_2022_2.Audio
         private int m_intBufferSize;
         private string m_strWaveFileNameOutput;
         private bool m_blFinished;
+        private string m_exceptionMessage;
         Activity m_act;
 
         public float DurationInSeconds
@@ -59,6 +60,14 @@ namespace TTtuner_2022_2.Audio
             get
             {
                 return m_blFinished;
+            }
+        }
+
+        public string ExceptionMessage
+        {
+            get
+            {
+                return m_exceptionMessage;
             }
         }
 
@@ -104,6 +113,7 @@ namespace TTtuner_2022_2.Audio
             }
             Java.IO.RandomAccessFile fout;
             string internalfilePath = GetProcessedInternalWaveFilePath();
+            string exceptionMessage = null;
 
             m_blFinished = false;
             m_ad = AudioDispatcherFactory.FromPipe(m_act, m_strFileNameInput, m_intTargetSampleRate, m_intBufferSize, 0);
@@ -117,13 +127,23 @@ namespace TTtuner_2022_2.Audio
                 m_ad.Run();
             }).ContinueWith((encryptTask) =>
             {
-                m_ad.Dispose();
-                m_ad = null;
-                FileHelper.CopyFileFromInternalStorageToScoped(internalfilePath);
-                FileHelper.DeleteFile(internalfilePath);
-                m_blFinished = true;
+                try
+                {
+                    m_ad.Dispose();
+                    m_ad = null;
+                    FileHelper.CopyFileFromInternalStorageToScoped(internalfilePath);
+                    FileHelper.DeleteFile(internalfilePath);
+                    m_blFinished = true;
+                }
+                catch (Exception e)
+                {
+                    m_exceptionMessage = e.Message;
+                    m_blFinished = true;
+                }
             });
+
         }
+
 
         private void DoConversionLegacy()
         {

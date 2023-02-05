@@ -225,6 +225,12 @@ namespace TTtuner_2022_2.Audio
                     FileProgress?.Invoke(this, fp);
                     Thread.Sleep(500);
                 }
+
+                if (cvAudio.ExceptionMessage != null)
+                {
+                    throw new Exception(cvAudio.ExceptionMessage);
+                }
+            
                 // now generate the freq text file
 
                 GenerateFrequencyTextFile(strDestPath, indexOfFile);
