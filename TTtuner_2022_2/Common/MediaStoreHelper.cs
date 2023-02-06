@@ -18,14 +18,20 @@ namespace TTtuner_2022_2.Common
     internal static class MediaStoreHelper
     {
         public const string MIMETYPE_WAV = "audio/wav";
-        static internal bool CheckIfFileExists(string filename, string mediaStoreExtension)
+        static internal bool CheckIfFileExists(string filename, string mediaStoreExtension = "")
         {
 
             var uri = CreateFileUri(filename + mediaStoreExtension, -1);
 
+            if (uri == null)
+            {
+                return false;
+            }
+
+
             string newFilename = GetFileNameOfUri(uri);
 
-            return newFilename != filename;
+            return newFilename != filename + mediaStoreExtension;
         }
 
         static internal long GetFileSize(string fileName, string mediaStoreExtension = "", string mimeType = null)
