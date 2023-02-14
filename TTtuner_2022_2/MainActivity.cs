@@ -31,10 +31,15 @@ using System.Threading.Tasks;
 using System.Threading;
 using Android.Graphics;
 using Android.Media;
+using Android.OS.Storage;
+using Android.Util;
+using System.IO;
+using Path = System.IO.Path;
+using BE.Tarsos.Dsp.Mfcc;
 
 namespace TTtuner_2022_2
 {
-    [Activity(Label = "TTtuner",  Icon = "@drawable/icon", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Activity(Label = "TTtuner", Icon = "@drawable/icon", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
     {
         private int LED_NOTIFICATION_ID = 0; //arbitrary constant   
@@ -76,40 +81,49 @@ namespace TTtuner_2022_2
 
         protected override void OnCreate(Bundle bundle)
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NzQwNjc3QDMyMzAyZTMzMmUzMGlONnlkYXFuNlF5TUpOVk40RE1xRmhYWlljeVIxVzZHY0d2eldWdWozZEU9");
-            base.OnCreate(bundle);
-            CommonFunctions comFunc = new CommonFunctions();
-
-
-
-
-            //Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
-            //Crashlytics.Crashlytics.HandleManagedExceptions();
-
-            //prevent app from sleeping on the main screen
-            this.Window.SetFlags(WindowManagerFlags.KeepScreenOn, WindowManagerFlags.KeepScreenOn);
-
-            RequestPermissions();
-            DataPointCollection.ClearAllDataPoints();
-            SetContentView(Resource.Layout.Main);
-
-            // set up string resources
-
-            Common.StringResourceHelper.ScalesArrayResource_Get(this);
-            Common.StringResourceHelper.TransposeArrayResource_Get(this);
-
-            SetupButtons();
-
-            var toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.toolbar1);
-            SetSupportActionBar(toolbar);
-            SupportActionBar.Title = "TTtuner";
-
-            if (m_blPermissionsOK)
+            try
             {
-                DoPostPermissionGrantSetup();
+                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NzQwNjc3QDMyMzAyZTMzMmUzMGlONnlkYXFuNlF5TUpOVk40RE1xRmhYWlljeVIxVzZHY0d2eldWdWozZEU9");
+                base.OnCreate(bundle);
+                CommonFunctions comFunc = new CommonFunctions();
+
+
+
+
+                //Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
+                //Crashlytics.Crashlytics.HandleManagedExceptions();
+
+                //prevent app from sleeping on the main screen
+                this.Window.SetFlags(WindowManagerFlags.KeepScreenOn, WindowManagerFlags.KeepScreenOn);
+
+                RequestPermissions();
+
+                DataPointCollection.ClearAllDataPoints();
+                SetContentView(Resource.Layout.Main);
+
+                // set up string resources
+
+                Common.StringResourceHelper.ScalesArrayResource_Get(this);
+                Common.StringResourceHelper.TransposeArrayResource_Get(this);
+
+                SetupButtons();
+
+                var toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.toolbar1);
+                SetSupportActionBar(toolbar);
+                SupportActionBar.Title = "TTtuner";
+
+                if (m_blPermissionsOK)
+                {
+                    DoPostPermissionGrantSetup();
 #if Release_LogOutput
                 SetupLogFile();
 #endif
+                }
+            }
+            catch (Exception e)
+            {
+                Toast.MakeText(this, "Exception : " + e.Message, ToastLength.Long).Show();
+                return;
             }
         }
 
@@ -131,7 +145,7 @@ namespace TTtuner_2022_2
         private bool AllFragementsAreSetup()
         {
             return (_tunerFrag.SetupComplete && _statsFrag.SetupComplete && _scatterFrag.SetupComplete && _gaugeFrag.SetupComplete);
-           // return (_tunerFrag.SetupComplete && _statsFrag.SetupComplete );
+            // return (_tunerFrag.SetupComplete && _statsFrag.SetupComplete );
         }
 
         private void SetupScatterPlotFragment()
@@ -197,7 +211,7 @@ namespace TTtuner_2022_2
         private void RequestPermissions()
         {
 
-            if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 if (AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.Internet) == (int)Permission.Granted
           && AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.RecordAudio) == (int)Permission.Granted)
@@ -231,6 +245,8 @@ namespace TTtuner_2022_2
                 }
             }
         }
+
+   
 
         public void OnPageSelected(object sender, AndroidX.ViewPager.Widget.ViewPager.PageSelectedEventArgs e)
         {
@@ -271,7 +287,7 @@ namespace TTtuner_2022_2
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
 #if Release_LogOutput
-                     MenuInflater.Inflate(Resource.Menu.top_menus_log_output, menu);
+            MenuInflater.Inflate(Resource.Menu.top_menus_log_output, menu);
 #else
 
             MenuInflater.Inflate(Resource.Menu.top_menus, menu);
@@ -325,7 +341,7 @@ namespace TTtuner_2022_2
             return base.OnOptionsItemSelected(item);
         }
 
-      
+
 
         private void ContinueCollectionStats(bool blContinue)
         {
@@ -460,7 +476,7 @@ namespace TTtuner_2022_2
 
             blRecordButtonEnabled = !blRecordButtonEnabled;
 #if Release_LogOutput
-                    Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity....");
+            Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity....");
 #endif
 
             if (m_dataPtHelper.DataPoints.Count <= 10)
@@ -483,7 +499,7 @@ namespace TTtuner_2022_2
 
                 m_dataPtHelper.SaveDataPointsToFile(m_strTimeStampForFileName + CommonFunctions.TEXT_EXTENSION);
 #if Release_LogOutput
-                        Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity: txt file name is :" + m_strTimeStampForFileName + CommonFunctions.TEXT_EXTENSION);
+                Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity: txt file name is :" + m_strTimeStampForFileName + CommonFunctions.TEXT_EXTENSION);
 #endif
                 m_dataPtHelper.ClearData();
 
@@ -496,7 +512,7 @@ namespace TTtuner_2022_2
 
                 ConvertPcmToWave wv = new ConvertPcmToWave(m_audioRecorder.SampleRate, 1, strPcmInputFilepath, strWavInputFilepath);
 #if Release_LogOutput
-                        Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity: wave file name is :" + strWavInputFilepath );
+                Logger.Info(Common.CommonFunctions.APP_NAME, "In OnStopButtonClick in main activity: wave file name is :" + strWavInputFilepath);
 #endif
                 string[] stringArr = { strWavInputFilepath , Common.Settings.DisplayNotesGraph.ToString(),
                                             Common.Settings.DisplayDecibelGraph.ToString() ,

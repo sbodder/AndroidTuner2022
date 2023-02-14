@@ -106,7 +106,7 @@ namespace TTtuner_2022_2.Audio
 
         public void DoConversion()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.R)
             {
                 DoConversionLegacy();
                 return;

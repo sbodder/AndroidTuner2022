@@ -261,7 +261,9 @@ namespace TTtuner_2022_2.Common
 
             if (urlFileName != filename)
             {
-                throw new Exception("File already exists in the folder, please move/remove and try again");
+
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, "File" + filename + "already exists in the folder, please move/remove and try again", ToastLength.Long).Show();
+                return null;
             }
 
             if (uri == null)

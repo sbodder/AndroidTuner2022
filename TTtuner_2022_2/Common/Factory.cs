@@ -326,7 +326,7 @@ namespace TTtuner_2022_2.Common
             IAudioPlayer audPlay;
             bool deleteFileOnExit = false;
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 // becasue of scoped storage we need to copy the file to internal storage and delete when the object is destroyed
                 strWavFilePath = FileHelper.CopyFileFromScopedStorageToInternal(strWavFilePath);

@@ -83,7 +83,7 @@ namespace TTtuner_2022_2.Audio
         internal ConvertPcmToWave(int sampleRate, short nChannels, string strPcmFileNameInput, string strWaveFileNameOutput)
         {
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 ConvertPcmToWaveApi29Plus(sampleRate, nChannels, strPcmFileNameInput, strWaveFileNameOutput);
             }

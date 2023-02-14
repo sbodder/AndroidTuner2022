@@ -22,7 +22,7 @@ namespace TTtuner_2022_2.Common
             {
                 string path;
 
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
                 {
                     path = Settings.MediaStoreFolder;
  
@@ -43,12 +43,8 @@ namespace TTtuner_2022_2.Common
 
             if (!WriteToLogcatOnly)
             {
-                //using (System.IO.StreamWriter writer = new System.IO.StreamWriter(LOG_FILE_PATH, true))
-                //{
-                //    writer.WriteLine(DateTime.Now.ToString("hh.mm.ss.fff") + " : " + logText);
-                //}
+                
                 builder.Append(DateTime.Now.ToString("hh.mm.ss.fff") + " : " + logText + "\n");
-
             }
         }
 
@@ -58,13 +54,15 @@ namespace TTtuner_2022_2.Common
             {
                 string strToWrite = "Starting logging at " + System.DateTime.Now.ToString();
 
-                System.IO.Stream os = FileHelper.OpenFileOutputStream(LOG_FILE_PATH, false, strToWrite.Length, null, true);
-
-                using (StreamWriter writer = new StreamWriter(os))
+                using (System.IO.Stream os = FileHelper.OpenFileOutputStream(LOG_FILE_PATH, false, strToWrite.Length, null, true))
                 {
-                    writer.Write(strToWrite);
-                    writer.Close();
-                    writer.DisposeAsync();
+
+                    using (StreamWriter writer = new StreamWriter(os))
+                    {
+                        writer.Write(strToWrite);
+                        writer.Close();
+                        writer.DisposeAsync();
+                    }
                 }
             }
         }
@@ -80,12 +78,16 @@ namespace TTtuner_2022_2.Common
 
         static public void FlushBufferToFile()
         {
-            System.IO.Stream os = FileHelper.OpenFileOutputStream(LOG_FILE_PATH, false, builder.ToString().Length, null, true);
-
-            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(os))
+            using (System.IO.Stream os = FileHelper.OpenFileOutputStream(LOG_FILE_PATH, false, builder.ToString().Length, null, true))
             {
-                writer.Write(builder.ToString());
+
+                using (System.IO.StreamWriter writer = new System.IO.StreamWriter(os))
+                {
+                    writer.Write(builder.ToString());
+                }
             }
+
+            builder.Clear();
         }
 
     }

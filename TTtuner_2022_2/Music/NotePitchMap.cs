@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using global::Android.Views;
 using global::Android.Widget;
+using BE.Tarsos.Dsp.DbLevel;
 
 namespace TTtuner_2022_2.Music
 {
@@ -18,9 +19,9 @@ namespace TTtuner_2022_2.Music
         internal const double PITCH_LOW_LIMIT = 15.0f;
         internal const double PITCH_HIGH_LIMIT = 8000.0f;
 
-        internal static string[] noteNames = new string[12] ;
+        internal static string[] noteNames = new string[12];
 
-        internal  static string[] noteNames_default = new string[] { "C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B" };
+        internal static string[] noteNames_default = new string[] { "C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B" };
 
         internal static double[] oct0 = new double[12];
         internal static double[] oct1 = new double[12];
@@ -48,7 +49,7 @@ namespace TTtuner_2022_2.Music
 
         private static double[][] m_Notes = new double[][] { oct0, oct1, oct2, oct3, oct4, oct5, oct6, oct7, oct8 };
 
-        private static double[] arrScaleCentsDeviations = new double[12] ;
+        private static double[] arrScaleCentsDeviations = new double[12];
 
         private const double ALLOWABLE_ERROR = 0.025;  // % of freq
 
@@ -90,11 +91,11 @@ namespace TTtuner_2022_2.Music
         internal static void SetupTuningSystem(string strTuningSystem, int intRootScaleOffset, int intTransposeOffset, float flA4ref)
         {
             Common.CommonFunctions comFunc = new Common.CommonFunctions();
-             string[] arrTemp = new string[12];
+            string[] arrTemp = new string[12];
             double dlA4dev = flA4ref - 440;
 
             //   double dlPrctChange = (dlA4dev < 0 ?  -1f  : 1f  )   * dlA4dev / 440;
-            double dlPrctChange =  dlA4dev / 440;
+            double dlPrctChange = dlA4dev / 440;
 
             m_dlA4Ref = flA4ref;
 
@@ -102,15 +103,15 @@ namespace TTtuner_2022_2.Music
 
             if (strTuningSystem == "Equal Temperament")
             {
-                comFunc.CopyArrays<double>( oct0_ET, ref oct0);
-                comFunc.CopyArrays<double>( oct1_ET, ref oct1);
-                comFunc.CopyArrays<double>( oct2_ET, ref oct2);
-                comFunc.CopyArrays<double>( oct3_ET, ref oct3);
-                comFunc.CopyArrays<double>( oct4_ET, ref oct4);
-                comFunc.CopyArrays<double>( oct5_ET, ref oct5);
-                comFunc.CopyArrays<double>( oct6_ET, ref oct6);
-                comFunc.CopyArrays<double>( oct7_ET, ref oct7);
-                comFunc.CopyArrays<double>( oct8_ET, ref oct8);
+                comFunc.CopyArrays<double>(oct0_ET, ref oct0);
+                comFunc.CopyArrays<double>(oct1_ET, ref oct1);
+                comFunc.CopyArrays<double>(oct2_ET, ref oct2);
+                comFunc.CopyArrays<double>(oct3_ET, ref oct3);
+                comFunc.CopyArrays<double>(oct4_ET, ref oct4);
+                comFunc.CopyArrays<double>(oct5_ET, ref oct5);
+                comFunc.CopyArrays<double>(oct6_ET, ref oct6);
+                comFunc.CopyArrays<double>(oct7_ET, ref oct7);
+                comFunc.CopyArrays<double>(oct8_ET, ref oct8);
 
 
             }
@@ -120,15 +121,15 @@ namespace TTtuner_2022_2.Music
                 // load the cents deviations in the arrScaleCentsDeviations array
                 LoadCentsDeviationArray(intRootScaleOffset);
 
-                comFunc.CopyArrays<double>(GenerateScale( 0) ,  ref oct0);
-                comFunc.CopyArrays<double>(GenerateScale( 1), ref oct1);
-                comFunc.CopyArrays<double>(GenerateScale( 2), ref oct2);
-                comFunc.CopyArrays<double>(GenerateScale( 3), ref oct3);
-                comFunc.CopyArrays<double>(GenerateScale( 4), ref oct4);
-                comFunc.CopyArrays<double>(GenerateScale( 5), ref oct5);
-                comFunc.CopyArrays<double>(GenerateScale( 6), ref oct6);
-                comFunc.CopyArrays<double>(GenerateScale( 7), ref oct7);
-                comFunc.CopyArrays<double>(GenerateScale( 8), ref oct8);
+                comFunc.CopyArrays<double>(GenerateScale(0), ref oct0);
+                comFunc.CopyArrays<double>(GenerateScale(1), ref oct1);
+                comFunc.CopyArrays<double>(GenerateScale(2), ref oct2);
+                comFunc.CopyArrays<double>(GenerateScale(3), ref oct3);
+                comFunc.CopyArrays<double>(GenerateScale(4), ref oct4);
+                comFunc.CopyArrays<double>(GenerateScale(5), ref oct5);
+                comFunc.CopyArrays<double>(GenerateScale(6), ref oct6);
+                comFunc.CopyArrays<double>(GenerateScale(7), ref oct7);
+                comFunc.CopyArrays<double>(GenerateScale(8), ref oct8);
             }
 
 
@@ -137,7 +138,7 @@ namespace TTtuner_2022_2.Music
             {
                 for (int j = 0; j < m_Notes[0].Length; j++)
                 {
-                    m_Notes[i][j] = (m_Notes[i][j] * dlPrctChange ) + m_Notes[i][j];
+                    m_Notes[i][j] = (m_Notes[i][j] * dlPrctChange) + m_Notes[i][j];
                 }
             }
 
@@ -179,7 +180,7 @@ namespace TTtuner_2022_2.Music
 
 
             // load the cents deviation array
-            for (int i = 0; i< 12; i++)
+            for (int i = 0; i < 12; i++)
             {
                 arrScaleCentsDeviations[i] = tuningSystemCentsDeviation[i];
             }
@@ -214,13 +215,13 @@ namespace TTtuner_2022_2.Music
 
         private static double[] GenerateScale(int intOctaveNumber)
         {
-           
-            double[] arrDbl = new double [12];
-            int i ;
+
+            double[] arrDbl = new double[12];
+            int i;
             double dbValOfKeyOffset;
 
 
-            for (i = 0; i< 12; i++ )
+            for (i = 0; i < 12; i++)
             {
                 dbValOfKeyOffset = notes_EQ[intOctaveNumber][i];
                 // f2 = f1 * 2^( C / 1200 )
@@ -236,18 +237,18 @@ namespace TTtuner_2022_2.Music
             bool isPrctClosnessLessThan100_Note1 = dblPrctCloseness1 < 100;
             bool isPrctClosnessLessThan100_Note2 = dblPrctCloseness2 < 100;
 
-            int i,j;
+            int i, j;
             string[] noteNamesForAllOctaves = new string[NUM_NOTES_PER_OCTAVE * NUM_OCTAVES];
 
             for (i = 0; i < NUM_OCTAVES; i++)
             {
-                for (j = 0; j < NUM_NOTES_PER_OCTAVE ; j++)
+                for (j = 0; j < NUM_NOTES_PER_OCTAVE; j++)
                 {
                     noteNamesForAllOctaves[i * NUM_NOTES_PER_OCTAVE + j] = noteNames[j] + i.ToString();
                 }
             }
 
-            if ( (!noteNamesForAllOctaves.Contains(strNote1)) || (!noteNamesForAllOctaves.Contains(strNote2)) )
+            if ((!noteNamesForAllOctaves.Contains(strNote1)) || (!noteNamesForAllOctaves.Contains(strNote2)))
             {
                 return false;
             }
@@ -257,21 +258,21 @@ namespace TTtuner_2022_2.Music
                 return true;
             }
 
-            if ( ( Math.Abs( Array.IndexOf(noteNamesForAllOctaves, strNote1) - Array.IndexOf(noteNamesForAllOctaves, strNote2) )  > 1)  )
-           {
+            if ((Math.Abs(Array.IndexOf(noteNamesForAllOctaves, strNote1) - Array.IndexOf(noteNamesForAllOctaves, strNote2)) > 1))
+            {
                 // notes are not neighbours in the scale
                 return false;
             }
 
 
-           if (Array.IndexOf(noteNamesForAllOctaves, strNote1) < Array.IndexOf(noteNamesForAllOctaves, strNote2))
+            if (Array.IndexOf(noteNamesForAllOctaves, strNote1) < Array.IndexOf(noteNamesForAllOctaves, strNote2))
             {
-                if ( (!isPrctClosnessLessThan100_Note1) && (isPrctClosnessLessThan100_Note2) )
+                if ((!isPrctClosnessLessThan100_Note1) && (isPrctClosnessLessThan100_Note2))
                 {
                     return true;
                 }
             }
-           else
+            else
             {
                 if ((isPrctClosnessLessThan100_Note1) && (!isPrctClosnessLessThan100_Note2))
                 {
@@ -334,15 +335,15 @@ namespace TTtuner_2022_2.Music
             {
                 if ((int)Math.Floor(oct[i]) == intNoteVal)
                 {
-                    return TransposeNote(NotePitchMap.noteNames[i] , intOctNumber);
+                    return TransposeNote(NotePitchMap.noteNames[i], intOctNumber);
                 }
             }
 
             return string.Empty;
-        }       
+        }
 
 
-        internal static string TransposeNote( string strName, int intOctave )
+        internal static string TransposeNote(string strName, int intOctave)
         {
             int intTrasOffset = Common.Settings.TransposeOffset;
             Common.CommonFunctions comfunc = new Common.CommonFunctions();
@@ -355,17 +356,17 @@ namespace TTtuner_2022_2.Music
             intNoteIndexOutput = intNoteOffset;
             // make sure that transposition is possible
 
-            if ( (intOctave == 0 ) && ( intNoteOffset - intTrasOffset < 0) )
+            if ((intOctave == 0) && (intNoteOffset - intTrasOffset < 0))
             {
                 return "";
             }
 
-            if ((intOctave == 8) && (intNoteOffset -  intTrasOffset > 11))
+            if ((intOctave == 8) && (intNoteOffset - intTrasOffset > 11))
             {
                 return "";
             }
 
-            for ( int i =0; i < intTrasOffset; i++)
+            for (int i = 0; i < intTrasOffset; i++)
             {
                 if (intNoteIndexOutput == 0)
                 {
@@ -390,6 +391,7 @@ namespace TTtuner_2022_2.Music
             double[] octave = null;
             double dlLowerLimit, dblUpperLimit;
             int bestFitOctave = 0;
+
 
             if ((pitch < PITCH_LOW_LIMIT) || (pitch > PITCH_HIGH_LIMIT))
             {
@@ -434,8 +436,8 @@ namespace TTtuner_2022_2.Music
             // c = 1200 × 3.322038403 * log10 (f2 / f1)
             // http://www.sengpielaudio.com/calculator-centsratio.htm
 
-            centsDeviation = 1200f * 3.322038403f *  Math.Log10( (pitch / octave[bestFitNoteIndex]) ) ;
-            outputNote = TransposeNote( noteNames[bestFitNoteIndex] ,bestFitOctave);
+            centsDeviation = 1200f * 3.322038403f * Math.Log10((pitch / octave[bestFitNoteIndex]));
+            outputNote = TransposeNote(noteNames[bestFitNoteIndex], bestFitOctave);
             return outputNote;
 
         }

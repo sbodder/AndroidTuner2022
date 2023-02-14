@@ -462,7 +462,7 @@ namespace TTtuner_2022_2.Common
                 return;
             }
            
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 string csvText = Settings.GetCsvFileTextFromManifest(act);
                 MediaStoreHelper.WriteTextToFile(csvText, fileName);

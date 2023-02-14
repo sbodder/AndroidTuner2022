@@ -47,7 +47,7 @@ namespace TTtuner_2022_2.Common
             var fileName = comF.GetFileNameFromPath(sourcePath);
             string filePath = null;
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 if (internalAppSpace)
                 {
@@ -88,7 +88,7 @@ namespace TTtuner_2022_2.Common
 
         static internal IList<FileInfoItem> GetMediaFileListInDirectory(string directory)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 var list = MediaStoreHelper.GetMediaFilesInAppDirectory();
                 var list2 = GetStatsFileInInternalAppSpace();
@@ -135,7 +135,7 @@ namespace TTtuner_2022_2.Common
 
         internal static string GetFilePath(string filename, bool internalAppDir, string mimetype = null)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 if (internalAppDir)
                 {
@@ -222,7 +222,7 @@ namespace TTtuner_2022_2.Common
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(filePath);
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 if (internalAppSpace)
                 {
@@ -297,7 +297,7 @@ namespace TTtuner_2022_2.Common
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(filePath);
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             { 
                 if (internalAppSpace)
                 {
@@ -322,7 +322,7 @@ namespace TTtuner_2022_2.Common
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(filePath);
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 if (internalAppSpace)
                 {
@@ -413,7 +413,7 @@ namespace TTtuner_2022_2.Common
 
         static internal Stream CreateFile(Activity act, string filename, bool blExternal, string mimeType = null)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 if (mimeType == null)
                 {
@@ -496,7 +496,7 @@ namespace TTtuner_2022_2.Common
         }
         static internal string LoadText(Activity act, string filename, bool blExternal, string mediaStoreExtension = "")
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 return MediaStoreHelper.GetFileText(act, filename, mediaStoreExtension);
             }
@@ -510,7 +510,7 @@ namespace TTtuner_2022_2.Common
         static internal bool CheckIfFileExists(string fileName, bool internalAppSpace = true, string mediaStoreFileExt = "")
         {
             string filePath = null;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 if (internalAppSpace)
                 {

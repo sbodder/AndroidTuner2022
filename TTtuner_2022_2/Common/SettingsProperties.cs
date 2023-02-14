@@ -173,7 +173,7 @@ namespace TTtuner_2022_2.Common
 
                     m_strDataFolder = ReadXmlSetting("DataFolder");
 
-                    if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
                     {
                         m_strDataFolder =  Settings.MediaStoreFolder;
                     }
@@ -772,6 +772,15 @@ namespace TTtuner_2022_2.Common
             {
                 //this setting is not stored in the xml setting file as its constant and cant be changed. Its only used on android >= api 29
                 return "TuningSystems.csv";
+            }
+        }
+
+        internal static double MinDbLevelForRegisteringaNote
+        {
+            get
+            {
+                //this setting is not stored in the xml setting file as its constant and cant be changed. Its only used on android >= api 29
+                return -60.0f;
             }
         }
 

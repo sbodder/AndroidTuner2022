@@ -189,6 +189,7 @@ namespace TTtuner_2022_2.Audio
             m_lngLastElapsedTime = m_lngStartTime;
 
             intSamplingPeriodMs = Common.Settings.PitchSmaplingPeriodMs;
+
             while (isRecording)
             {
                 // gets the voice output from microphone to byte format
@@ -215,14 +216,16 @@ namespace TTtuner_2022_2.Audio
                     if ((SystemClock.UptimeMillis() - m_lngLastElapsedTime) > intSamplingPeriodMs)
                     {                        
                         m_lngLastElapsedTime = SystemClock.UptimeMillis();
+                        pitch = null;
 
-                        pitch = m_dspLib.getPitchFromShort(sData);
+                       
                         dbLevel = dbLib.GetDbLevelFromShort(sData);
-                        dbLevel = dbLevel == null ? (double) -100 : (double) dbLevel;
+                                             
+                        pitch = m_dspLib.getPitchFromShort(sData, dbLevel);                        
 
                         strNote = pitch == null? "" : Music.NotePitchMap.GetNoteFromPitch( (double) pitch, ref dblCentsCloseness);
 #if DEBUG
-                        // Logger.Info(Common.CommonFunctions.APP_NAME, string.Format("note is {0} and pitch is {1:0.00} abd cents dev is {2:0.00}", strNote, pitch, dblCentsCloseness) );
+                         Logger.Info(Common.CommonFunctions.APP_NAME, string.Format("note is {0} and pitch is {1:0.00} abd cents dev is {2:0.00}", strNote, pitch, dblCentsCloseness) );
 #endif
 
 
@@ -235,7 +238,7 @@ namespace TTtuner_2022_2.Audio
                                     long lngTime = Math.Max(0, _lngTempTime - intWindowTimeMs);
                                     Common.NoteEventArgs e = new Common.NoteEventArgs((double) (pitch == null? 0f : pitch), strNote, dblCentsCloseness, lngTime, (double) dbLevel);
 #if DEBUG
-                                    Logger.Info(Common.CommonFunctions.APP_NAME, string.Format("time  is {0}, note is {1} and pitch is {2:0.00} and dBLevel is {2:0.00} ", lngTime, strNote, pitch, (double) dbLevel));
+                                    //Logger.Info(Common.CommonFunctions.APP_NAME, string.Format("time  is {0}, note is {1} and pitch is {2:0.00} and dBLevel is {2:0.00} ", lngTime, strNote, pitch, (double) dbLevel));
 #endif
                                     NewPitch(this, e);
                                 }

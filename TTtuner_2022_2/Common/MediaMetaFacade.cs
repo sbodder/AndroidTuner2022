@@ -14,7 +14,7 @@ namespace TTtuner_2022_2.Common
         {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 
-            if ( (Build.VERSION.SdkInt >= BuildVersionCodes.Q) && !internalAppSpace )
+            if ( (Build.VERSION.SdkInt >= BuildVersionCodes.R) && !internalAppSpace )
             {
                 //assumes the file is in external storage and the file type is wave
                 mmr.SetDataSource(CrossCurrentActivity.Current.AppContext, MediaStoreHelper.GetFileUri(strFilePath, "", MediaStoreHelper.MIMETYPE_WAV)) ;

@@ -70,7 +70,7 @@
                 {
                     Looper.Prepare();
                     wvImport.ImportWaveFiles(act, p0, Common.Settings.DataFolder);
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
                     {
                         // the files had to be copied to internal storage so delete them now
                         foreach (string strFilename in p0)
@@ -194,7 +194,7 @@
 
         internal async void OnUpload(object sender, EventArgs e)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 var intent = new Intent(Intent.ActionOpenDocument);
                 intent.SetType("audio/*");
@@ -751,7 +751,7 @@
             // set up wave file in temp dir
             string strFileName = cmFunc.GetFileNameWtihoutExtension(file);
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 internalFile = new File(FileHelper.CopyFileFromScopedStorageToInternal(file));
                 var newFileName = cmFunc.GetFileNameWtihoutExtension(internalFile.AbsolutePath);

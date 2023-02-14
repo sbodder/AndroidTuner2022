@@ -52,6 +52,18 @@ namespace TTtuner_2022_2.DSP
 
         }
 
+        internal double? getPitchFromShort(short[] data, double? dbLevel)
+        {
+            float[] floatData = new float[data.Length];
+
+            if (dbLevel == null || (double)dbLevel < Common.Settings.MinDbLevelForRegisteringaNote)
+            {
+                return null;
+            }
+
+            return getPitchFromShort(data);
+        }
+
         internal double? getPitchFromShort(short[] data)
         {
             float[] floatData = new float[data.Length];
@@ -63,7 +75,7 @@ namespace TTtuner_2022_2.DSP
 
             PitchDetectionResult pitchRes = m_mpm.GetPitch(floatData);
 
-            return (pitchRes.Pitch == -1 || pitchRes.Probability < Settings.NoteClarityFloat * 0.85f) ? null : (double?) pitchRes.Pitch;
+            return (pitchRes.Pitch == -1 || pitchRes.Probability < Settings.NoteClarityFloat * 0.85f) ? null : (double?)pitchRes.Pitch;
         }
 
         internal double? getPitchFromFloat(float[] data)
