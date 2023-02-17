@@ -65,6 +65,8 @@ namespace TTtuner_2022_2.Common
         private static Activity m_act;
         private static List<TuningSystem> m_lstTuningSystems = new List<TuningSystem>();
 
+        private static string m_dataFolderUri;
+
 
         internal static string A4ref
         {
@@ -757,6 +759,35 @@ namespace TTtuner_2022_2.Common
             }
         }
 
+        internal static string DataStoreFolderUriString
+        {
+            get
+            {
+                //this setting is not stored in the xml setting file as its constant and cant be changed. Its only used on android >= api 29
+                if (m_dataFolderUri!= null)
+                {
+                    return m_dataFolderUri;
+                }
+                var sp = new Common.SharedPreferences();
+                m_dataFolderUri = sp.GetDataFolderUri();
+                return m_dataFolderUri;
+            }
+            set
+            {
+                var sp = new Common.SharedPreferences();
+                sp.StoreDataFolderUri(value);
+                m_dataFolderUri = value;
+            }
+        }
+
+        internal static global::Android.Net.Uri DataStoreFolderUri
+        {
+            get
+            {
+                return global::Android.Net.Uri.Parse(DataStoreFolderUriString);
+            }
+        }
+
         internal static string MediaStoreFolder
         {
             get
@@ -770,7 +801,6 @@ namespace TTtuner_2022_2.Common
         {
             get
             {
-                //this setting is not stored in the xml setting file as its constant and cant be changed. Its only used on android >= api 29
                 return "TuningSystems.csv";
             }
         }
@@ -779,7 +809,6 @@ namespace TTtuner_2022_2.Common
         {
             get
             {
-                //this setting is not stored in the xml setting file as its constant and cant be changed. Its only used on android >= api 29
                 return -60.0f;
             }
         }

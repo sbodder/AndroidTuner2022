@@ -32,6 +32,8 @@ using Android.Util;
 using System.Runtime.InteropServices.ComTypes;
 using Android.Views.Inspectors;
 using static Android.Provider.ContactsContract;
+using AndroidX.DocumentFile.Provider;
+using static Android.Provider.SyncStateContract;
 
 namespace TTtuner_2022_2.Common
 {
@@ -76,9 +78,9 @@ namespace TTtuner_2022_2.Common
         static internal IList<FileInfoItem> GetStatsFileInInternalAppSpace()
         {
             var dir = new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal));
-            IList <FileInfoItem> files = new List<FileInfoItem>();
+            IList<FileInfoItem> files = new List<FileInfoItem>();
 
-            foreach (var item in dir.GetFileSystemInfos().Where(item =>  item.Extension.ToLower() == CommonFunctions.STAT_FILE_EXTENSION).OrderByDescending(s => s.Name))
+            foreach (var item in dir.GetFileSystemInfos().Where(item => item.Extension.ToLower() == CommonFunctions.STAT_FILE_EXTENSION).OrderByDescending(s => s.Name))
             {
                 files.Add(new FileInfoItem(item.Name, item.FullName));
             }
@@ -98,7 +100,7 @@ namespace TTtuner_2022_2.Common
                 {
                     list.Add(item);
                 }
-                return list.OrderBy(s => s.Name).ToList(); 
+                return list.OrderBy(s => s.Name).ToList();
             }
 
             //legacy
@@ -236,7 +238,7 @@ namespace TTtuner_2022_2.Common
             }
             else
             {
-                newfilePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);               
+                newfilePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);
             }
 
             return File.Open(newfilePath, FileMode.Open);
@@ -256,7 +258,7 @@ namespace TTtuner_2022_2.Common
             }
         }
 
-            internal static string CopyFileFromScopedStorageToInternal(string filePath)
+        internal static string CopyFileFromScopedStorageToInternal(string filePath)
         {
             Java.IO.File fl2;
             Stream si = null, os = null;
@@ -265,9 +267,9 @@ namespace TTtuner_2022_2.Common
 
             try
             {
-                si = MediaStoreHelper.OpenFileInputStream(filePath);   
+                si = MediaStoreHelper.OpenFileInputStream(filePath);
                 os = FileHelper.OpenFileOutputStream(filePath, true);
-                si.CopyTo(os);                
+                si.CopyTo(os);
             }
             catch (Exception e1)
             {
@@ -292,13 +294,15 @@ namespace TTtuner_2022_2.Common
 
 
 
-       internal static Stream OpenFileOutputStream(string filePath, bool internalAppSpace = true, long lengthInBytes = 0, string mimetype = null, bool append= false)
+
+
+        internal static Stream OpenFileOutputStream(string filePath, bool internalAppSpace = true, long lengthInBytes = 0, string mimetype = null, bool append = false)
         {
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(filePath);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
-            { 
+            {
                 if (internalAppSpace)
                 {
                     filePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
@@ -311,10 +315,10 @@ namespace TTtuner_2022_2.Common
             }
             else
             {
-                filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);               
+                filePath = System.IO.Path.Combine(Common.Settings.DataFolder, fileName);
             }
 
-            return File.Open(filePath,  append ? FileMode.Append : FileMode.Create);
+            return File.Open(filePath, append ? FileMode.Append : FileMode.Create);
         }
 
         internal static long GetLengthOfFile(string filePath, bool internalAppSpace = true)
@@ -431,7 +435,7 @@ namespace TTtuner_2022_2.Common
             }
             else
             {
-                return CreateFileLegacy(act, filename, blExternal);   
+                return CreateFileLegacy(act, filename, blExternal);
             }
         }
 
@@ -466,7 +470,21 @@ namespace TTtuner_2022_2.Common
 
             return os;
         }
-        static internal void SaveTextFile(Activity act, string filename, string text, bool blExternal)
+        static internal void SaveTextFile(Activity act, string filepath, string text, bool blExternal)
+        {
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+            {
+                StorageAccessFrameworkHelper.SaveTextFile(filepath, text);
+            }
+            else
+            {
+                SaveTextFileLegacy(act, filepath, text, blExternal);
+            }
+
+        }
+
+        static private void SaveTextFileLegacy(Activity act, string filename, string text, bool blExternal)
         {
             CheckExternalStorageAvailable();
 
@@ -492,7 +510,6 @@ namespace TTtuner_2022_2.Common
                     Toast.MakeText(act, "Problem saving File " + filePath, ToastLength.Long).Show();
                 }
             }
-
         }
         static internal string LoadText(Activity act, string filename, bool blExternal, string mediaStoreExtension = "")
         {
@@ -507,29 +524,30 @@ namespace TTtuner_2022_2.Common
 
         }
 
-        static internal bool CheckIfFileExists(string fileName, bool internalAppSpace = true, string mediaStoreFileExt = "")
+        static internal bool CheckIfFileExists(string fileName, bool internalAppSpace = true)
         {
             string filePath = null;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
+
                 if (internalAppSpace)
                 {
                     CommonFunctions comF = new CommonFunctions();
                     var fn = comF.GetFileNameFromPath(fileName);
                     var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                     filePath = Path.Combine(documentsPath, fn);
-                    
                 }
                 else
                 {
-                    return MediaStoreHelper.CheckIfFileExists(fileName, mediaStoreFileExt);
+                    var dir = StorageAccessFrameworkHelper.GetDocumentFileForDataFolder();
+                    return dir?.FindFile(Settings.TuningSystemsCsvFileName) != null;
                 }
             }
             else
             {
                 // check if xml file exits
                 var documentsPath = Settings.DataFolder;
-                filePath = System.IO.Path.Combine(documentsPath, fileName);                         
+                filePath = System.IO.Path.Combine(documentsPath, fileName);
             }
 
             using (Java.IO.File fl1 = new Java.IO.File(filePath))

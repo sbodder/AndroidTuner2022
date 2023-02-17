@@ -36,6 +36,11 @@ using Android.Util;
 using System.IO;
 using Path = System.IO.Path;
 using BE.Tarsos.Dsp.Mfcc;
+using AndroidX.Core.Content;
+using static AndroidX.Core.Util.Pools;
+using System.Runtime.Remoting.Contexts;
+using AndroidX.Preference;
+using Plugin.CurrentActivity;
 
 namespace TTtuner_2022_2
 {
@@ -44,9 +49,11 @@ namespace TTtuner_2022_2
     {
         private int LED_NOTIFICATION_ID = 0; //arbitrary constant   
         private int REQUEST_PERMISSIONS = 3; //arbitrary constant
+        private int REQUEST_PERMISSIONS_API_30_AND_GREATER = 4;
         private Audio_Record m_audioRecorder = null;
         private LinearLayout m_llay;
         private bool ignoreSwipeleftToRightGestures = false;
+        private string _dataFolderUri = null;
 
         private TextView m_txtTimeElapsed;
 
@@ -57,6 +64,7 @@ namespace TTtuner_2022_2
         private bool m_blPermissionsOK = false;
         private int m_secElapsed = 0;
         private int _pitch_i = 0;
+
 
 
         internal Audio_Record AudioRecorder
@@ -86,9 +94,6 @@ namespace TTtuner_2022_2
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NzQwNjc3QDMyMzAyZTMzMmUzMGlONnlkYXFuNlF5TUpOVk40RE1xRmhYWlljeVIxVzZHY0d2eldWdWozZEU9");
                 base.OnCreate(bundle);
                 CommonFunctions comFunc = new CommonFunctions();
-
-
-
 
                 //Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
                 //Crashlytics.Crashlytics.HandleManagedExceptions();
@@ -196,7 +201,7 @@ namespace TTtuner_2022_2
         private void SetupFiles()
         {
             CommonFunctions cm = new CommonFunctions();
-            cm.SetupXmlSettingsFile(this);
+            cm.SetupXmlSettingsAndCsvFiles(this);
         }
 
         private void SetupAudio()
@@ -213,9 +218,7 @@ namespace TTtuner_2022_2
 
             if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
-                if (AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.Internet) == (int)Permission.Granted
-          && AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.RecordAudio) == (int)Permission.Granted)
-
+                if (ArePermissionsGranted())
                 {
                     m_blPermissionsOK = true;
                 }
@@ -223,7 +226,7 @@ namespace TTtuner_2022_2
                 {
                     AndroidX.Core.App.ActivityCompat.RequestPermissions(this,
                         new String[] { Manifest.Permission.RecordAudio, Manifest.Permission.Internet },
-                        REQUEST_PERMISSIONS);
+                        REQUEST_PERMISSIONS_API_30_AND_GREATER);                   
                 }
             }
             else
@@ -246,7 +249,71 @@ namespace TTtuner_2022_2
             }
         }
 
-   
+
+        private bool ArePermissionsGranted()
+        {
+            // list of all persisted permissions for our app
+            var uriString = Settings.DataStoreFolderUriString;
+            ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
+            var list = resolver.PersistedUriPermissions;
+
+            if (!(ContextCompat.CheckSelfPermission(this, Manifest.Permission.Internet) == (int)Permission.Granted)
+           || (ContextCompat.CheckSelfPermission(this, Manifest.Permission.RecordAudio) == (int)Permission.Granted)
+                     )
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(uriString))
+            {
+                return false;
+            }
+            foreach (UriPermission i in list)
+            {
+                var persistedUriString = i.ToString();
+                if (persistedUriString == uriString && i.IsWritePermission && i.IsReadPermission)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void RequestStoragePermissionsAndroid11AndGreater()
+        {
+           
+            //Toast.MakeText(this, "On the next Dialog please select the folder for TTtuner files", ToastLength.Long).Show();
+
+            AndroidX.AppCompat.App.AlertDialog.Builder alert = new AndroidX.AppCompat.App.AlertDialog.Builder(this);
+            alert.SetTitle("On the next dialog please select the data folder for TTtuner files");
+            alert.SetPositiveButton("OK", (senderAlert, argus) =>
+            {
+                var intent = new Intent(Intent.ActionOpenDocumentTree);
+                StartActivityForResult(intent, REQUEST_PERMISSIONS_API_30_AND_GREATER);
+            });
+            global::Android.App.Dialog dialog = alert.Create();
+            dialog.Show(); 
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            var sp = new Common.SharedPreferences();
+            if (resultCode == Result.Ok && requestCode == REQUEST_PERMISSIONS_API_30_AND_GREATER)
+            {
+                if (data != null)
+                {
+                    //this is the uri user has provided us
+                    global::Android.Net.Uri treeUri = data != null ? data.Data : null;
+                    Settings.DataStoreFolderUriString = sp.StoreDataFolderUri(treeUri.ToString());
+                    Settings.DataFolder = MediaStoreHelper.GetFileNameOfUri(treeUri);
+                }
+            }
+            // we have all permissions granted at this point, now do rest of setup
+            DoPostPermissionGrantSetup();
+        }
+
+
 
         public void OnPageSelected(object sender, AndroidX.ViewPager.Widget.ViewPager.PageSelectedEventArgs e)
         {
@@ -271,6 +338,18 @@ namespace TTtuner_2022_2
                     }
                 }
                 DoPostPermissionGrantSetup();
+            }
+            else if (requestCode == REQUEST_PERMISSIONS_API_30_AND_GREATER)
+            {
+                foreach (Permission p1 in grantResults)
+                {
+                    if (!(p1 == Permission.Granted))
+                    {
+                        Toast.MakeText(this, "Application Exiting...", ToastLength.Long).Show();
+                        FinishAffinity();
+                    }
+                }
+                RequestStoragePermissionsAndroid11AndGreater();
             }
             else
             {

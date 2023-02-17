@@ -358,7 +358,7 @@ namespace TTtuner_2022_2.Common
             return path.Substring(intIndex + 1, 3).ToUpper();
         }
 
-        internal void SetupXmlSettingsFile(Activity act)
+        internal void SetupXmlSettingsAndCsvFiles(Activity act)
         {
             WriteXmlSetttingsFiles(act);
             // load all settings from xml fiile
@@ -458,19 +458,22 @@ namespace TTtuner_2022_2.Common
             var fileName = Settings.TuningSystemsCsvFileName;
 
 
-            if (FileHelper.CheckIfFileExists( fileName, false, CommonFunctions.TEXT_EXTENSION)) {
+            if (FileHelper.CheckIfFileExists( fileName, false)) {
                 return;
             }
            
             if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 string csvText = Settings.GetCsvFileTextFromManifest(act);
+
                 MediaStoreHelper.WriteTextToFile(csvText, fileName);
+
+                FileHelper.SaveTextFile(act, fileName, csvText, true);
             }
             else
             {
                 // get the file from the manifest
-                Settings.WriteCsvFileFromManifestToInternalStorage(act);
+                Settings.WriteCsvFileFromManifestToDataFolder(act);
             }
         }
 

@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Content.Res;
 using Android.Database;
 using Android.Graphics;
+using Android.OS;
 using Android.Provider;
 using Android.Systems;
 using Android.Widget;
@@ -281,30 +282,15 @@ namespace TTtuner_2022_2.Common
         static public string GetFileNameOfUri(global::Android.Net.Uri uri)
         {
             String result = null;
-            if (uri.Scheme =="content")
+            try
             {
-                ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
-                var cursor = resolver.Query(uri, null, null, null, null);
-                try
-                {
-                    if (cursor != null && cursor.MoveToFirst())
-                    {
-                        result = cursor.GetString(cursor.GetColumnIndex(OpenableColumns.DisplayName));
-                    }
-                }
-                finally
-                {
-                    cursor.Close();
-                }
+                Java.IO.File file = new Java.IO.File(uri.Path);//create path from uri
+                String[] split = file.Path.Split(":");//split the path.
+                result = split[1];//assign it to a string(your choice).
             }
-            if (result == null)
+            catch
             {
-                result = uri.Path;
-                int cut = result.LastIndexOf('/');
-                if (cut != -1)
-                {
-                    result = result.Substring(cut + 1);
-                }
+                return null;
             }
             return result;
         }

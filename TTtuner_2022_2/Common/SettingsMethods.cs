@@ -648,7 +648,7 @@ namespace TTtuner_2022_2.Common
             }
         }
 
-        internal static void WriteCsvFileFromManifestToInternalStorage(Activity activity)
+        internal static void WriteCsvFileFromManifestToDataFolder(Activity activity)
         {
             string resource = m_namespaceType.Namespace + "." + Settings.TuningSystemsCsvFileName;
             string result;

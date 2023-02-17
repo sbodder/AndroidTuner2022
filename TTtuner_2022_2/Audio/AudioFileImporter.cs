@@ -106,7 +106,7 @@ namespace TTtuner_2022_2.Audio
 
                 string path = System.IO.Path.Combine(Common.Settings.DataFolder, fileNAme);
 
-                if (FileHelper.CheckIfFileExists(path, false, String.Empty))
+                if (FileHelper.CheckIfFileExists(path, false))
                 {
                     dlMessage = new AndroidX.AppCompat.App.AlertDialog.Builder(act);
 
