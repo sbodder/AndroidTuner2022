@@ -354,8 +354,12 @@ namespace TTtuner_2022_2.Common
         }
         internal string GetFileNameExtension(string path)
         {
-            int intIndex = path.LastIndexOf('.');
-            return path.Substring(intIndex + 1, 3).ToUpper();
+            int? intIndex = path?.LastIndexOf('.');
+            if ( intIndex == null || intIndex < 0)
+            {
+                return "";
+            }
+            return path.Substring( (int) intIndex , 4).ToLower();
         }
 
         internal void SetupXmlSettingsAndCsvFiles(Activity act)
@@ -458,7 +462,7 @@ namespace TTtuner_2022_2.Common
             var fileName = Settings.TuningSystemsCsvFileName;
 
 
-            if (FileHelper.CheckIfFileExists( fileName, false)) {
+            if (FileHelper.CheckIfFileExists( fileName, false, TEXT_EXTENSION)) {
                 return;
             }
            
@@ -466,7 +470,7 @@ namespace TTtuner_2022_2.Common
             {
                 string csvText = Settings.GetCsvFileTextFromManifest(act);
 
-                MediaStoreHelper.WriteTextToFile(csvText, fileName);
+                //MediaStoreHelper.WriteTextToFile(csvText, fileName);
 
                 FileHelper.SaveTextFile(act, fileName, csvText, true);
             }

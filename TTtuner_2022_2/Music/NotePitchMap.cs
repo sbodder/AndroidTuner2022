@@ -10,6 +10,7 @@ using Android.Runtime;
 using global::Android.Views;
 using global::Android.Widget;
 using BE.Tarsos.Dsp.DbLevel;
+using TTtuner_2022_2.Common;
 
 namespace TTtuner_2022_2.Music
 {
@@ -177,6 +178,10 @@ namespace TTtuner_2022_2.Music
             // the EQ scales are baased on C so we must shift the cents deviation scale right by 9 to align and then rotate  
             // another 'intKeyOffset' positions
             int intNumOfRotations = 12 - (9 + intKeyOffset) % 12;
+
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "in LoadCentsDeviationArray, keyoffset:" + intKeyOffset + "number of tuning systems: " + tuningSystemCentsDeviation.Count);
+#endif
 
 
             // load the cents deviation array

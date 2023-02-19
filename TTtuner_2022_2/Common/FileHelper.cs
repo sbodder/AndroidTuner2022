@@ -92,14 +92,30 @@ namespace TTtuner_2022_2.Common
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
-                var list = MediaStoreHelper.GetMediaFilesInAppDirectory();
-                var list2 = GetStatsFileInInternalAppSpace();
-                // this is the only directory that will be useful to retrieve if on scoped storage
 
-                foreach (var item in list2)
+                CommonFunctions cf = new CommonFunctions();
+                var df = StorageAccessFrameworkHelper.GetDocumentFileForDataFolder();
+                var dfARray = df.ListFiles();
+                List<FileInfoItem> list = new List<FileInfoItem>(); 
+
+                foreach (DocumentFile d in dfARray)
                 {
-                    list.Add(item);
+                    var ext = cf.GetFileNameExtension(d.Name);
+                    if ( ext == CommonFunctions.WAV_FILE_EXTENSION || ext == CommonFunctions.STAT_FILE_EXTENSION )
+                    {
+                        list.Add(new FileInfoItem(d.Name, MediaStoreHelper.GetFilePathOfUri(d.Uri)));
+                    }
                 }
+                //var list = MediaStoreHelper.GetMediaFilesInAppDirectory();
+                //var list2 = GetStatsFileInInternalAppSpace();
+
+
+                //// this is the only directory that will be useful to retrieve if on scoped storage
+
+                //foreach (var item in list2)
+                //{
+                //    list.Add(item);
+                //}
                 return list.OrderBy(s => s.Name).ToList();
             }
 
@@ -524,7 +540,7 @@ namespace TTtuner_2022_2.Common
 
         }
 
-        static internal bool CheckIfFileExists(string fileName, bool internalAppSpace = true)
+        static internal bool CheckIfFileExists(string fileName, bool internalAppSpace = true, string extension = "")
         {
             string filePath = null;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
@@ -539,8 +555,9 @@ namespace TTtuner_2022_2.Common
                 }
                 else
                 {
+                    var filename = Settings.TuningSystemsCsvFileName +  (string.IsNullOrEmpty(extension) ? "" : extension);
                     var dir = StorageAccessFrameworkHelper.GetDocumentFileForDataFolder();
-                    return dir?.FindFile(Settings.TuningSystemsCsvFileName) != null;
+                    return dir?.FindFile(filename) != null;
                 }
             }
             else

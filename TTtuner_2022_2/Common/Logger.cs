@@ -67,7 +67,6 @@ namespace TTtuner_2022_2.Common
             }
         }
 
-
         static public void DeleteLogFile()
         {
             if (FileHelper.CheckIfFileExists(LOG_FILE_PATH, false))

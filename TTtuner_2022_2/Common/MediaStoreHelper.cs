@@ -30,7 +30,7 @@ namespace TTtuner_2022_2.Common
             }
 
 
-            string newFilename = GetFileNameOfUri(uri);
+            string newFilename = GetFilePathOfUri(uri);
 
             return newFilename != filename + mediaStoreExtension;
         }
@@ -258,7 +258,7 @@ namespace TTtuner_2022_2.Common
         {
             var uri = CreateFileUri(filename, lengthInBytes, mimeType);
 
-            var urlFileName = GetFileNameOfUri(uri);
+            var urlFileName = GetFilePathOfUri(uri);
 
             if (urlFileName != filename)
             {
@@ -279,12 +279,12 @@ namespace TTtuner_2022_2.Common
             return os;
         }
 
-        static public string GetFileNameOfUri(global::Android.Net.Uri uri)
+        static public string GetFilePathOfUri(global::Android.Net.Uri uri)
         {
             String result = null;
             try
             {
-                Java.IO.File file = new Java.IO.File(uri.Path);//create path from uri
+                Java.IO.File file = new Java.IO.File(uri.LastPathSegment);//create path from uri
                 String[] split = file.Path.Split(":");//split the path.
                 result = split[1];//assign it to a string(your choice).
             }

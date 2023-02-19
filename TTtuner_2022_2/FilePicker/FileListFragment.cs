@@ -160,7 +160,7 @@ namespace TTtuner_2022_2
         {
             CommonFunctions cmFunc = new CommonFunctions();
 
-            if (cmFunc.GetFileNameExtension(m_strFullFilename) == "WAV")
+            if (cmFunc.GetFileNameExtension(m_strFullFilename) == CommonFunctions.WAV_FILE_EXTENSION)
             {
                 prg = m_viewListItemClicked.FindViewById<ProgressBar>(Resource.Id.PrgBar);
                 prg.Visibility = ViewStates.Visible;

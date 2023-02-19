@@ -87,7 +87,7 @@ namespace TTtuner_2022_2
             {
                 resourceIdOfFileIcon = Resource.Drawable.folder;
             }
-            else if (comFun.GetFileNameExtension(fileInfoItem.Name) == "WAV")
+            else if (comFun.GetFileNameExtension(fileInfoItem.Name) == CommonFunctions.WAV_FILE_EXTENSION)
             {
                 resourceIdOfFileIcon = Resource.Drawable.file;
             }

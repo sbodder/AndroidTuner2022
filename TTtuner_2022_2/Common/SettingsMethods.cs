@@ -614,8 +614,16 @@ namespace TTtuner_2022_2.Common
 
             if (string.IsNullOrEmpty(strFileText))
             {
+
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, "the tuning system file is empty");
+#endif
                 return;
             }
+
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, "Here is the tuning system file:" + strFileText);
+#endif
 
             string[] arrLines = strFileText.Split('\n');
 
@@ -646,6 +654,11 @@ namespace TTtuner_2022_2.Common
             {
                 Settings.TuningSytem = m_lstTuningSystems[0].Name;
             }
+
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, "The number of tuning systems loaded: " + m_lstTuningSystems.Count);
+#endif
+
         }
 
         internal static void WriteCsvFileFromManifestToDataFolder(Activity activity)
@@ -668,6 +681,11 @@ namespace TTtuner_2022_2.Common
                         using (FileStream fileStream = System.IO.File.Create(filePath, (int)stream.Length))
                         {
                             // Initialize the bytes array with the stream length and then fill it with data
+
+#if Release_LogOutput
+                            Logger.Info(Common.CommonFunctions.APP_NAME, "WriteCsvFileFromManifestToDataFolder, the number of bytes in the stream are" + (int)stream.Length);
+
+#endif
                             byte[] bytesInStream = new byte[stream.Length];
                             stream.Read(bytesInStream, 0, bytesInStream.Length);
                             // Use write method to write to the file specified above

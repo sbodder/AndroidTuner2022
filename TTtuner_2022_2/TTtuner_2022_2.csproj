@@ -128,6 +128,7 @@
     <Compile Include="Common\FileItem.cs" />
     <Compile Include="Common\MediaMetaFacade.cs" />
     <Compile Include="Common\MediaStoreHelper.cs" />
+    <Compile Include="Common\PermissionHelper.cs" />
     <Compile Include="Common\SharedPreferences.cs" />
     <Compile Include="Common\StorageAccessFrameworkHelper.cs" />
     <Compile Include="CreditsActivity.cs" />

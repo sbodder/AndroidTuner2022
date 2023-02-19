@@ -1,17 +1,7 @@
 ﻿using Android.App;
 using global::Android.Widget;
 using Android.OS;
-
-
-
 using System;
-//using Android.Util;
-//using System.Collections.Generic;
-//using System.IO;
-//using global::Android.Views;
-//using Android.Graphics;
-//using System.Threading.Tasks;
-//using System.Threading;
 using AndroidX.AppCompat.App;
 using TTtuner_2022_2.Audio;
 using TTtuner_2022_2.Plot;
@@ -41,6 +31,7 @@ using static AndroidX.Core.Util.Pools;
 using System.Runtime.Remoting.Contexts;
 using AndroidX.Preference;
 using Plugin.CurrentActivity;
+using static AndroidX.Concurrent.Futures.CallbackToFutureAdapter;
 
 namespace TTtuner_2022_2
 {
@@ -48,15 +39,7 @@ namespace TTtuner_2022_2
     public class MainActivity : AppCompatActivity
     {
         private int LED_NOTIFICATION_ID = 0; //arbitrary constant   
-        private int REQUEST_PERMISSIONS = 3; //arbitrary constant
-        private int REQUEST_PERMISSIONS_API_30_AND_GREATER = 4;
         private Audio_Record m_audioRecorder = null;
-        private LinearLayout m_llay;
-        private bool ignoreSwipeleftToRightGestures = false;
-        private string _dataFolderUri = null;
-
-        private TextView m_txtTimeElapsed;
-
         private bool blRecordButtonEnabled = true;
         private bool m_blCollectionPaused = true;
         private DataPointHelper<Serializable_DataPoint> m_dataPtHelper;
@@ -64,17 +47,6 @@ namespace TTtuner_2022_2
         private bool m_blPermissionsOK = false;
         private int m_secElapsed = 0;
         private int _pitch_i = 0;
-
-
-
-        internal Audio_Record AudioRecorder
-        {
-            get
-            {
-                return m_audioRecorder;
-            }
-        }
-
         private ImageButton m_RecStopbutton;
         private ImageButton m_PlayPauseButton;
         private AndroidX.ViewPager.Widget.ViewPager m_viewPager;
@@ -85,8 +57,13 @@ namespace TTtuner_2022_2
         StatsViewFragment _statsFrag;
         TunerFragment _tunerFrag;
         System.Timers.Timer _buttonTimerClick = null;
-
-
+        internal Audio_Record AudioRecorder
+        {
+            get
+            {
+                return m_audioRecorder;
+            }
+        }
         protected override void OnCreate(Bundle bundle)
         {
             try
@@ -95,21 +72,36 @@ namespace TTtuner_2022_2
                 base.OnCreate(bundle);
                 CommonFunctions comFunc = new CommonFunctions();
 
+                CrossCurrentActivity.Current.Init(this, bundle);
+
                 //Fabric.Fabric.With(this, new Crashlytics.Crashlytics());
                 //Crashlytics.Crashlytics.HandleManagedExceptions();
 
                 //prevent app from sleeping on the main screen
                 this.Window.SetFlags(WindowManagerFlags.KeepScreenOn, WindowManagerFlags.KeepScreenOn);
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, "before request perms");
+#endif
+                PermissionHelper.RequestPermissions(ref m_blPermissionsOK);
 
-                RequestPermissions();
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, "ClearAllDataPoints");
+#endif
 
                 DataPointCollection.ClearAllDataPoints();
                 SetContentView(Resource.Layout.Main);
 
                 // set up string resources
 
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, "before ScalesArrayResource_Get");
+#endif
                 Common.StringResourceHelper.ScalesArrayResource_Get(this);
                 Common.StringResourceHelper.TransposeArrayResource_Get(this);
+
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, "before SetupButtons");
+#endif
 
                 SetupButtons();
 
@@ -117,36 +109,75 @@ namespace TTtuner_2022_2
                 SetSupportActionBar(toolbar);
                 SupportActionBar.Title = "TTtuner";
 
+
+
                 if (m_blPermissionsOK)
                 {
-                    DoPostPermissionGrantSetup();
 #if Release_LogOutput
-                SetupLogFile();
+                    SetupLogFile();
 #endif
+                    DoPostPermissionGrantSetup();
+
                 }
             }
             catch (Exception e)
             {
-                Toast.MakeText(this, "Exception : " + e.Message, ToastLength.Long).Show();
+                var str = "Exception : " + e.Message + " Stack trace : " + e.StackTrace;
+                Toast.MakeText(this, str, ToastLength.Long).Show();
+
+#if Release_LogOutput
+                Logger.Info(Common.CommonFunctions.APP_NAME, str);
+                Logger.FlushBufferToFile();
+#endif
+
                 return;
             }
         }
-
         private void DoPostPermissionGrantSetup()
         {
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting DoPostPermissionGrantSetup");
+#endif
             Type type = this.GetType();
             Settings.Init(type, this);
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting SetupFiles");
+#endif
             SetupFiles();
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting SetupPageAdapter");
+#endif
             SetupPageAdapter();
+
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting SetupGaugeFragment");
+#endif
             SetupGaugeFragment();
+
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting SetupScatterPlotFragment");
+#endif
             SetupScatterPlotFragment();
+
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting SetCurrentItem");
+#endif
             m_viewPager.SetCurrentItem(Common.Settings.PositionOfPageAdapterOnMainActivity, false);
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting StartServiceUsedToHookAppCloseEvent");
+#endif
             StartServiceUsedToHookAppCloseEvent();
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting setupAudio");
+#endif
             SetupAudio();
             // Give some time for the page adapter to setup (not a synchronous setup) 
+#if Release_LogOutput
+            Logger.Info(Common.CommonFunctions.APP_NAME, "starting StartRecording");
+#endif
             m_audioRecorder.StartRecording(false);
-        }
 
+        }
         private bool AllFragementsAreSetup()
         {
             return (_tunerFrag.SetupComplete && _statsFrag.SetupComplete && _scatterFrag.SetupComplete && _gaugeFrag.SetupComplete);
@@ -164,7 +195,6 @@ namespace TTtuner_2022_2
             _gaugeFrag = GaugeFragment.NewInstance(this);
             SupportFragmentManager.BeginTransaction().Replace(Resource.Id.gauge_frame1, _gaugeFrag).Commit();
         }
-
         private void SetupButtons()
         {
             m_RecStopbutton = FindViewById<ImageButton>(Resource.Id.RecordButton);
@@ -174,7 +204,6 @@ namespace TTtuner_2022_2
 
             m_animationDrawable = (AnimationDrawable)AndroidX.Core.Content.ContextCompat.GetDrawable(this, Resource.Drawable.PauseButtonAnimation);
         }
-
         private void StartPauseButtonAnimation()
         {
             m_PlayPauseButton.SetImageDrawable(m_animationDrawable);
@@ -210,110 +239,18 @@ namespace TTtuner_2022_2
             m_audioRecorder.NewPitch += Pitch_received;
 
             m_dataPtHelper = DataPointCollection.Frq;
-        }
-
-
-        private void RequestPermissions()
-        {
-
-            if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.R)
-            {
-                if (ArePermissionsGranted())
-                {
-                    m_blPermissionsOK = true;
-                }
-                else
-                {
-                    AndroidX.Core.App.ActivityCompat.RequestPermissions(this,
-                        new String[] { Manifest.Permission.RecordAudio, Manifest.Permission.Internet },
-                        REQUEST_PERMISSIONS_API_30_AND_GREATER);                   
-                }
-            }
-            else
-            {
-                if (AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.ReadExternalStorage) == (int)Permission.Granted
-               && AndroidX.Core.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) == (int)Permission.Granted
-              )
-                {
-                    // We have permissions, go ahead and use the app
-                    m_blPermissionsOK = true;
-                }
-                else
-                {
-                    m_blPermissionsOK = false;
-                    //  permissions are not granted. If necessary display rationale & request.
-                    AndroidX.Core.App.ActivityCompat.RequestPermissions(this,
-                           new String[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage, Manifest.Permission.RecordAudio, Manifest.Permission.Internet },
-                           REQUEST_PERMISSIONS);
-                }
-            }
-        }
-
-
-        private bool ArePermissionsGranted()
-        {
-            // list of all persisted permissions for our app
-            var uriString = Settings.DataStoreFolderUriString;
-            ContentResolver resolver = CrossCurrentActivity.Current.AppContext.ContentResolver;
-            var list = resolver.PersistedUriPermissions;
-
-            if (!(ContextCompat.CheckSelfPermission(this, Manifest.Permission.Internet) == (int)Permission.Granted)
-           || (ContextCompat.CheckSelfPermission(this, Manifest.Permission.RecordAudio) == (int)Permission.Granted)
-                     )
-            {
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(uriString))
-            {
-                return false;
-            }
-            foreach (UriPermission i in list)
-            {
-                var persistedUriString = i.ToString();
-                if (persistedUriString == uriString && i.IsWritePermission && i.IsReadPermission)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void RequestStoragePermissionsAndroid11AndGreater()
-        {
-           
-            //Toast.MakeText(this, "On the next Dialog please select the folder for TTtuner files", ToastLength.Long).Show();
-
-            AndroidX.AppCompat.App.AlertDialog.Builder alert = new AndroidX.AppCompat.App.AlertDialog.Builder(this);
-            alert.SetTitle("On the next dialog please select the data folder for TTtuner files");
-            alert.SetPositiveButton("OK", (senderAlert, argus) =>
-            {
-                var intent = new Intent(Intent.ActionOpenDocumentTree);
-                StartActivityForResult(intent, REQUEST_PERMISSIONS_API_30_AND_GREATER);
-            });
-            global::Android.App.Dialog dialog = alert.Create();
-            dialog.Show(); 
-        }
-
+        } 
+ 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-            var sp = new Common.SharedPreferences();
-            if (resultCode == Result.Ok && requestCode == REQUEST_PERMISSIONS_API_30_AND_GREATER)
+            if (resultCode == Result.Ok && requestCode == PermissionHelper.REQUEST_PERMISSIONS_API_30_AND_GREATER)
             {
-                if (data != null)
-                {
-                    //this is the uri user has provided us
-                    global::Android.Net.Uri treeUri = data != null ? data.Data : null;
-                    Settings.DataStoreFolderUriString = sp.StoreDataFolderUri(treeUri.ToString());
-                    Settings.DataFolder = MediaStoreHelper.GetFileNameOfUri(treeUri);
-                }
+                PermissionHelper.StorePermissionsResult(data);
             }
             // we have all permissions granted at this point, now do rest of setup
             DoPostPermissionGrantSetup();
         }
-
-
 
         public void OnPageSelected(object sender, AndroidX.ViewPager.Widget.ViewPager.PageSelectedEventArgs e)
         {
@@ -327,42 +264,35 @@ namespace TTtuner_2022_2
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
-            if (requestCode == REQUEST_PERMISSIONS)
-            {
-                foreach (Permission p1 in grantResults)
-                {
-                    if (!(p1 == Permission.Granted))
-                    {
-                        Toast.MakeText(this, "Application Exiting...", ToastLength.Long).Show();
-                        FinishAffinity();
-                    }
-                }
+            PermissionHelper.ExitActivityIfAnyPermissionNotGranted(grantResults);
+            if (requestCode == PermissionHelper.REQUEST_PERMISSIONS)
+            {                
                 DoPostPermissionGrantSetup();
             }
-            else if (requestCode == REQUEST_PERMISSIONS_API_30_AND_GREATER)
+            else if (requestCode == PermissionHelper.REQUEST_PERMISSIONS_API_30_AND_GREATER)
             {
-                foreach (Permission p1 in grantResults)
+                if (!PermissionHelper.AreStoragePermissionsGrantedAndroid11AndGreater())
                 {
-                    if (!(p1 == Permission.Granted))
-                    {
-                        Toast.MakeText(this, "Application Exiting...", ToastLength.Long).Show();
-                        FinishAffinity();
-                    }
+                    var alert = PermissionHelper.RequestStoragePermissionsAndroid11AndGreater();
+
+                    global::Android.App.Dialog dialog = alert.Create();
+                    dialog.Show();
                 }
-                RequestStoragePermissionsAndroid11AndGreater();
+                else
+                {
+                    DoPostPermissionGrantSetup();
+                }
             }
             else
             {
                 base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         }
-
         private void StartServiceUsedToHookAppCloseEvent()
         {
             //Intent downloadIntent = new Intent(this, typeof(TTtunerService));
             //StartService(downloadIntent);
         }
-
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
 #if Release_LogOutput
@@ -419,9 +349,6 @@ namespace TTtuner_2022_2
 
             return base.OnOptionsItemSelected(item);
         }
-
-
-
         private void ContinueCollectionStats(bool blContinue)
         {
             if (blContinue)
@@ -436,7 +363,6 @@ namespace TTtuner_2022_2
             }
             m_blCollectionPaused = !blContinue;
         }
-
         private void SaveStatsFile(string m_strTimeStampForFileName)
         {
             EditText editTextView = new EditText(this);
@@ -603,7 +529,6 @@ namespace TTtuner_2022_2
 
             Finish();
         }
-
         internal void DeleteStatsGridData()
         {
             if (!blRecordButtonEnabled)
@@ -614,7 +539,6 @@ namespace TTtuner_2022_2
             _statsFrag.DeleteAllData();
             DataPointCollection.ClearAllDataPoints();
         }
-
         private void OnPlayPauseButtonClicked(object sender, EventArgs e)
         {
             if (!blRecordButtonEnabled)
@@ -655,7 +579,6 @@ namespace TTtuner_2022_2
                 ContinueCollectionStats(false);
             }
         }
-
         internal void OnRecordStopButtonClicked(object sender, EventArgs e)
         {
             if (blRecordButtonEnabled)
@@ -694,8 +617,6 @@ namespace TTtuner_2022_2
                 SaveAudioAndFinishActivity();
             }
         }
-
-
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -710,8 +631,6 @@ namespace TTtuner_2022_2
             m_viewPager.PageSelected -= OnPageSelected;
             Finish();
         }
-
-
         protected override void OnPause()
         {
             base.OnPause();
@@ -728,9 +647,6 @@ namespace TTtuner_2022_2
                 }
             }
         }
-
-
-
         private void BlueFlashLight()
         {
             NotificationManager nm = (NotificationManager)GetSystemService(NotificationService);
@@ -748,7 +664,6 @@ namespace TTtuner_2022_2
             notif.ContentView = new RemoteViews(PackageName, Resource.Layout.NotificationLayout);
             nm.Notify(LED_NOTIFICATION_ID, notif);
         }
-
 
         protected override void OnResume()
         {
@@ -779,8 +694,7 @@ namespace TTtuner_2022_2
                     throw new Exception(e1.Message);
                 }
             }
-        }
-
+        }  
         private void CancelBlueFlashLight()
         {
             NotificationManager nm = (NotificationManager)GetSystemService(NotificationService);

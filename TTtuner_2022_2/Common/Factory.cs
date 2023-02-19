@@ -16,6 +16,7 @@ using Syncfusion.Data;
 using System.Collections.Specialized;
 using TTtuner_2022_2.DataGrid.Cells;
 using Android.OS;
+using AndroidX.DocumentFile.Provider;
 
 namespace TTtuner_2022_2.Common
 {
@@ -37,6 +38,7 @@ namespace TTtuner_2022_2.Common
 
             if (blDisplayNotesGraph)
             {
+               
                 dtHelperFreq.LoadDataPointsFromFile(strTextFilePath);
                 if (dtHelperFreq.DataPoints.Count > MIN_NUM_POINTS)
                 {
@@ -331,6 +333,12 @@ namespace TTtuner_2022_2.Common
                 // becasue of scoped storage we need to copy the file to internal storage and delete when the object is destroyed
                 strWavFilePath = FileHelper.CopyFileFromScopedStorageToInternal(strWavFilePath);
                 deleteFileOnExit = true;
+
+
+
+                Java.IO.File fl = new Java.IO.File(strWavFilePath);
+                DocumentFile df = DocumentFile.FromFile(fl);
+
             }
 
 

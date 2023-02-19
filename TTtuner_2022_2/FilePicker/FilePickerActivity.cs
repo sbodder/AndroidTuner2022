@@ -410,7 +410,7 @@
             CommonFunctions cmFunc = new CommonFunctions();
 
 
-            if (cmFunc.GetFileNameExtension(m_lstFilesSelected[0]) == "WAV")
+            if (cmFunc.GetFileNameExtension(m_lstFilesSelected[0]) == CommonFunctions.WAV_FILE_EXTENSION)
             {
                 string[] stringArr = { m_lstFilesSelected[0] , Common.Settings.DisplayNotesGraph.ToString(),
                                     Common.Settings.DisplayDecibelGraph.ToString() ,
@@ -477,7 +477,7 @@
                         editTextView.Text = editTextView.Text.Replace(c, '_');
                     }
 
-                    if (extenstion == "STT")
+                    if (extenstion == CommonFunctions.STAT_FILE_EXTENSION)
                     {
                         // rename stt file 
                         strNewSttFilename = strFileName.Substring(0, strFileName.LastIndexOf('/') + 1) + editTextView.Text + CommonFunctions.STAT_FILE_EXTENSION;
@@ -699,7 +699,7 @@
             {
                 string extenstion = cmFunc.GetFileNameExtension(file);
 
-                if (extenstion == "STT")
+                if (extenstion == CommonFunctions.STAT_FILE_EXTENSION)
                 {
                     ExportStatsFile(file, uris);
                 }
@@ -726,7 +726,6 @@
             // FLAG_GRANT_READ_URI_PERMISSION
             // set up wave file in temp dir
             string strFileName = cmFunc.GetFileNameWtihoutExtension(file);
-            string extenstion = cmFunc.GetFileNameExtension(file);
 
             Java.IO.File temporaryFile = Java.IO.File.CreateTempFile(strFileName + "-", CommonFunctions.WAV_FILE_EXTENSION, ExternalCacheDir);
             Java.IO.File fl1 = new Java.IO.File(file);
