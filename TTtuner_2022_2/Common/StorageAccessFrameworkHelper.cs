@@ -9,6 +9,7 @@ using AndroidX.DocumentFile.Provider;
 using global::Android.Content;
 using Plugin.CurrentActivity;
 using Syncfusion.Data.Extensions;
+using static AndroidX.Concurrent.Futures.CallbackToFutureAdapter;
 
 namespace TTtuner_2022_2.Common
 {
@@ -43,9 +44,6 @@ namespace TTtuner_2022_2.Common
             CommonFunctions comF = new CommonFunctions();
             var fileName = comF.GetFileNameFromPath(filepath);
             var csvFile = dir.CreateFile("text/plain", fileName);
-
-            //var os = OpenFileOutputStream(csvFile.Uri);
-
 
             using (var os = OpenFileOutputStream(csvFile.Uri))
             {
@@ -87,6 +85,7 @@ namespace TTtuner_2022_2.Common
         {
             var filename = fileName + (string.IsNullOrEmpty(extension) ? "" : extension);
             var dir = GetDocumentFileForDataFolder();
+            filename = new CommonFunctions().GetFileNameFromPath(filename);
             return dir?.FindFile(filename) != null;
 
         }
@@ -137,6 +136,30 @@ namespace TTtuner_2022_2.Common
             }
 
             return list.OrderBy(s => s.Name).ToList();
+        }
+
+        internal static bool DeleteFile(string sourcePath)
+        {
+            CommonFunctions cf = new CommonFunctions();
+            var dir = GetDocumentFileForDataFolder();
+            var filename = new CommonFunctions().GetFileNameFromPath(sourcePath);
+
+            var df = dir?.FindFile(filename);
+
+            
+            return df == null ? false : df.Delete();
+        }
+
+        internal static string GetFileText(Activity act, string fileName, string mediaStoreExtension = "")
+        {
+            using (System.IO.Stream stream = OpenFileInputStream(fileName + mediaStoreExtension))
+            {
+                // Perform operations on "stream".
+                byte[] bytesInStream = new byte[stream.Length];
+                stream.Read(bytesInStream, 0, bytesInStream.Length);
+                var str = System.Text.Encoding.Default.GetString(bytesInStream);
+                return str;
+            }
         }
     }
 }

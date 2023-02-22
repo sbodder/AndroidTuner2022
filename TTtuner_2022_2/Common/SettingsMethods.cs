@@ -618,7 +618,7 @@ namespace TTtuner_2022_2.Common
 #if Release_LogOutput
                 Logger.Info(Common.CommonFunctions.APP_NAME, "the tuning system file is empty");
 #endif
-                return;
+                throw new Exception("Tuning systems are empty");
             }
 
 #if Release_LogOutput

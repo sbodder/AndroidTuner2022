@@ -819,13 +819,10 @@ namespace TTtuner_2022_2.Common
             m_act = act;
         }
 
-
         internal class TuningSystem
         {
             internal string Name;
             internal List<double> lstCentsDeviation = new List<double>();
         }
-
-
     }
 }

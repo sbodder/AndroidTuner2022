@@ -57,7 +57,7 @@ namespace TTtuner_2022_2.Common
                 }
                 else
                 {
-                    MediaStoreHelper.DeleteFile(sourcePath);
+                    StorageAccessFrameworkHelper.DeleteFile(sourcePath);
                     return;
                 }
             }
@@ -244,7 +244,7 @@ namespace TTtuner_2022_2.Common
 
             using (Stream si = FileHelper.OpenFileInputStream(filePath))
             {
-                using (Stream so = MediaStoreHelper.OpenFileOutputStream(fileName, -1, "audio/wav"))
+                using (Stream so = StorageAccessFrameworkHelper.OpenFileOutputStream(fileName, "audio/wav"))
                 {
                     si.CopyTo(so);
                 }
@@ -303,8 +303,6 @@ namespace TTtuner_2022_2.Common
                 else
                 {
                     return StorageAccessFrameworkHelper.OpenFileOutputStream(fileName, mimetype, append ? "wa" : string.Empty);
-                    //return MediaStoreHelper.OpenFileOutputStream(fileName, lengthInBytes, mimetype, append ? "wa" : string.Empty);
-
                 }
             }
             else
@@ -425,7 +423,6 @@ namespace TTtuner_2022_2.Common
                 else
                 {
                     return StorageAccessFrameworkHelper.OpenFileOutputStream(filename, mimeType);
-                    //return MediaStoreHelper.OpenFileOutputStream(filename, -1, mimeType);
                 }
             }
             else
@@ -510,7 +507,7 @@ namespace TTtuner_2022_2.Common
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
-                return MediaStoreHelper.GetFileText(act, filename, mediaStoreExtension);
+                return StorageAccessFrameworkHelper.GetFileText(act, filename, mediaStoreExtension);
             }
             else
             {
@@ -552,9 +549,7 @@ namespace TTtuner_2022_2.Common
                 }
                 // file doesn't exist
             }
-
             return false;
-
         }
 
 
@@ -572,8 +567,6 @@ namespace TTtuner_2022_2.Common
                 var filePath = Path.Combine(documentsPath, filename);
                 try
                 {
-                    //  strText = System.IO.File.ReadAllText(filePath);
-
                     //Get the text file
                     Java.IO.File file = new Java.IO.File(filePath);
 
@@ -607,8 +600,6 @@ namespace TTtuner_2022_2.Common
                 var filePath = Path.Combine(documentsPath, filename);
                 try
                 {
-                    //  strText = System.IO.File.ReadAllText(filePath);
-
                     //Get the text file
                     Java.IO.File file = new Java.IO.File(filePath);
 
@@ -634,12 +625,6 @@ namespace TTtuner_2022_2.Common
 
                 return strText;
             }
-
         }
-
-
     }
-
-
-
 }

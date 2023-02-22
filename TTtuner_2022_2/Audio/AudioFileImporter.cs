@@ -111,7 +111,7 @@ namespace TTtuner_2022_2.Audio
                     dlMessage = new AndroidX.AppCompat.App.AlertDialog.Builder(act);
 
                     dlMessage.SetTitle("Import Error");
-                    dlMessage.SetMessage("The file '" + lstFileNames[i] + "' cannot be imported. The file name already exists in the destination folder");
+                    dlMessage.SetMessage("The file '" + new CommonFunctions().GetFileNameFromPath(lstFileNames[i]) + "' cannot be imported. The file name already exists in the destination folder");
                     dlMessage.SetPositiveButton("OK", (senderAlert, argus) => { });
                     blDoImport = false;
 
