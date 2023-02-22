@@ -59,10 +59,10 @@ namespace TTtuner_2022_2.Common
 
         static private bool ArePermissionsGrantedAndroid11AndGreater()
         {
-            // list of all persisted permissions for our app    
+            // list of all persisted permissions for our app           
 
-            if (!(ContextCompat.CheckSelfPermission(CrossCurrentActivity.Current.AppContext, Manifest.Permission.Internet) == (int)Permission.Granted)
-           || (ContextCompat.CheckSelfPermission(CrossCurrentActivity.Current.AppContext, Manifest.Permission.RecordAudio) == (int)Permission.Granted)
+            if (!(ContextCompat.CheckSelfPermission(CrossCurrentActivity.Current.AppContext, Manifest.Permission.Internet) == Permission.Granted)
+           || !(ContextCompat.CheckSelfPermission(CrossCurrentActivity.Current.AppContext, Manifest.Permission.RecordAudio) == Permission.Granted)
                      )
             {
                 return false;

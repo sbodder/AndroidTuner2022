@@ -169,6 +169,7 @@ namespace TTtuner_2022_2.Audio
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);
+                    throw e;
                 }
             }
             //start the recorder

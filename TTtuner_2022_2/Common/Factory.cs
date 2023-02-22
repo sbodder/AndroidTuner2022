@@ -333,12 +333,6 @@ namespace TTtuner_2022_2.Common
                 // becasue of scoped storage we need to copy the file to internal storage and delete when the object is destroyed
                 strWavFilePath = FileHelper.CopyFileFromScopedStorageToInternal(strWavFilePath);
                 deleteFileOnExit = true;
-
-
-
-                Java.IO.File fl = new Java.IO.File(strWavFilePath);
-                DocumentFile df = DocumentFile.FromFile(fl);
-
             }
 
 

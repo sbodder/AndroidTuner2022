@@ -93,30 +93,7 @@ namespace TTtuner_2022_2.Common
             if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
 
-                CommonFunctions cf = new CommonFunctions();
-                var df = StorageAccessFrameworkHelper.GetDocumentFileForDataFolder();
-                var dfARray = df.ListFiles();
-                List<FileInfoItem> list = new List<FileInfoItem>(); 
-
-                foreach (DocumentFile d in dfARray)
-                {
-                    var ext = cf.GetFileNameExtension(d.Name);
-                    if ( ext == CommonFunctions.WAV_FILE_EXTENSION || ext == CommonFunctions.STAT_FILE_EXTENSION )
-                    {
-                        list.Add(new FileInfoItem(d.Name, MediaStoreHelper.GetFilePathOfUri(d.Uri)));
-                    }
-                }
-                //var list = MediaStoreHelper.GetMediaFilesInAppDirectory();
-                //var list2 = GetStatsFileInInternalAppSpace();
-
-
-                //// this is the only directory that will be useful to retrieve if on scoped storage
-
-                //foreach (var item in list2)
-                //{
-                //    list.Add(item);
-                //}
-                return list.OrderBy(s => s.Name).ToList();
+                return StorageAccessFrameworkHelper.GetMediaFileListInDataDirectory();
             }
 
             //legacy
@@ -161,7 +138,8 @@ namespace TTtuner_2022_2.Common
                 }
                 else
                 {
-                    return MediaStoreHelper.GetNewFilePath(filename);
+                    return StorageAccessFrameworkHelper.GetNewFilePath(filename);
+                    //return MediaStoreHelper.GetNewFilePath(filename);
                 }
             }
             else
@@ -247,9 +225,8 @@ namespace TTtuner_2022_2.Common
                     newfilePath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), fileName);
                 }
                 else
-                {
-                    return MediaStoreHelper.OpenFileInputStream(fileName, String.Empty, mimetype);
-
+                {  
+                    return StorageAccessFrameworkHelper.OpenFileInputStream(fileName);
                 }
             }
             else
@@ -283,7 +260,7 @@ namespace TTtuner_2022_2.Common
 
             try
             {
-                si = MediaStoreHelper.OpenFileInputStream(filePath);
+                si = StorageAccessFrameworkHelper.OpenFileInputStream(filePath);
                 os = FileHelper.OpenFileOutputStream(filePath, true);
                 si.CopyTo(os);
             }
@@ -325,7 +302,8 @@ namespace TTtuner_2022_2.Common
                 }
                 else
                 {
-                    return MediaStoreHelper.OpenFileOutputStream(fileName, lengthInBytes, mimetype, append ? "wa" : string.Empty);
+                    return StorageAccessFrameworkHelper.OpenFileOutputStream(fileName, mimetype, append ? "wa" : string.Empty);
+                    //return MediaStoreHelper.OpenFileOutputStream(fileName, lengthInBytes, mimetype, append ? "wa" : string.Empty);
 
                 }
             }
@@ -437,7 +415,7 @@ namespace TTtuner_2022_2.Common
             {
                 if (mimeType == null)
                 {
-                    // can only write binary data to app space  
+                    // can only store raw data in the internal folder
                     System.IO.FileStream os = null;
                     var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                     var filePath = Path.Combine(documentsPath, filename);
@@ -446,7 +424,8 @@ namespace TTtuner_2022_2.Common
                 }
                 else
                 {
-                    return MediaStoreHelper.OpenFileOutputStream(filename, -1, mimeType);
+                    return StorageAccessFrameworkHelper.OpenFileOutputStream(filename, mimeType);
+                    //return MediaStoreHelper.OpenFileOutputStream(filename, -1, mimeType);
                 }
             }
             else
@@ -555,9 +534,7 @@ namespace TTtuner_2022_2.Common
                 }
                 else
                 {
-                    var filename = Settings.TuningSystemsCsvFileName +  (string.IsNullOrEmpty(extension) ? "" : extension);
-                    var dir = StorageAccessFrameworkHelper.GetDocumentFileForDataFolder();
-                    return dir?.FindFile(filename) != null;
+                    return StorageAccessFrameworkHelper.CheckIfFileExists(fileName, extension);
                 }
             }
             else

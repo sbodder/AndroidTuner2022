@@ -97,13 +97,10 @@ namespace TTtuner_2022_2.Audio
 
         private void ConvertPcmToWaveApi29Plus(int sampleRate, short nChannels, string strPcmFileNameInput, string strWaveFileNameOutput)
         {
-
             byte[] rawData = null;
             sbyte[] sBytes;
 
             System.IO.Stream input = null;
-
-
 
             if (!InstanceFieldsInitialized)
             {
@@ -124,7 +121,10 @@ namespace TTtuner_2022_2.Audio
 
                 sBytes = new sbyte[(int)rawData.Length];
 
-
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
             finally
             {

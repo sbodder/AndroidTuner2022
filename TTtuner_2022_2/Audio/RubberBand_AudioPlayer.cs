@@ -92,9 +92,8 @@ namespace TTtuner_2022_2.Audio
             m_dbTimeRatio = Math.Round(1 / flSpeed, 1);
             m_chNum = ChannelOut.Mono;
             m_strWaveFileName = strFilename;
-            _deleteFileOnExit = deleteFileOnExit;
 
-            MediaMetadataRetriever mmr = MediaMetaFacade.GetRetriever(m_strWaveFileName);
+            MediaMetadataRetriever mmr = MediaMetaFacade.GetRetriever(m_strWaveFileName, false);
 
             String durationStr = mmr.ExtractMetadata(MetadataKey.Duration);
             m_intDuration = Convert.ToInt32(durationStr);

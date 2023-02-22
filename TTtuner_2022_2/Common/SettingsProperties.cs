@@ -809,7 +809,7 @@ namespace TTtuner_2022_2.Common
         {
             get
             {
-                return -60.0f;
+                return -80.0f;
             }
         }
 

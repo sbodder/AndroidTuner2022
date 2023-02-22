@@ -22,6 +22,10 @@ using Com.Github.Angads25.Filepicker.Model;
 using Com.Github.Angads25.Filepicker.View;
 using AndroidX.AppCompat.App;
 using TTtuner_2022_2.EventHandlersTidy;
+using Android.Text.Style;
+using Android.Text;
+using static System.Net.Mime.MediaTypeNames;
+using System.Runtime.Remoting.Contexts;
 
 namespace TTtuner_2022_2
 {
@@ -134,24 +138,34 @@ namespace TTtuner_2022_2
 
                 try
                 {
-                    DialogProperties properties = new DialogProperties();
-                    m_FileDialog = new FilePickerDialog(this, properties);
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+                    {
+                        var text = "If you wish to change the data folder you will have to uninstall and reinstall the app";
+                        SpannableStringBuilder smallerText = new SpannableStringBuilder(text);
+                        smallerText.SetSpan(new RelativeSizeSpan(0.8f), 0, text.Length, 0);
+                        Toast.MakeText(this, smallerText, ToastLength.Long).Show();
+                    }
+                    else
+                    {
+                        DialogProperties properties = new DialogProperties();
+                        m_FileDialog = new FilePickerDialog(this, properties);
 
-                    m_FileDialog.SetTitle("Select Folder");
-                    m_FileDialog.SetPositiveBtnName("Select");
-                    m_FileDialog.SetNegativeBtnName("Cancel");
+                        m_FileDialog.SetTitle("Select Folder");
+                        m_FileDialog.SetPositiveBtnName("Select");
+                        m_FileDialog.SetNegativeBtnName("Cancel");
 
-                    properties.SelectionMode = DialogConfigs.MultiMode;
+                        properties.SelectionMode = DialogConfigs.MultiMode;
 
-                    properties.SelectionType = DialogConfigs.DirSelect;
+                        properties.SelectionType = DialogConfigs.DirSelect;
 
 
-                    properties.Root = ExternalDir;
+                        properties.Root = ExternalDir;
 
-                    m_FileDialog.Properties = properties;
+                        m_FileDialog.Properties = properties;
 
-                    m_FileDialog.SetDialogSelectionListener(lis1);
-                    m_FileDialog.Show();
+                        m_FileDialog.SetDialogSelectionListener(lis1);
+                        m_FileDialog.Show();
+                    }
                 }
                 catch (Exception ex)
                 {
