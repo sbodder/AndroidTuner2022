@@ -35,7 +35,6 @@ namespace TTtuner_2022_2.Fragments
     {
         private SfDataGrid _dataGrid_Freq;
         private SfDataGrid m_dataGrid_Dcb;
-        private AppCompatActivity m_act;
         ObservableCollection<NoteStat> m_lstNoteStats = new ObservableCollection<NoteStat>();
         ObservableCollection<NoteStat> m_tempNoteStats;
         ObservableCollection<DbStat> m_lstDbStat = null;
@@ -60,12 +59,11 @@ namespace TTtuner_2022_2.Fragments
         {
 
         }
-        public static StatsViewFragment NewInstance(AppCompatActivity act, bool displayFreqNotes, bool displayDb, bool bDataSourceMoving)
+        public static StatsViewFragment NewInstance( bool displayFreqNotes, bool displayDb, bool bDataSourceMoving)
         {
             var statsFrag = new StatsViewFragment
             {
                 Arguments = new Bundle(),
-                m_act = act,
                 _displayFreqNotes = displayFreqNotes,
                 _displayDcb = displayDb,
                 _bDataSourceMoving = bDataSourceMoving,
@@ -189,8 +187,8 @@ namespace TTtuner_2022_2.Fragments
 
             if (_displayFreqNotes)
             {
-                _dataGrid_Freq = fct.CreateFreqDataGrid(m_act, Resources.DisplayMetrics, 9, GetHeightOfFreqGrid());
-                m_llayFreq = new LinearLayout(m_act);
+                _dataGrid_Freq = fct.CreateFreqDataGrid(Activity, Resources.DisplayMetrics, 9, GetHeightOfFreqGrid());
+                m_llayFreq = new LinearLayout(Activity);
                 AddFreqDataGrid();
                 m_llay.AddView(m_llayFreq);
             }
@@ -198,7 +196,7 @@ namespace TTtuner_2022_2.Fragments
             if (_displayDcb)
             {
                 SetupDataGrid_Dcb();
-                m_llayDcb = new LinearLayout(m_act);
+                m_llayDcb = new LinearLayout(Activity);
                 AddDbDataGrid();
                 m_llay.AddView(m_llayDcb);
             }
@@ -360,7 +358,7 @@ namespace TTtuner_2022_2.Fragments
         private void SetupDataGrid_Dcb()
         {
 
-            m_dataGrid_Dcb = new SfDataGrid(m_act);
+            m_dataGrid_Dcb = new SfDataGrid(Activity);
 
             m_dataGrid_Dcb.AutoGenerateColumns = false;
 

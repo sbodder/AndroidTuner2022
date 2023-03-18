@@ -20,7 +20,6 @@ namespace TTtuner_2022_2.Fragments
     {
         ChartZoomPanBehavior _zoomPanBehavior;
         SfChart _chart;
-        private Activity m_act;
         private View m_view;
         private ObservableCollection<ISerialisableDataPoint> _dataseries;
         const double _TIME_WINDOW_WIDTH = 3;
@@ -31,12 +30,11 @@ namespace TTtuner_2022_2.Fragments
         {
 
         }
-        public static ScatterPlotFragment NewInstance(Activity act)
+        public static ScatterPlotFragment NewInstance()
         {
             var scatterFrag = new ScatterPlotFragment
             {
                 Arguments = new Bundle(),
-                m_act = act,
                 _dataseries = new ObservableCollection<ISerialisableDataPoint>(),
             };
 
@@ -75,7 +73,7 @@ namespace TTtuner_2022_2.Fragments
         {
             LinearLayout llay = (LinearLayout)m_view.FindViewById(Resource.Id.LinearLayoutForScatterPlot);
 
-            _chart = new SfChart(m_act);
+            _chart = new SfChart(Activity);
             _chart.Title.SetTextSize(global::Android.Util.ComplexUnitType.Dip, 13f);
             _chart.Title.SetTextColor(Color.Rgb(0x99, 0xcc, 0));
             _chart.SetBackgroundColor(Color.Black);

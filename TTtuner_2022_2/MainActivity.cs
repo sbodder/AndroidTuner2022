@@ -186,13 +186,13 @@ namespace TTtuner_2022_2
 
         private void SetupScatterPlotFragment()
         {
-            _scatterFrag = ScatterPlotFragment.NewInstance(this);
+            _scatterFrag = ScatterPlotFragment.NewInstance();
             SupportFragmentManager.BeginTransaction().Replace(Resource.Id.chart_frame1, _scatterFrag).Commit();
         }
 
         private void SetupGaugeFragment()
         {
-            _gaugeFrag = GaugeFragment.NewInstance(this);
+            _gaugeFrag = GaugeFragment.NewInstance();
             SupportFragmentManager.BeginTransaction().Replace(Resource.Id.gauge_frame1, _gaugeFrag).Commit();
         }
         private void SetupButtons()

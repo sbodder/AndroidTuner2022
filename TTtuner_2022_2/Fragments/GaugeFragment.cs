@@ -23,7 +23,6 @@ namespace TTtuner_2022_2.Fragments
         double[] m_dlArray = new double[m_BUFFER_ARRAY_SIZE];
         private View m_view;
         private SfCircularGauge _gauge;
-        private Activity m_act;
 
         public bool SetupComplete { get; set; } = false;
 
@@ -31,12 +30,11 @@ namespace TTtuner_2022_2.Fragments
         {
 
         }
-        public static GaugeFragment NewInstance(Activity act)
+        public static GaugeFragment NewInstance()
         {
             var gaugeFrag = new GaugeFragment
             {
-                Arguments = new Bundle(),
-                m_act = act
+                Arguments = new Bundle()
             };
 
             return gaugeFrag;
@@ -60,7 +58,7 @@ namespace TTtuner_2022_2.Fragments
             try
             {
                 LinearLayout llay = (LinearLayout)m_view.FindViewById(Resource.Id.LinearLayoutForGauge);
-                _gauge = new SfCircularGauge(m_act);
+                _gauge = new SfCircularGauge(Activity);
 
                 _gauge.SetBackgroundColor(Color.Black);
                 _gauge.SetPadding(0, 0, 0, 0);

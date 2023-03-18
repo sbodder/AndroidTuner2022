@@ -23,7 +23,7 @@ namespace TTtuner_2022_2.Adapters
             : base(fm)
         {
             m_tunFg = TunerFragment.NewInstance();
-            m_staFg = StatsViewFragment.NewInstance( (AppCompatActivity ) act, true, false, true);
+            m_staFg = StatsViewFragment.NewInstance( true, false, true);
 
         }
 

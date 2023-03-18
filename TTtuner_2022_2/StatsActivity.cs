@@ -65,7 +65,7 @@ namespace TTtuner_2022_2
 
                 m_prgBAr = FindViewById<ProgressBar>(Resource.Id.PrgBar);
                 m_prgBAr.Visibility = ViewStates.Gone;
-                _statsFrag = StatsViewFragment.NewInstance(this, _displayNotes, _displayDcb, false);
+                _statsFrag = StatsViewFragment.NewInstance( _displayNotes, _displayDcb, false);
                 SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame1, _statsFrag).Commit();
 
             }
