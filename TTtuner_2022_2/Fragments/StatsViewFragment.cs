@@ -204,11 +204,14 @@ namespace TTtuner_2022_2.Fragments
         }
 
         private void AttachDataToDataGrids()
-        {
+        {         
             NoteStatsGenerator ntStat = new NoteStatsGenerator(Common.Settings.MinNumberOfSamplesForNote);
             if (!_bDataSourceMoving)
             {
-                ntStat.MergeNoteStatCollections(_dataGrid_Freq.ItemsSource as ObservableCollection<NoteStat>, m_lstNoteStats);
+                if (_displayFreqNotes)
+                {
+                    ntStat.MergeNoteStatCollections(_dataGrid_Freq.ItemsSource as ObservableCollection<NoteStat>, m_lstNoteStats);
+                }
                 if (_displayDcb)
                 {
                     m_dataGrid_Dcb.ItemsSource = m_lstDbStat;

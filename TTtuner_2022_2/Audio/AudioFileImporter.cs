@@ -165,7 +165,7 @@ namespace TTtuner_2022_2.Audio
             int SAMPLES = Common.Settings.NumberOfSamplesInBuffer;
             DataPointHelper<Serializable_DataPoint_Std> dpHlp = DataPointCollection.Dcb;
             int samplingFreq;
-            long lgLength = Common.FileHelper.GetLengthOfFile(strWaveFilePath);
+            long lgLength = Common.FileHelper.GetLengthOfFile(strWaveFilePath, false );
             Common.CommonFunctions comFunc = new Common.CommonFunctions();
 
 

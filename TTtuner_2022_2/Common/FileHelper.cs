@@ -326,7 +326,7 @@ namespace TTtuner_2022_2.Common
                 }
                 else
                 {
-                    return MediaStoreHelper.GetFileSize(filePath);
+                    return StorageAccessFrameworkHelper.GetFileSize(filePath);
                 }
             }
             else

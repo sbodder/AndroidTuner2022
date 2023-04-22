@@ -1055,6 +1055,7 @@
     <Content Include="ICON FILES\icon3.png" />
     <Content Include="ICON FILES\ic_launcher.png" />
     <Content Include="ICON FILES\note.png" />
+    <None Include="ReleaseNotes.txt" />
     <ProguardConfiguration Include="proguard-rules.pro">
       <SubType>Designer</SubType>
     </ProguardConfiguration>

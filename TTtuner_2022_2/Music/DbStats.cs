@@ -148,7 +148,7 @@ namespace TTtuner_2022_2.Music
 
 
                     // draw rectangle
-                    paint.Color = Color.LightGray;
+                    paint.Color = Color.AntiqueWhite;
 
                     x1 = (float)(FindInterQuartileValue(0.25f) * MULT_FACTOR);
                     if (x1 < 0)

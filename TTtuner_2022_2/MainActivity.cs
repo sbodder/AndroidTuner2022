@@ -35,7 +35,7 @@ using static AndroidX.Concurrent.Futures.CallbackToFutureAdapter;
 
 namespace TTtuner_2022_2
 {
-    [Activity(Label = "TTtuner", Icon = "@drawable/icon", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Activity(Label = "TTtuner", Icon = "@drawable/icon", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : AppCompatActivity
     {
         private int LED_NOTIFICATION_ID = 0; //arbitrary constant   

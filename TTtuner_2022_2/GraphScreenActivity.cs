@@ -25,13 +25,14 @@ using TTtuner_2022_2.PopUpDialogFragments;
 using TTtuner_2022_2.Common;
 using BE.Tarsos.Dsp.IO.Android;
 using System.Threading;
+using Android.Content.PM;
 
 namespace TTtuner_2022_2.Plot
 {
 
 
 
-    [Activity(Label = "Graph", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Activity(Label = "Graph", ConfigurationChanges = global::Android.Content.PM.ConfigChanges.Orientation | global::Android.Content.PM.ConfigChanges.ScreenSize, ScreenOrientation = ScreenOrientation.Portrait)]
     internal class GraphScreenActivity : AppCompatActivity
     {
         int m_intElapsedTime = 0;

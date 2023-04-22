@@ -1,0 +1,93 @@
+﻿//////Release 2.07R///////////////////
+- addressed bug with decibel graphs
+- fixed orientation on main and graph screens
+
+//////Release 1.75R///////////////////
+- updated synchfusion components
+- added more logging for crashes
+
+///////////Release 1.5R////////////////////////////////
+- introduced a new stats screen on the main display
+- introducted scatter plot and dB meter on main display
+- can now save and open stats only files
+- addressed application crash with large files
+
+///////////Release 1.47R////////////////////////////////
+- fixed bug with stats screen (mem leak)
+- fixed timer not working in the main screen
+- made limits for zoom graphs
+- graph screen now wont go to sleep
+
+///////////Release 1.4614R////////////////////////////////
+- Can now plot dB values
+- New graph configure men in graph screen and settings
+- Can now access A4 reference from the main menu by long pressing the setting value
+- New dB full scale stats available
+
+
+//////////Release 1.45R////////////////////////////////
+- Implemented time stretching of audio during playback. This means the pitch of the audio no longer changes when 
+  the speed of music is changed. 
+- Can now import almost any audio format including mp3, m4a and aac
+- Audio recordings now have higher sample resolution
+- Added new setting which allows user to change the minimum number of samples for note to appear on stats table
+- Added new setting which allows user to change the player back to previous version (without time stretch)
+- Importing files is now faster
+- Bug fixes (app crashes on file import)
+
+
+
+///////////Release 1.44R////////////////////////////////
+ - Fixed bug with audio ahead of graph in play back
+ - Fixed bug with rewind and fast forward not working when audio is paused
+ - Fixed bug with long press action changing the position of the play marker
+ 
+
+///////////Release 1.43R////////////////////////////////
+ - Can tap the graph and the play marker will change to that point 
+ - Can now scoll the graph when paused.
+ - Fixed bug with pressing back in the graph screen - now stops audio if playing
+ 
+
+///////////Release 1.42R////////////////////////////////
+ - There's now a new Graph overview section in the graph screen
+ - Zoom in and out on the graph using the pinch gesture
+ - New Snap to Note feature on the graph. Access by long-pressing the graph.
+ - New graphic on the Statistics page that displays the mean cents error (black dot) and the inter quartile range (coloured rectange). 
+ - When you share a track in the archive screen, its associated data ( note statistics etc)  are shared as a text file.  
+
+///////////Release 1.38R////////////////////////////////
+- Can now import Wave files tp the application for frequency analysis and playback
+- Tuning screen now turns yellow when note is out of tune (> 25cents)
+- Changed folder selection dialogs
+
+
+///////////Release 1.37R////////////////////////////////
+- bug fix (localisation, convert to double)
+
+
+///////////Release 1.30R////////////////////////////////
+- settings icon now on toolbar in main screen for easy access
+- Load menu has been renamed to archive menu
+- Now displays credits screen
+- fixed issue with sharing files 
+- fixed issue with writing csv file to data folder
+- now deletes pcm files form data folder when no longer needed
+
+
+///////////Release 1.28R////////////////////////////////
+- Added over a hundred new Tuning systems
+- You can now add your own tuning systems by editing TuningSystems.csv in the data folder location
+- Improved folder picker for Data Folder Setting
+- Redesigned load file screen with multiple file selection now possible with long press
+- Changed the layout of Tuner Specs on the main recording screen
+- Fixed bug with transposition of notes
+- Fixed memory leaks
+
+///////////Release 1.27R////////////////////////////////
+- Added a setting to change A4 reference
+- You can now specify where to save recordings
+- The Save location is now displayed in the load screen
+- The app is now kept awake when in the main record screen
+- Can now restore the default settings of the app
+- Corrected the share icon

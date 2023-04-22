@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Android.App;
 using Android.App.AppSearch;
+using Android.Content.Res;
 using Android.OS;
 using AndroidX.DocumentFile.Provider;
 using global::Android.Content;
@@ -161,5 +162,16 @@ namespace TTtuner_2022_2.Common
                 return str;
             }
         }
+
+        internal static long GetFileSize(string filename)
+        {
+            var uri = GetFileUri(filename);
+            AssetFileDescriptor fileDescriptor = CrossCurrentActivity.Current.AppContext.ContentResolver.OpenAssetFileDescriptor(uri, "r");
+            var len = fileDescriptor.Length;
+            fileDescriptor = null;
+            return len ;           
+        }
+
+
     }
 }
