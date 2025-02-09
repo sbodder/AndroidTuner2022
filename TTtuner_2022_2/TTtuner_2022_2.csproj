@@ -19,7 +19,7 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v13.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -42,6 +42,7 @@
     <EnableLLVM>false</EnableLLVM>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <BundleAssemblies>false</BundleAssemblies>
+    <MandroidI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -109,11 +110,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FilesAndDirPicker2022">
-      <HintPath>..\..\dlls\FilesAndDirPicker2022.dll</HintPath>
+      <HintPath>..\..\FilesAndDirPickerBinding2022\FilesAndDirPicker2022\bin\Release\FilesAndDirPicker2022.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Android.Export" />
     <Reference Include="RuberBandTarosDspBindings2022">
-      <HintPath>..\..\dlls\RuberBandTarosDspBindings2022.dll</HintPath>
+      <HintPath>..\..\RuberBandTarosDspBindings2022\RuberBandTarosDspBindings2022\bin\Release\RuberBandTarosDspBindings2022.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -139,10 +140,6 @@
     <Compile Include="StatsActivity.cs" />
     <Compile Include="Views\SwipeIndicatorView.cs" />
     <Compile Include="Views\TunerScalesView.cs" />
-    <AndroidNativeLibrary Include="Assets\libs\arm64-v8a\libffmpeg.so" />
-    <AndroidNativeLibrary Include="Assets\libs\armeabi-v7a\libffmpeg.so" />
-    <AndroidNativeLibrary Include="Assets\libs\x86\libffmpeg.so" />
-    <AndroidNativeLibrary Include="Assets\libs\x86_64\libffmpeg.so" />
     <None Include="ICON FILES\ICON1.pdn" />
     <None Include="ICON FILES\icon2.pdn" />
     <None Include="MainActivity.cs.old" />
@@ -249,7 +246,7 @@
       <Version>2.1.0.4</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Licensing">
-      <Version>20.3.0.48</Version>
+      <Version>28.1.41</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Xamarin.Core">
       <Version>20.3.0.48</Version>
@@ -1060,6 +1057,11 @@
       <SubType>Designer</SubType>
     </ProguardConfiguration>
     <EmbeddedResource Include="Settings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidNativeLibrary Include="Assets\libs\arm64-v8a\libffmpeg.so" />
+    <AndroidNativeLibrary Include="Assets\libs\armeabi-v7a\libffmpeg.so" />
+    <AndroidNativeLibrary Include="Assets\libs\x86_64\libffmpeg.so" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

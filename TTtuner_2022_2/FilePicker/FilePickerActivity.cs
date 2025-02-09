@@ -125,7 +125,7 @@
             };
 
             //this sets up the taros dsp ffmeg binaries
-            AndroidFFMPEGLocator affmeg = new AndroidFFMPEGLocator(this);
+             AndroidFFMPEGLocator affmeg = new AndroidFFMPEGLocator(this);
             ///
             this.Window.AddFlags(WindowManagerFlags.NotTouchModal);
             // ...but notify us that it happened.
